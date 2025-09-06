@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IkuzaChat - Настройки</title>
+    <!-- Иконка сайта -->
+    <link rel="icon" href="src/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="src/logo.png">
+    <link rel="icon" sizes="192x192" href="src/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+<body class="light-theme">
+    <div class="container">
+        <header class="vercel-header">
+            <div class="logo">
+                <div class="logo-gradient">
+                    <img src="src/logo.png" alt="IkuzaChat Logo" class="logo-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/512/6441a5/ffffff?text=I';">
+                </div>
+                <h1>IkuzaChat</h1>
+            </div>
+            <p class="subtitle">Преобразите ваш Twitch чат с премиальным оверлеем для стримов</p>
+            <div class="theme-toggle">
+                <button id="themeToggle" class="theme-button">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="settings-container vercel-card">
+            <div class="settings-header">
+                <div class="settings-header-content">
+                    <i class="fas fa-cog"></i>
+                    <h2>Настройки чата</h2>
+                </div>
+            </div>
+            <div class="settings-body">
+                <div class="settings-group">
+                    <div class="group-header">
+                        <div class="group-title">
+                            <i class="fas fa-hashtag"></i>
+                            <h3>Основные настройки</h3>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <div class="setting-item">
+                            <label for="channel">
+                                <span class="label-text">Имя канала</span>
+                                <span class="label-description">Введите имя канала Twitch (без @)</span>
+                            </label>
+                            <div class="input-container">
+                                <input type="text" id="channel" placeholder="Введите имя канала" value="ikuza47">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="fontFamily">
+                                <span class="label-text">Шрифт</span>
+                                <span class="label-description">Выберите шрифт для текста чата</span>
+                            </label>
+                            <div class="input-container">
+                                <select id="fontFamily">
+                                    <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                    <option value="'Helvetica Neue', sans-serif">Helvetica</option>
+                                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="'Inter', sans-serif">Inter</option>
+                                    <option value="system-ui">Системные шрифты</option>
+                                    <option value="custom">Другой шрифт...</option>
+                                </select>
+                                <div class="font-preview">Пример текста</div>
+                                <input type="text" id="customFontInput" class="custom-font-input" placeholder="Введите название шрифта">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="fontSize">
+                                <span class="label-text">Размер шрифта</span>
+                                <span class="label-description">Размер текста в чате (в пикселях)</span>
+                            </label>
+                            <div class="input-container">
+                                <input type="number" id="fontSize" min="12" max="36" value="24">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="shadowColor">
+                                <span class="label-text">Цвет тени</span>
+                                <span class="label-description">Цвет тени вокруг текста для лучшей читаемости</span>
+                            </label>
+                            <div class="input-container color-picker">
+                                <input type="color" id="shadowColor" value="#000000">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="shadowBlur">
+                                <span class="label-text">Размытие тени</span>
+                                <span class="label-description">Сила размытия тени вокруг текста</span>
+                            </label>
+                            <div class="input-container">
+                                <input type="number" id="shadowBlur" min="0" max="10" value="3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="group-header">
+                        <div class="group-title">
+                            <i class="fas fa-certificate"></i>
+                            <h3>Бейджики</h3>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <div class="setting-item">
+                            <label for="showBadges">
+                                <span class="label-text">Отображать бейджики</span>
+                                <span class="label-description">Показывать бейджики пользователей</span>
+                            </label>
+                            <div class="input-container">
+                                <div class="toggle-container">
+                                    <span class="toggle-label">Показывать бейджики</span>
+                                    <label class="vercel-toggle">
+                                        <input type="checkbox" id="showBadges" checked>
+                                        <span class="vercel-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item" id="badgesSizeGroup">
+                            <label for="badgesSize">
+                                <span class="label-text">Размер бейджиков</span>
+                                <span class="label-description">Размер бейджиков (1x, 2x, 4x)</span>
+                            </label>
+                            <div class="input-container">
+                                <select id="badgesSize">
+                                    <option value="1">1x</option>
+                                    <option value="2" selected>2x</option>
+                                    <option value="4">4x</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item" id="badgesPositionGroup">
+                            <label for="badgesPosition">
+                                <span class="label-text">Позиция бейджиков</span>
+                                <span class="label-description">Где размещать бейджики относительно ника</span>
+                            </label>
+                            <div class="input-container">
+                                <select id="badgesPosition">
+                                    <option value="left" selected>Слева от ника</option>
+                                    <option value="right">Справа от ника</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="group-header">
+                        <div class="group-title">
+                            <i class="fas fa-robot"></i>
+                            <h3>Дополнительно</h3>
+                        </div>
+                    </div>
+                    <div class="group-content">
+                        <div class="setting-item">
+                            <label for="autoRemove">
+                                <span class="label-text">Автоудаление сообщений</span>
+                                <span class="label-description">Автоматически удалять старые сообщения</span>
+                            </label>
+                            <div class="input-container">
+                                <div class="toggle-container">
+                                    <span class="toggle-label">Включить автоудаление</span>
+                                    <label class="vercel-toggle">
+                                        <input type="checkbox" id="autoRemove">
+                                        <span class="vercel-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item" id="timeoutGroup" style="display: none;">
+                            <label for="removeTimeout">
+                                <span class="label-text">Время до удаления</span>
+                                <span class="label-description">Сколько секунд показывать сообщение</span>
+                            </label>
+                            <div class="input-container">
+                                <div class="timeout-input">
+                                    <input type="number" id="removeTimeout" min="3" max="30" value="5">
+                                    <span>секунд</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="clearChatOnCommand">
+                                <span class="label-text">Автоочистка чата</span>
+                                <span class="label-description">Чат будет очищаться при использовании команды /clear в Twitch</span>
+                            </label>
+                            <div class="input-container">
+                                <div class="toggle-container">
+                                    <span class="toggle-label">Включить автоочистку</span>
+                                    <label class="vercel-toggle">
+                                        <input type="checkbox" id="clearChatOnCommand" checked>
+                                        <span class="vercel-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="animationIn">
+                                <span class="label-text">Анимация появления</span>
+                                <span class="label-description">Как сообщения появляются в чате</span>
+                            </label>
+                            <div class="input-container">
+                                <select id="animationIn">
+                                    <option value="fadeIn">Плавное появление</option>
+                                    <option value="slideIn">Сдвиг снизу</option>
+                                    <option value="zoomIn">Увеличение</option>
+                                    <option value="none">Без анимации</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="animationOut">
+                                <span class="label-text">Анимация исчезновения</span>
+                                <span class="label-description">Как сообщения исчезают из чата</span>
+                            </label>
+                            <div class="input-container">
+                                <select id="animationOut">
+                                    <option value="fadeOut">Плавное исчезновение</option>
+                                    <option value="slideOut">Сдвиг вверх</option>
+                                    <option value="zoomOut">Уменьшение</option>
+                                    <option value="none">Без анимации</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="generate" class="vercel-button primary">
+                        <i class="fas fa-cogs"></i>
+                        Сгенерировать ссылку
+                    </button>
+                    <button id="reset" class="vercel-button secondary">
+                        <i class="fas fa-redo"></i>
+                        Сбросить настройки
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-container vercel-card" id="result">
+            <div class="result-header">
+                <h2><i class="fas fa-link"></i> Готовая ссылка</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="result-content">
+                <div class="url-container">
+                    <input type="text" id="overlayUrl" readonly>
+                    <button id="copyBtn" title="Скопировать">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="instructions">
+                    <h3><i class="fas fa-cog"></i> Настройка в OBS</h3>
+                    <ul>
+                        <li>Добавьте новый "Браузерный источник" в OBS</li>
+                        <li>Вставьте эту ссылку в поле URL</li>
+                        <li>Установите высоту и ширину по вашему усмотрению</li>
+                        <li>Отключите "Захват курсора" для лучшего отображения</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Элементы
+            const channelInput = document.getElementById('channel');
+            const fontFamilyInput = document.getElementById('fontFamily');
+            const fontSizeInput = document.getElementById('fontSize');
+            const generateBtn = document.getElementById('generate');
+            const resultDiv = document.getElementById('result');
+            const overlayUrlInput = document.getElementById('overlayUrl');
+            const copyBtn = document.getElementById('copyBtn');
+            const resetBtn = document.getElementById('reset');
+            const autoRemoveCheckbox = document.getElementById('autoRemove');
+            const timeoutGroup = document.getElementById('timeoutGroup');
+            const removeTimeoutInput = document.getElementById('removeTimeout');
+            const customFontInput = document.getElementById('customFontInput');
+            const clearChatOnCommandCheckbox = document.getElementById('clearChatOnCommand');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            // Элементы бейджиков
+            const showBadgesCheckbox = document.getElementById('showBadges');
+            const badgesSizeSelect = document.getElementById('badgesSize');
+            const badgesPositionSelect = document.getElementById('badgesPosition');
+            const shadowColorInput = document.getElementById('shadowColor');
+            const shadowBlurInput = document.getElementById('shadowBlur');
+
+            // Проверка обязательных элементов
+            const requiredElements = [
+                channelInput, fontFamilyInput, fontSizeInput, generateBtn,
+                shadowColorInput, shadowBlurInput,
+                showBadgesCheckbox, badgesSizeSelect, badgesPositionSelect,
+                clearChatOnCommandCheckbox, themeToggle
+            ];
+
+            for (const el of requiredElements) {
+                if (!el) {
+                    console.error('❌ Элемент не найден:', el);
+                    return;
+                }
+            }
+
+            // Показ/скрытие таймаута
+            if (autoRemoveCheckbox && timeoutGroup) {
+                autoRemoveCheckbox.addEventListener('change', function () {
+                    timeoutGroup.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+            
+            // Обработка выбора шрифта
+            fontFamilyInput.addEventListener('change', function() {
+                const fontPreview = document.querySelector('.font-preview');
+                const customFontInput = document.getElementById('customFontInput');
+                
+                if (this.value === 'custom') {
+                    customFontInput.style.display = 'block';
+                    fontPreview.textContent = 'Введите название шрифта';
+                    fontPreview.style.fontFamily = 'inherit';
+                } else if (this.value === 'system-ui') {
+                    customFontInput.style.display = 'none';
+                    fontPreview.textContent = 'Системные шрифты';
+                    fontPreview.style.fontFamily = 'system-ui';
+                } else {
+                    customFontInput.style.display = 'none';
+                    fontPreview.textContent = 'Пример текста';
+                    fontPreview.style.fontFamily = this.value;
+                }
+            });
+            
+            // Обновление превью при вводе кастомного шрифта
+            if (customFontInput) {
+                customFontInput.addEventListener('input', function() {
+                    const fontPreview = document.querySelector('.font-preview');
+                    fontPreview.textContent = 'Проверка шрифта: ' + this.value;
+                    fontPreview.style.fontFamily = this.value + ', sans-serif';
+                });
+            }
+            
+            // Инициализация превью шрифта
+            const fontPreview = document.querySelector('.font-preview');
+            fontPreview.style.fontFamily = fontFamilyInput.value;
+
+            // Генерация ссылки
+            generateBtn.addEventListener('click', () => {
+                const channel = channelInput.value.trim().toLowerCase();
+                
+                // Удаляем символ @, если он есть в начале
+                if (channel.startsWith('@')) {
+                    channel = channel.substring(1);
+                }
+                
+                // Проверяем на допустимые символы для Twitch канала
+                const twitchChannelRegex = /^[a-z0-9_]{3,25}$/;
+                if (!twitchChannelRegex.test(channel)) {
+                    alert('Недопустимое имя канала!\n\nИмя канала Twitch должно:\n- Содержать от 3 до 25 символов\n- Содержать только буквы, цифры и нижнее подчеркивание');
+                    return;
+                }
+
+                const params = new URLSearchParams();
+                
+                // Добавляем обязательные параметры
+                params.append('channel', channel);
+                
+                // Обрабатываем выбор шрифта
+                let fontValue;
+                if (fontFamilyInput.value === 'custom') {
+                    fontValue = customFontInput.value.trim();
+                    if (!fontValue) {
+                        fontValue = 'sans-serif';
+                    } else {
+                        fontValue = `'${fontValue}', sans-serif`;
+                    }
+                } else if (fontFamilyInput.value === 'system-ui') {
+                    fontValue = 'system-ui';
+                } else {
+                    fontValue = fontFamilyInput.value;
+                }
+                
+                params.append('font', encodeURIComponent(fontValue));
+                params.append('size', fontSizeInput.value);
+                params.append('shadowColor', shadowColorInput.value.replace('#', ''));
+                params.append('shadowBlur', shadowBlurInput.value);
+                
+                // Добавляем автоудаление, если включено
+                if (autoRemoveCheckbox && autoRemoveCheckbox.checked) {
+                    params.append('autoRemove', 'true');
+                    const timeoutValue = removeTimeoutInput ? removeTimeoutInput.value : '5';
+                    params.append('timeout', timeoutValue || '5');
+                }
+                
+                // Добавляем автоочистку чата
+                params.append('clearChatOnCommand', clearChatOnCommandCheckbox.checked);
+                
+                // Добавляем настройки анимаций
+                params.append('animationIn', document.getElementById('animationIn').value);
+                params.append('animationOut', document.getElementById('animationOut').value);
+                
+                // Добавляем настройки бейджиков
+                if (showBadgesCheckbox && showBadgesCheckbox.checked) {
+                    params.append('showBadges', 'true');
+                    params.append('badgesSize', badgesSizeSelect.value);
+                    params.append('badgesPosition', badgesPositionSelect.value);
+                }
+
+                const url = `chat/overlay.html?${params.toString()}`;
+
+                let basePath = window.location.pathname;
+                if (basePath.endsWith('index.html')) {
+                    basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+                } else if (!basePath.endsWith('/')) {
+                    basePath += '/';
+                }
+
+                const fullUrl = `${window.location.origin}${basePath}${url}`;
+
+                if (overlayUrlInput) overlayUrlInput.value = fullUrl;
+                if (resultDiv) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+
+            // Копирование ссылки
+            if (copyBtn && overlayUrlInput) {
+                copyBtn.addEventListener('click', () => {
+                    overlayUrlInput.select();
+                    document.execCommand('copy');
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    copyBtn.title = 'Скопировано!';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyBtn.title = 'Скопировать';
+                    }, 2000);
+                });
+            }
+            
+            // Переключение результата
+            document.querySelector('.result-header').addEventListener('click', () => {
+                const resultContent = document.querySelector('.result-content');
+                const toggleIcon = document.querySelector('.toggle-icon');
+                
+                if (resultContent.style.display === 'none' || !resultContent.style.display) {
+                    resultContent.style.display = 'block';
+                    toggleIcon.classList.remove('fa-chevron-down');
+                    toggleIcon.classList.add('fa-chevron-up');
+                } else {
+                    resultContent.style.display = 'none';
+                    toggleIcon.classList.remove('fa-chevron-up');
+                    toggleIcon.classList.add('fa-chevron-down');
+                }
+            });
+            
+            // Сброс настроек
+            resetBtn.addEventListener('click', () => {
+                if (confirm('Вы уверены, что хотите сбросить все настройки?')) {
+                    channelInput.value = 'ikuza47';
+                    fontFamilyInput.value = "'Segoe UI', sans-serif";
+                    fontSizeInput.value = '24';
+                    shadowColorInput.value = '#000000';
+                    shadowBlurInput.value = '3';
+                    
+                    autoRemoveCheckbox.checked = false;
+                    timeoutGroup.style.display = 'none';
+                    removeTimeoutInput.value = '5';
+                    
+                    clearChatOnCommandCheckbox.checked = true;
+                    
+                    document.getElementById('animationIn').value = 'fadeIn';
+                    document.getElementById('animationOut').value = 'fadeOut';
+                    
+                    showBadgesCheckbox.checked = true;
+                    badgesSizeSelect.value = '2';
+                    badgesPositionSelect.value = 'left';
+                    
+                    // Сбрасываем выбор шрифта
+                    fontFamilyInput.value = "'Segoe UI', sans-serif";
+                    customFontInput.style.display = 'none';
+                    const fontPreview = document.querySelector('.font-preview');
+                    fontPreview.textContent = 'Пример текста';
+                    fontPreview.style.fontFamily = fontFamilyInput.value;
+                    
+                    alert('Настройки сброшены к значениям по умолчанию!');
+                }
+            });
+            
+            // Переключение темы
+            themeToggle.addEventListener('click', () => {
+                const body = document.body;
+                const isLightTheme = body.classList.contains('light-theme');
+                
+                if (isLightTheme) {
+                    body.classList.remove('light-theme');
+                    body.classList.add('dark-theme');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.classList.remove('dark-theme');
+                    body.classList.add('light-theme');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            // Проверка сохраненной темы
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            
+            if (savedTheme === 'dark') {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+            
+            // Инициализация видимости групп
+            timeoutGroup.style.display = autoRemoveCheckbox.checked ? 'block' : 'none';
+            document.getElementById('badgesSizeGroup').style.display = showBadgesCheckbox.checked ? 'block' : 'none';
+            document.getElementById('badgesPositionGroup').style.display = showBadgesCheckbox.checked ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>

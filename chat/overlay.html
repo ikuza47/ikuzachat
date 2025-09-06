@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IkuzaChat</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: transparent;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        #chat-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 0;
+            box-sizing: border-box;
+            font-size: 16px;
+            background: transparent;
+            color: white;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        #chat-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Edge */
+        }
+        
+        /* Индикатор загрузки */
+        #loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #6441a5, #8a56d3);
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: load 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1), 
+                       gradientFlow 15s ease infinite;
+            animation-direction: alternate;
+            text-align: center;
+            line-height: 1.2;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            position: relative;
+        }
+        
+        .loading-subtext {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            text-align: center;
+            max-width: 80%;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            animation: load 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+            animation-direction: alternate;
+        }
+        
+        @keyframes load {
+            0% {
+                opacity: 0.08;
+                filter: blur(5px);
+                letter-spacing: 3px;
+                transform: scale(0.95);
+            }
+            50% {
+                opacity: 0.7;
+                filter: blur(1px);
+                letter-spacing: 1px;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                letter-spacing: 0;
+                transform: scale(1.02);
+            }
+        }
+        
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        /* Индикатор ошибки */
+        #error-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            z-index: 1000;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        #error-indicator pre {
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        /* Стили для градиентного ника */
+        .gradient-username {
+            background: linear-gradient(90deg, #6441a5, #8a56d3);
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientFlow 15s ease infinite;
+            display: inline-block;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-indicator">
+        <div class="loading-text">IkuzaChat</div>
+        <div class="loading-subtext">Загрузка ресурсов чата...</div>
+    </div>
+    
+    <div id="chat-container"></div>
+    
+    <!-- Загружаем JS файлы в правильном порядке -->
+    <script>
+        // Глобальная функция для скрытия индикатора загрузки
+        window.hideLoadingIndicator = function() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.opacity = '0';
+                setTimeout(() => {
+                    loadingIndicator.style.display = 'none';
+                }, 500);
+            }
+        };
+        
+        // Глобальная функция для показа ошибки загрузки
+        window.showErrorIndicator = function(message, errorDetails = '') {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            
+            const errorIndicator = document.createElement('div');
+            errorIndicator.id = 'error-indicator';
+            errorIndicator.innerHTML = `
+                <div>${message || 'Ошибка загрузки чата'}</div>
+                <div style="font-size: 14px; margin-top: 10px;">Проверьте консоль браузера</div>
+                ${errorDetails ? `<pre>${errorDetails}</pre>` : ''}
+            `;
+            document.body.appendChild(errorIndicator);
+        };
+        
+        // Функция для отслеживания загрузки скриптов
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = false;
+            
+            // Обновляем статус загрузки в зависимости от загружаемого файла
+            if (src.includes('badges.js')) {
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Загрузка бейджиков...');
+                }
+            } else if (src.includes('emotes.js')) {
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Загрузка эмодзи...');
+                }
+            } else if (src.includes('styles.js')) {
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Применение стилей...');
+                }
+            } else if (src.includes('message-add.js')) {
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Настройка отображения сообщений...');
+                }
+            } else if (src.includes('twitch-connect.js')) {
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Подключение к Twitch чату...');
+                }
+            }
+            
+            script.onload = function() {
+                console.log(`✅ Скрипт загружен: ${src}`);
+                if (callback) callback();
+            };
+            
+            script.onerror = function() {
+                console.error(`❌ Ошибка загрузки скрипта: ${src}`);
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Ошибка загрузки скрипта...');
+                }
+                if (callback) callback(new Error(`Failed to load script: ${src}`));
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        // Последовательная загрузка скриптов
+        function loadScriptsSequentially(scripts, index = 0) {
+            if (index >= scripts.length) {
+                console.log('✅ Все скрипты успешно загружены');
+                return;
+            }
+            
+            loadScript(scripts[index], (error) => {
+                if (error) {
+                    console.error(`❌ Прерывание загрузки из-за ошибки в скрипте: ${scripts[index]}`);
+                    window.showErrorIndicator('Ошибка загрузки скрипта', `Ошибка загрузки скрипта: ${scripts[index]}`);
+                    return;
+                }
+                loadScriptsSequentially(scripts, index + 1);
+            });
+        }
+        
+        // Сначала загружаем анимацию загрузки
+        (function() {
+            const loadingScript = document.createElement('script');
+            loadingScript.src = 'js/loading-anim.js';
+            loadingScript.onload = function() {
+                console.log('✅ Анимация загрузки инициализирована');
+                
+                // Обновляем статус загрузки
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Инициализация системы...');
+                }
+                
+                // Затем загружаем основные скрипты
+                setTimeout(() => {
+                    const scriptsToLoad = [
+                        'js/params.js',
+                        'js/utils.js',
+                        'js/badges.js',
+                        'js/emotes.js',
+                        'js/styles.js',
+                        'js/message-add.js',
+                        'js/twitch-connect.js'
+                    ];
+                    
+                    loadScriptsSequentially(scriptsToLoad);
+                }, 100); // Небольшая задержка для отображения анимации
+            };
+            loadingScript.onerror = function() {
+                console.error('❌ Ошибка загрузки анимации загрузки');
+                // Создаем минимальный индикатор загрузки
+                let loadingIndicator = document.getElementById('loading-indicator');
+                if (!loadingIndicator) {
+                    loadingIndicator = document.createElement('div');
+                    loadingIndicator.id = 'loading-indicator';
+                    loadingIndicator.style.position = 'fixed';
+                    loadingIndicator.style.top = '0';
+                    loadingIndicator.style.left = '0';
+                    loadingIndicator.style.width = '100%';
+                    loadingIndicator.style.height = '100%';
+                    loadingIndicator.style.display = 'flex';
+                    loadingIndicator.style.flexDirection = 'column';
+                    loadingIndicator.style.justifyContent = 'center';
+                    loadingIndicator.style.alignItems = 'center';
+                    loadingIndicator.style.background = 'transparent';
+                    loadingIndicator.style.zIndex = '1000';
+                    
+                    const loadingText = document.createElement('div');
+                    loadingText.className = 'loading-text';
+                    loadingText.style.fontSize = '3.5rem';
+                    loadingText.style.fontWeight = 'bold';
+                    loadingText.textContent = 'IkuzaChat';
+                    
+                    const loadingSubtext = document.createElement('div');
+                    loadingSubtext.className = 'loading-subtext';
+                    loadingSubtext.style.marginTop = '20px';
+                    loadingSubtext.textContent = 'Загрузка ресурсов чата...';
+                    
+                    loadingIndicator.appendChild(loadingText);
+                    loadingIndicator.appendChild(loadingSubtext);
+                    
+                    document.body.appendChild(loadingIndicator);
+                    
+                    window.updateLoadingStatus = function(message) {
+                        const loadingSubtext = document.querySelector('.loading-subtext');
+                        if (loadingSubtext) {
+                            loadingSubtext.textContent = message;
+                        }
+                    };
+                }
+                
+                // Продолжаем загрузку без анимации
+                const scriptsToLoad = [
+                    'js/params.js',
+                    'js/utils.js',
+                    'js/badges.js',
+                    'js/emotes.js',
+                    'js/styles.js',
+                    'js/message-add.js',
+                    'js/twitch-connect.js'
+                ];
+                
+                loadScriptsSequentially(scriptsToLoad);
+            };
+            
+            document.head.appendChild(loadingScript);
+        })();
+    </script>
+</body>
+</html>
