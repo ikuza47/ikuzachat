@@ -53,7 +53,7 @@ function addSystemMessage(text) {
     }
     const messageDiv = document.createElement('div');
     messageDiv.className = 'msg';
-    messageDiv.style.wordBreak = 'break-all';
+    messageDiv.style.wordBreak = 'break-word';
     messageDiv.style.fontSize = `${window.size}px`;
     messageDiv.style.fontFamily = window.font;
     
@@ -86,7 +86,7 @@ function CreateSpecialUsernameStyles(username) {
         const userSpan = document.createElement('span');
         userSpan.className = 'IkuzaUsername';
         userSpan.textContent = username + (window.colonEnabled ? ':' : '');
-        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
         return userSpan;
@@ -97,7 +97,7 @@ function CreateSpecialUsernameStyles(username) {
         const userSpan = document.createElement('span');
         userSpan.className = 'HellCakeUsername';
         userSpan.textContent = username + (window.colonEnabled ? ':' : '');
-        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
         return userSpan;
@@ -108,7 +108,7 @@ function CreateSpecialUsernameStyles(username) {
         const userSpan = document.createElement('span');
         userSpan.className = 'YatagarasuUsername';
         userSpan.textContent = username + (window.colonEnabled ? ':' : '');
-        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
         return userSpan;
@@ -129,7 +129,7 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         
         const messageDiv = document.createElement('div');
         messageDiv.className = 'msg';
-        messageDiv.style.wordBreak = 'break-all';
+        messageDiv.style.wordBreak = 'break-word';
         messageDiv.style.fontSize = `${window.size}px`;
         messageDiv.style.fontFamily = window.font;
 
@@ -144,7 +144,7 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         // Создаем контейнер для ника и бейджиков
         const userSpan = document.createElement('span');
         userSpan.className = 'user';
-        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.wordBreak = 'break-word';
         userSpan.style.display = 'inline-block';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
@@ -167,7 +167,7 @@ async function addMessage(username, text, tags, originalText, channelId, color =
                     const badgeElements = userSpan.querySelectorAll('img');
                     badgeElements.forEach(img => {
                         img.className = 'badge';
-                        img.style.wordBreak = 'break-all';
+                        img.style.wordBreak = 'break-word';
                         img.style.verticalAlign = 'middle';
                         img.style.borderRadius = '10%';
                         img.style.marginRight = '5px';
@@ -193,7 +193,7 @@ async function addMessage(username, text, tags, originalText, channelId, color =
             nickSpan = document.createElement('span');
             nickSpan.className = 'nick';
             nickSpan.textContent = username + (window.colonEnabled ? ':' : '');
-            nickSpan.style.wordBreak = 'break-all';
+            nickSpan.style.wordBreak = 'break-word';
             nickSpan.style.fontSize = `${window.size}px`;
             nickSpan.style.fontFamily = window.font;
 
@@ -253,7 +253,7 @@ async function addMessage(username, text, tags, originalText, channelId, color =
             messageSpan.textContent = processedText; // текст без HTML
         }
         messageSpan.style.textShadow = `0 0 ${window.shadowBlur}px ${window.shadowColor}`;
-        messageSpan.style.wordBreak = 'break-all';
+        messageSpan.style.wordBreak = 'break-word';
         messageSpan.style.fontSize = `${window.size}px`;
         messageSpan.style.fontFamily = window.font;
 
