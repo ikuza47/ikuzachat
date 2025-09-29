@@ -3,6 +3,9 @@ const userColorCache = {};
 
 // Добавление системного сообщения
 function addSystemMessage(text) {
+    if (window.debugMode) {
+        console.log(`📢 Системное сообщение: ${text}`);
+    }
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message';
     
@@ -13,15 +16,22 @@ function addSystemMessage(text) {
     
     messageDiv.appendChild(textSpan);
     chatContainer.appendChild(messageDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // Прокрутка вниз только если debugMode = false
+    if (!window.debugMode) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
 }
 
 // Добавление сообщения
-function addMessage(username, text, tags, originalText, channelId) {
+function addMessage(username, text, tags, originalText, channelId, color = null) {
     try {
-        console.log(`👤 ${username}: ${text}`);
-        console.log(`🔖 Теги сообщения: ${tags}`);
-        console.log(`🆔 Room ID: ${channelId || 'не найден'}`);
+        if (window.debugMode) {
+            console.log(`👤 ${username}: ${text}`);
+            console.log(`🎨 Цвет ника из тегов: ${color || 'не указан'}`);
+            console.log(`🔖 Теги сообщения: ${tags}`);
+            console.log(`🆔 Room ID: ${channelId || 'не найден'}`);
+        }
         
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message';
@@ -45,54 +55,63 @@ function addMessage(username, text, tags, originalText, channelId) {
         // Добавляем бейджики, если включено
         let badgesHtml = '';
         if (showBadges && typeof badges !== 'undefined' && typeof badges.parse === 'function') {
-            console.log('🔄 Парсинг бейджиков...');
+            if (window.debugMode) console.log('🔄 Парсинг бейджиков...');
             const badgesArray = badges.parse(tags);
             
             if (badgesArray.length > 0) {
-                console.log(`✅ Найдено ${badgesArray.length} бейджиков`);
+                if (window.debugMode) console.log(`✅ Найдено ${badgesArray.length} бейджиков`);
                 
                 if (typeof badges.createHtml === 'function') {
                     badgesHtml = badges.createHtml(badgesArray, badgesSize, badgesPosition);
-                    console.log('✅ HTML для бейджиков создан');
+                    if (window.debugMode) console.log('✅ HTML для бейджиков создан');
                 } else {
                     console.error('❌ Функция createHtml не найдена в модуле badges');
                 }
             } else {
-                console.log('ℹ️ Бейджики не найдены в тегах');
+                if (window.debugMode) console.log('ℹ️ Бейджики не найдены в тегах');
             }
         } else {
-            console.log('ℹ️ Отображение бейджиков отключено или модуль badges не загружен');
+            if (window.debugMode) console.log('ℹ️ Отображение бейджиков отключено или модуль badges не загружен');
         }
 
         // Создаем и стилизуем никнейм
         let userSpan;
         if (username.toLowerCase() === 'ikuza47') {
-            console.log('✨ Создание градиентного ника для ikuza47');
+            if (window.debugMode) console.log('✨ Создание градиентного ника для ikuza47');
             userSpan = createGradientUsername(username);
         } else {
             userSpan = document.createElement('span');
             userSpan.className = 'username';
             userSpan.textContent = username + ':';
-            
-            // Генерируем или получаем цвет для этого пользователя
-            if (!userColorCache[username]) {
-                const colors = [
-                    '#FF4500', '#00FF7F', '#1E90FF', '#FFD700',
-                    '#FF69B4', '#ADFF2F', '#FF6347', '#7B68EE'
-                ];
-                userColorCache[username] = colors[Math.floor(Math.random() * colors.length)];
+
+            // Используем цвет из тегов, если есть
+            if (color) {
+                userSpan.style.color = color;
+                if (window.debugMode) console.log(`✅ Применён цвет ника из тегов: ${color}`);
+            } else {
+                // Если цвета нет, используем кэшированный или генерируем случайный
+                if (!userColorCache[username]) {
+                    const colors = [
+                        '#FF4500', '#00FF7F', '#1E90FF', '#FFD700',
+                        '#FF69B4', '#ADFF2F', '#FF6347', '#7B68EE'
+                    ];
+                    userColorCache[username] = colors[Math.floor(Math.random() * colors.length)];
+                    if (window.debugMode) console.log(`🎨 Генерация случайного цвета для ${username}: ${userColorCache[username]}`);
+                } else {
+                    if (window.debugMode) console.log(`🎨 Использование кэшированного цвета для ${username}: ${userColorCache[username]}`);
+                }
+                userSpan.style.color = userColorCache[username];
             }
-            userSpan.style.color = userColorCache[username];
         }
 
         // Обрабатываем эмодзи
         let processedText = text;
         if (channelId && typeof emotes !== 'undefined' && typeof emotes.replace === 'function') {
-            console.log('🔄 Замена эмодзи в тексте...');
+            if (window.debugMode) console.log('🔄 Замена эмодзи в тексте...');
             // Передаем имя канала вместе с ID
             processedText = emotes.replace(text, channelId, channel);
         } else {
-            console.log('ℹ️ Обработка эмодзи пропущена');
+            if (window.debugMode) console.log('ℹ️ Обработка эмодзи пропущена');
         }
 
         // Создаем контейнер для текста сообщения
@@ -136,10 +155,13 @@ function addMessage(username, text, tags, originalText, channelId) {
         
         chatContainer.appendChild(messageDiv);
         
-        // Дожидаемся завершения анимации появления перед прокруткой
-        setTimeout(() => {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }, 300);
+        // Прокрутка вниз только если debugMode = false
+        if (!window.debugMode) {
+            // Дожидаемся завершения анимации появления перед прокруткой
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 300);
+        }
 
         // Автоудаление
         if (autoRemove) {
@@ -158,12 +180,14 @@ function addMessage(username, text, tags, originalText, channelId) {
             }, timeout);
         }
 
-        // Ограничение количества сообщений
-        if (!autoRemove && chatContainer.children.length > 50) {
+        // Ограничение количества сообщений — только если debugMode = false
+        if (!window.debugMode && !autoRemove && chatContainer.children.length > 50) {
             chatContainer.removeChild(chatContainer.firstChild);
         }
     } catch (error) {
-        console.error('❌ Ошибка добавления сообщения:', error);
+        if (window.debugMode) {
+            console.error('❌ Ошибка добавления сообщения:', error);
+        }
     }
 }
 

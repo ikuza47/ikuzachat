@@ -81,6 +81,19 @@ function extractTags(message) {
     return tagsMatch ? tagsMatch[1] : '';
 }
 
+// Функция для извлечения цвета ника из тегов
+function extractColor(tags) {
+    const colorMatch = tags.match(/color=([^;]+)/);
+    const color = colorMatch ? colorMatch[1] : null;
+    
+    // Проверяем, что цвет есть и не пустой
+    if (color && color.trim() !== '' && color !== 'null' && color !== 'undefined') {
+        return color;
+    }
+    
+    return null;
+}
+
 // Функция для проверки, содержит ли сообщение упоминание пользователя
 function containsMention(text, channelName) {
     // Проверяем, содержит ли текст упоминание канала (с @)

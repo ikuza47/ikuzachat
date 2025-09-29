@@ -187,6 +187,10 @@ function connectToChat() {
                         const tags = extractTags(message);
                         console.log(`🔖 Теги сообщения: ${tags}`);
                         
+                        // Извлекаем цвет ника
+                        const color = extractColor(tags);
+                        console.log(`🎨 Цвет ника: ${color || 'не указан'}`);
+
                         // Извлекаем room-id
                         const roomIdMatch = message.match(/@.*?room-id=(\d+);/);
                         let roomId = roomIdMatch ? roomIdMatch[1] : null;
@@ -205,9 +209,9 @@ function connectToChat() {
                             return;
                         }
                         
-                        // Добавляем сообщение с учетом выделения
+                        // Добавляем сообщение с учетом цвета
                         console.log('📨 Добавление сообщения в чат');
-                        addMessage(username, text, tags, text, roomId);
+                        addMessage(username, text, tags, text, roomId, color);
                     } catch (error) {
                         console.error('❌ Ошибка обработки сообщения:', error);
                         console.log('Сообщение:', message);

@@ -20,6 +20,9 @@ const showBadges = urlParams.get('showBadges') === 'true';
 const badgesSize = urlParams.get('badgesSize') || '2';
 const badgesPosition = urlParams.get('badgesPosition') || 'left';
 
+// Проверяем, есть ли параметр debug
+const debugMode = urlParams.get('debug') === 'true';
+
 // Форматируем цвета
 const shadowColor = `#${shadowColorHex}`;
 
@@ -31,15 +34,21 @@ if (!chatContainer) {
     throw new Error('Элемент #chat-container не найден!');
 }
 
-// Выводим все параметры для отладки
-console.log('⚙️ Настройки чата:');
-console.log(`- Канал: ${channel}`);
-console.log(`- Шрифт: ${font}`);
-console.log(`- Размер шрифта: ${size}px`);
-console.log(`- Цвет тени: ${shadowColor}`);
-console.log(`- Размытие тени: ${shadowBlur}px`);
-console.log(`- Автоудаление: ${autoRemove ? `включено (${timeout/1000} сек)` : 'отключено'}`);
-console.log(`- Автоочистка чата: ${clearChatOnCommand ? 'включена' : 'отключена'}`);
-console.log(`- Анимация появления: ${animationIn}`);
-console.log(`- Анимация исчезновения: ${animationOut}`);
-console.log(`- Бейджики: ${showBadges ? `включены (размер: ${badgesSize}x, позиция: ${badgesPosition})` : 'отключены'}`);
+// Выводим все параметры для отладки (только в debugMode)
+if (debugMode) {
+    console.log('⚙️ Настройки чата:');
+    console.log(`- Канал: ${channel}`);
+    console.log(`- Шрифт: ${font}`);
+    console.log(`- Размер шрифта: ${size}px`);
+    console.log(`- Цвет тени: ${shadowColor}`);
+    console.log(`- Размытие тени: ${shadowBlur}px`);
+    console.log(`- Автоудаление: ${autoRemove ? `включено (${timeout/1000} сек)` : 'отключено'}`);
+    console.log(`- Автоочистка чата: ${clearChatOnCommand ? 'включена' : 'отключена'}`);
+    console.log(`- Анимация появления: ${animationIn}`);
+    console.log(`- Анимация исчезновения: ${animationOut}`);
+    console.log(`- Бейджики: ${showBadges ? `включены (размер: ${badgesSize}x, позиция: ${badgesPosition})` : 'отключены'}`);
+    console.log(`- Debug Mode: ${debugMode ? 'включён' : 'отключён'}`);
+}
+
+// Экспортируем debugMode как глобальную переменную
+window.debugMode = debugMode;
