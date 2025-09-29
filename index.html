@@ -364,6 +364,20 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- 7TV эмодзи после ника -->
+                    <div class="setting-item">
+                        <div class="flex items-start">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="sevenTvNickModuleToggle" onchange="updateUrl();">
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="ml-3">
+                                <label class="setting-label" id="sevenTvNickModuleLabel">7TV эмодзи после ника</label>
+                                <div class="setting-description" id="sevenTvNickModuleDesc">Добавляет 7TV эмодзи с названием как ник перед именем пользователя</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -645,9 +659,8 @@
 
             // bot!
             params.append('ignorebots', document.getElementById('botModuleToggle').checked);
-
-            // Язык
-            params.append('lang', currentLang);
+            // 7TV эмодзи после ника
+            params.append('7tvnick', document.getElementById('sevenTvNickModuleToggle').checked);
 
             const url = `chat/overlay.html?${params.toString()}`;
             const fullUrl = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)}${url}`;

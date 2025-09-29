@@ -28,6 +28,9 @@ const colonEnabled = urlParams.get('colon') === 'true';
 // Форматируем цвета
 const shadowColor = `#${shadowColorHex}`;
 
+const useSevenTvNick = urlParams.get('7tvnick') === 'true';
+
+
 // Применяем настройки
 const chatContainer = document.getElementById('chat-container');
 if (!chatContainer) {
@@ -39,6 +42,14 @@ if (ignoreBots) {
     const script = document.createElement('script');
     script.src = 'js/modules/bots.js';
     document.head.appendChild(script);
+}
+if (useSevenTvNick) {
+    console.log('🔄 Загрузка модуля 7TV эмодзи после ника...');
+    const script = document.createElement('script');
+    script.src = 'js/modules/7tvnick.js';
+    document.head.appendChild(script);
+} else {
+    console.log('ℹ️ Модуль 7TV эмодзи после ника отключён');
 }
 // Выводим все параметры для отладки (только в debugMode)
 if (debugMode) {
