@@ -186,7 +186,7 @@ function connectToChat() {
                         // Извлекаем теги
                         const tags = extractTags(message);
                         console.log(`🔖 Теги сообщения: ${tags}`);
-                        
+
                         // Извлекаем цвет ника
                         const color = extractColor(tags);
                         console.log(`🎨 Цвет ника: ${color || 'не указан'}`);
@@ -195,23 +195,31 @@ function connectToChat() {
                         const roomIdMatch = message.match(/@.*?room-id=(\d+);/);
                         let roomId = roomIdMatch ? roomIdMatch[1] : null;
                         console.log(`🆔 Room ID из сообщения: ${roomId || 'не найден'}`);
-                        
+
                         // Извлекаем никнейм
                         const username = extractUsername(message);
                         console.log(`👤 Имя пользователя: ${username}`);
-                        
+
+                        // Проверка на бота (если модуль загружен)
+                        if (window.botModule && typeof window.botModule.isUserBot === 'function') {
+                            if (window.botModule.isUserBot(username)) {
+                                console.log('🚫 Сообщение от бота проигнорировано');
+                                return; // не добавляем сообщение
+                            }
+                        }
+
                         // Извлекаем текст сообщения
                         const text = extractMessageText(message);
                         console.log(`📝 Текст сообщения: ${text}`);
-                        
+
                         if (!text) {
                             console.log('⚠️ Текст сообщения пуст');
                             return;
                         }
-                        
+
                         // Добавляем сообщение с учетом цвета
                         console.log('📨 Добавление сообщения в чат');
-                        addMessage(username, text, tags, text, roomId, color);
+                        await addMessage(username, text, tags, text, roomId, color);
                     } catch (error) {
                         console.error('❌ Ошибка обработки сообщения:', error);
                         console.log('Сообщение:', message);

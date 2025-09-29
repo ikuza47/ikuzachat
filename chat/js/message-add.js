@@ -1,6 +1,51 @@
 // Кэш цветов ников
 const userColorCache = {};
 
+// Функция для безопасного экранирования HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Функция для получения специального класса для ника
+function getSpecialUsernameClass(username) {
+    if (username.toLowerCase() === 'ikuza47') {
+        return 'IkuzaUsername';
+    }
+    if (username.toLowerCase() === 'hellcake47') {
+        return 'HellCakeUsername';
+    }
+    if (username.toLowerCase() === 'yatagarasu_gg') {
+        return 'YatagarasuUsername';
+    }
+    return null;
+}
+
+// Функция для обработки упоминаний в тексте
+function processMentions(text) {
+    // Регулярное выражение для поиска @username
+    const mentionRegex = /@(\w+)/g;
+    return text.replace(mentionRegex, (match, username) => {
+        const specialClass = getSpecialUsernameClass(username);
+        if (specialClass) {
+            // Если специальный ник — применяем его класс, и шрифт
+            return `<span class="${specialClass}" style="font-family: ${window.font};">@${username}</span>`;
+        } else {
+            // Если обычный пользователь — применяем его цвет и шрифт
+            if (!userColorCache[username]) {
+                const colors = [
+                    '#FF4500', '#00FF7F', '#1E90FF', '#FFD700',
+                    '#FF69B4', '#ADFF2F', '#FF6347', '#7B68EE'
+                ];
+                userColorCache[username] = colors[Math.floor(Math.random() * colors.length)];
+            }
+            const color = userColorCache[username];
+            return `<span class="mention" style="color: ${color}; font-family: ${window.font};">@${username}</span>`;
+        }
+    });
+}
+
 // Добавление системного сообщения
 function addSystemMessage(text) {
     if (window.debugMode) {
@@ -13,7 +58,7 @@ function addSystemMessage(text) {
     messageDiv.style.fontFamily = window.font;
     
     const textSpan = document.createElement('span');
-    textSpan.textContent = text;
+    textSpan.textContent = text; // безопасное отображение
     textSpan.style.color = '#FF69B4';
     textSpan.style.fontStyle = 'italic';
     
@@ -38,11 +83,34 @@ function CreateSpecialUsernameStyles(username) {
         userSpan.style.fontFamily = window.font;
         return userSpan;
     }
+
+    if (username.toLowerCase() === 'hellcake47') {
+        if (window.debugMode) console.log('🌿 Создание тёмно-зелёного градиентного ника для HellCake47');
+        const userSpan = document.createElement('span');
+        userSpan.className = 'HellCakeUsername';
+        userSpan.textContent = username + (window.colonEnabled ? ':' : '');
+        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.fontSize = `${window.size}px`;
+        userSpan.style.fontFamily = window.font;
+        return userSpan;
+    }
+
+    if (username.toLowerCase() === 'yatagarasu_gg') {
+        if (window.debugMode) console.log('🌸 Создание ярко-розового градиентного ника для yatagarasu_gg');
+        const userSpan = document.createElement('span');
+        userSpan.className = 'YatagarasuUsername';
+        userSpan.textContent = username + (window.colonEnabled ? ':' : '');
+        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.fontSize = `${window.size}px`;
+        userSpan.style.fontFamily = window.font;
+        return userSpan;
+    }
+
     return null;
 }
 
 // Добавление сообщения
-function addMessage(username, text, tags, originalText, channelId, color = null) {
+async function addMessage(username, text, tags, originalText, channelId, color = null) {
     try {
         if (window.debugMode) {
             console.log(`👤 ${username}: ${text}`);
@@ -144,12 +212,30 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
             processedText = emotes.replace(text, channelId, channel);
         } else {
             if (window.debugMode) console.log('ℹ️ Обработка эмодзи пропущена');
+            // Если эмодзи не обрабатываются, экранируем HTML в тексте
+            processedText = escapeHtml(text);
         }
+
+        // Обрабатываем osu! ссылки (если модуль загружен)
+        if (window.osuModule && typeof window.osuModule.replaceOsuLinksInText === 'function') {
+            if (window.debugMode) console.log('🔄 Обработка osu! ссылок...');
+            processedText = await window.osuModule.replaceOsuLinksInText(processedText);
+        } else {
+            if (window.debugMode) console.log('ℹ️ Модуль osuModule не найден или не загружен.');
+        }
+
+        // Обрабатываем упоминания
+        processedText = processMentions(processedText);
 
         // Создаем контейнер для текста сообщения
         const messageSpan = document.createElement('span');
         messageSpan.className = 'message';
-        messageSpan.innerHTML = processedText;
+        // Если эмодзи были обработаны, вставляем как HTML, иначе как текст
+        if (channelId && typeof emotes !== 'undefined' && typeof emotes.replace === 'function') {
+            messageSpan.innerHTML = processedText; // безопасный HTML от эмодзи
+        } else {
+            messageSpan.textContent = processedText; // текст без HTML
+        }
         messageSpan.style.textShadow = `0 0 ${window.shadowBlur}px ${window.shadowColor}`;
         messageSpan.style.wordBreak = 'break-all';
         messageSpan.style.fontSize = `${window.size}px`;

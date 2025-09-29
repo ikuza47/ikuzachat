@@ -319,7 +319,9 @@ function replaceEmotes(text, channelId, channelName) {
     // Заменяем каждый эмодзи
     for (const emote of sortedEmotes) {
         // Создаем регулярное выражение для поиска эмодзи как отдельного слова
-        const regex = new RegExp(`\\b${escapeRegExp(emote)}\\b`, 'g');
+        // Учитываем кириллицу и специальные символы
+        const escapedEmote = escapeRegExp(emote);
+        const regex = new RegExp(`\\b${escapedEmote}\\b`, 'gu'); // добавлен флаг 'u' для Unicode
         
         replacedText = replacedText.replace(regex, (match) => {
             const emoteData = allEmotes[emote];

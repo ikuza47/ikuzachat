@@ -10,6 +10,7 @@ const shadowBlur = urlParams.get('shadowBlur') || '3';
 const autoRemove = urlParams.get('autoRemove') === 'true';
 const timeout = parseInt(urlParams.get('timeout') || '5', 10) * 1000;
 const clearChatOnCommand = urlParams.get('clearChatOnCommand') !== 'false';
+const ignoreBots = urlParams.get('ignorebots') === 'true';
 
 // Получаем параметры анимаций
 const animationIn = urlParams.get('animationIn') || 'fadeIn';
@@ -34,7 +35,11 @@ if (!chatContainer) {
     document.body.innerHTML = '<h1 style="color: white; text-align: center; margin-top: 50px;">Ошибка: элемент #chat-container не найден!</h1>';
     throw new Error('Элемент #chat-container не найден!');
 }
-
+if (ignoreBots) {
+    const script = document.createElement('script');
+    script.src = 'js/modules/bots.js';
+    document.head.appendChild(script);
+}
 // Выводим все параметры для отладки (только в debugMode)
 if (debugMode) {
     console.log('⚙️ Настройки чата:');
