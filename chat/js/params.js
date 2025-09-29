@@ -17,11 +17,12 @@ const animationOut = urlParams.get('animationOut') || 'fadeOut';
 
 // Получаем параметры бейджиков
 const showBadges = urlParams.get('showBadges') === 'true';
-const badgesSize = urlParams.get('badgesSize') || '2';
-const badgesPosition = urlParams.get('badgesPosition') || 'left';
 
 // Проверяем, есть ли параметр debug
 const debugMode = urlParams.get('debug') === 'true';
+
+// Проверяем, нужно ли добавлять двоеточие после ника
+const colonEnabled = urlParams.get('colon') === 'true';
 
 // Форматируем цвета
 const shadowColor = `#${shadowColorHex}`;
@@ -46,9 +47,15 @@ if (debugMode) {
     console.log(`- Автоочистка чата: ${clearChatOnCommand ? 'включена' : 'отключена'}`);
     console.log(`- Анимация появления: ${animationIn}`);
     console.log(`- Анимация исчезновения: ${animationOut}`);
-    console.log(`- Бейджики: ${showBadges ? `включены (размер: ${badgesSize}x, позиция: ${badgesPosition})` : 'отключены'}`);
+    console.log(`- Бейджики: ${showBadges ? 'включены' : 'отключены'}`);
     console.log(`- Debug Mode: ${debugMode ? 'включён' : 'отключён'}`);
+    console.log(`- Двоеточие после ника: ${colonEnabled ? 'включено' : 'отключено'}`);
 }
 
-// Экспортируем debugMode как глобальную переменную
+// Экспортируем все параметры как глобальные переменные
 window.debugMode = debugMode;
+window.colonEnabled = colonEnabled;
+window.size = size;
+window.font = font;
+window.shadowBlur = shadowBlur;
+window.shadowColor = shadowColor;

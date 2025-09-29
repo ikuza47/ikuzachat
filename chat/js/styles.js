@@ -3,87 +3,61 @@ function applyChatStyles() {
     // Создаем элемент стиля
     const style = document.createElement('style');
     style.textContent = `
-        #chat-container {
-            font-family: ${font};
-            font-size: ${size}px;
-            line-height: 1.4;
-            height: 100%;
-        }
-        
-        .message {
-            margin-bottom: 8px;
-            animation: ${animationIn} 0.3s ease;
-            padding: 0;
-        }
-        
-        .message.removing {
-            animation: ${animationOut} 0.3s ease;
-        }
-        
-        .message-content {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .username {
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        
-        .gradient-username {
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        
-        .message-content > div:last-child {
-            word-wrap: break-word;
-            word-break: break-word;
-            width: 100%;
-            min-width: 0;
-        }
-        
-        .badges-container {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10px); }
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-        
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes zoomOut {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.9); }
-        }
-        .message-content {
-            display: flex;
-            flex-direction: row;
-            gap: 5px;
-            align-items: flex-start;
-        }
+.msg {
+    word-break: break-all;
+    font-size: calc(var(--size, 24) * 1px);
+    font-family: var(--font, 'Segoe UI', sans-serif);
+}
+
+.user {
+    word-break: break-all;
+    display: inline-block;
+    font-size: calc(var(--size, 24) * 1px);
+    font-family: var(--font, 'Segoe UI', sans-serif);
+}
+
+.nick {
+    word-break: break-all;
+    font-size: calc(var(--size, 24) * 1px);
+    font-family: var(--font, 'Segoe UI', sans-serif);
+}
+
+.message {
+    word-break: break-all;
+    font-size: calc(var(--size, 24) * 1px);
+    font-family: var(--font, 'Segoe UI', sans-serif);
+    text-shadow: 0 0 var(--shadowBlur, 3)px var(--shadowColor, #000000);
+}
+
+.badge {
+    word-break: break-all;
+    vertical-align: middle;
+    border-radius: 10%;
+    margin-right: 5px;
+    margin-bottom: 8px;
+    height: calc(var(--size, 24) * 0.6 * 1px); /* уменьшено в 2 раза */
+}
+
+.IkuzaUsername {
+    background: linear-gradient(90deg, #FFD700, #FFA500, #DAA520, #F0E68C, #FFD700);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: goldenGlow 4s ease-in-out infinite;
+    display: inline-block;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    word-break: break-all;
+    font-size: calc(var(--size, 24) * 1px);
+    font-family: var(--font, 'Segoe UI', sans-serif);
+}
+
+@keyframes goldenGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
     `;
     document.head.appendChild(style);
     

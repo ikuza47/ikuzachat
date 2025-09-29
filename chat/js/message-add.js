@@ -7,14 +7,15 @@ function addSystemMessage(text) {
         console.log(`📢 Системное сообщение: ${text}`);
     }
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message';
-    messageDiv.style.display = 'block';
+    messageDiv.className = 'msg';
+    messageDiv.style.wordBreak = 'break-all';
+    messageDiv.style.fontSize = `${window.size}px`;
+    messageDiv.style.fontFamily = window.font;
     
     const textSpan = document.createElement('span');
     textSpan.textContent = text;
     textSpan.style.color = '#FF69B4';
     textSpan.style.fontStyle = 'italic';
-    textSpan.style.display = 'inline';
     
     messageDiv.appendChild(textSpan);
     chatContainer.appendChild(messageDiv);
@@ -23,6 +24,21 @@ function addSystemMessage(text) {
     if (!window.debugMode) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
+}
+
+// Функция для создания стилей для специального ника
+function CreateSpecialUsernameStyles(username) {
+    if (username.toLowerCase() === 'ikuza47') {
+        if (window.debugMode) console.log('✨ Создание градиентного ника для ikuza47');
+        const userSpan = document.createElement('span');
+        userSpan.className = 'IkuzaUsername';
+        userSpan.textContent = username + (window.colonEnabled ? ':' : '');
+        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.fontSize = `${window.size}px`;
+        userSpan.style.fontFamily = window.font;
+        return userSpan;
+    }
+    return null;
 }
 
 // Добавление сообщения
@@ -36,26 +52,20 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
         }
         
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'message';
-        messageDiv.style.display = 'block';
-        
-        // Создаем контейнер для всего сообщения
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
-        messageContent.style.display = 'inline';
-        messageContent.style.verticalAlign = 'top';
-        messageContent.style.gap = '5px';
+        messageDiv.className = 'msg';
+        messageDiv.style.wordBreak = 'break-all';
+        messageDiv.style.fontSize = `${window.size}px`;
+        messageDiv.style.fontFamily = window.font;
 
         // Создаем контейнер для ника и бейджиков
-        const usernameContainer = document.createElement('div');
-        usernameContainer.style.display = 'inline';
-        usernameContainer.style.verticalAlign = 'top';
-        usernameContainer.style.gap = '5px';
-        usernameContainer.style.flexWrap = 'nowrap';
-        usernameContainer.style.flexShrink = '0';
+        const userSpan = document.createElement('span');
+        userSpan.className = 'user';
+        userSpan.style.wordBreak = 'break-all';
+        userSpan.style.display = 'inline-block';
+        userSpan.style.fontSize = `${window.size}px`;
+        userSpan.style.fontFamily = window.font;
 
         // Добавляем бейджики, если включено
-        let badgesHtml = '';
         if (showBadges && typeof badges !== 'undefined' && typeof badges.parse === 'function') {
             if (window.debugMode) console.log('🔄 Парсинг бейджиков...');
             const badgesArray = badges.parse(tags);
@@ -64,8 +74,22 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
                 if (window.debugMode) console.log(`✅ Найдено ${badgesArray.length} бейджиков`);
                 
                 if (typeof badges.createHtml === 'function') {
-                    badgesHtml = badges.createHtml(badgesArray, badgesSize, badgesPosition);
+                    const badgesHtml = badges.createHtml(badgesArray, window.size, 'left');
                     if (window.debugMode) console.log('✅ HTML для бейджиков создан');
+                    
+                    // Вставляем бейджики в userSpan
+                    userSpan.innerHTML = badgesHtml;
+                    // Применяем стили к каждому бейджику
+                    const badgeElements = userSpan.querySelectorAll('img');
+                    badgeElements.forEach(img => {
+                        img.className = 'badge';
+                        img.style.wordBreak = 'break-all';
+                        img.style.verticalAlign = 'middle';
+                        img.style.borderRadius = '10%';
+                        img.style.marginRight = '5px';
+                        img.style.marginBottom = '8px';
+                        img.style.height = `${parseInt(window.size) * 0.6}px`; // уменьшено в 2 раза
+                    });
                 } else {
                     console.error('❌ Функция createHtml не найдена в модуле badges');
                 }
@@ -76,31 +100,22 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
             if (window.debugMode) console.log('ℹ️ Отображение бейджиков отключено или модуль badges не загружен');
         }
 
-        // Создаем контейнер для бейджиков
-        const badgesContainer = document.createElement('div');
-        badgesContainer.className = 'message-badges';
-        badgesContainer.style.display = 'inline';
-        badgesContainer.style.verticalAlign = 'top';
-        badgesContainer.style.gap = '3px';
-        if (badgesHtml) {
-            badgesContainer.innerHTML = badgesHtml;
-        } else {
-            badgesContainer.style.display = 'none';
-        }
-
         // Создаем и стилизуем никнейм
-        let userSpan;
-        if (username.toLowerCase() === 'ikuza47') {
-            if (window.debugMode) console.log('✨ Создание градиентного ника для ikuza47');
-            userSpan = createGradientUsername(username);
+        let nickSpan;
+        const specialUsername = CreateSpecialUsernameStyles(username);
+        if (specialUsername) {
+            nickSpan = specialUsername;
         } else {
-            userSpan = document.createElement('span');
-            userSpan.className = 'username';
-            userSpan.textContent = username + ':';
+            nickSpan = document.createElement('span');
+            nickSpan.className = 'nick';
+            nickSpan.textContent = username + (window.colonEnabled ? ':' : '');
+            nickSpan.style.wordBreak = 'break-all';
+            nickSpan.style.fontSize = `${window.size}px`;
+            nickSpan.style.fontFamily = window.font;
 
             // Используем цвет из тегов, если есть
             if (color) {
-                userSpan.style.color = color;
+                nickSpan.style.color = color;
                 if (window.debugMode) console.log(`✅ Применён цвет ника из тегов: ${color}`);
             } else {
                 // Если цвета нет, используем кэшированный или генерируем случайный
@@ -114,10 +129,12 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
                 } else {
                     if (window.debugMode) console.log(`🎨 Использование кэшированного цвета для ${username}: ${userColorCache[username]}`);
                 }
-                userSpan.style.color = userColorCache[username];
+                nickSpan.style.color = userColorCache[username];
             }
         }
-        userSpan.style.display = 'inline';
+
+        // Добавляем ник в userSpan
+        userSpan.appendChild(nickSpan);
 
         // Обрабатываем эмодзи
         let processedText = text;
@@ -130,32 +147,22 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
         }
 
         // Создаем контейнер для текста сообщения
-        const messageTextContainer = document.createElement('div');
-        messageTextContainer.style.display = 'inline';
-        messageTextContainer.style.verticalAlign = 'top';
+        const messageSpan = document.createElement('span');
+        messageSpan.className = 'message';
+        messageSpan.innerHTML = processedText;
+        messageSpan.style.textShadow = `0 0 ${window.shadowBlur}px ${window.shadowColor}`;
+        messageSpan.style.wordBreak = 'break-all';
+        messageSpan.style.fontSize = `${window.size}px`;
+        messageSpan.style.fontFamily = window.font;
 
-        // Создаем и стилизуем текст сообщения
-        const textSpan = document.createElement('span');
-        textSpan.innerHTML = processedText;
-        textSpan.style.textShadow = `0 0 ${shadowBlur}px ${shadowColor}`;
-        textSpan.style.display = 'inline';
+        // Добавляем пробел между ником и сообщением
+        const spaceSpan = document.createElement('span');
+        spaceSpan.textContent = ' ';
 
-        // Добавляем элементы в контейнер ника
-        if (badgesPosition === 'left' && badgesHtml) {
-            usernameContainer.appendChild(badgesContainer);
-        }
-        
-        usernameContainer.appendChild(userSpan);
-        
-        if (badgesPosition === 'right' && badgesHtml) {
-            usernameContainer.appendChild(badgesContainer);
-        }
-
-        // Добавляем контейнер ника и текст сообщения в основной контейнер
-        messageContent.appendChild(usernameContainer);
-        messageTextContainer.appendChild(textSpan);
-        messageContent.appendChild(messageTextContainer);
-        messageDiv.appendChild(messageContent);
+        // Добавляем элементы в сообщение
+        messageDiv.appendChild(userSpan);
+        messageDiv.appendChild(spaceSpan); // пробел между ником и сообщением
+        messageDiv.appendChild(messageSpan);
         
         chatContainer.appendChild(messageDiv);
         
@@ -193,13 +200,4 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
             console.error('❌ Ошибка добавления сообщения:', error);
         }
     }
-}
-
-// Создание градиентного ника для ikuza47 (простой переливающийся градиент)
-function createGradientUsername(username) {
-    const userSpan = document.createElement('span');
-    userSpan.className = 'gradient-username';
-    userSpan.textContent = username + ':';
-    userSpan.style.display = 'inline';
-    return userSpan;
 }
