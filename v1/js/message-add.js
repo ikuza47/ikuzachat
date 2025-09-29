@@ -57,6 +57,14 @@ function addSystemMessage(text) {
     messageDiv.style.fontSize = `${window.size}px`;
     messageDiv.style.fontFamily = window.font;
     
+    // Применяем задний фон, если включено
+    if (window.showBackground) {
+        messageDiv.style.backgroundColor = `rgba(0, 0, 0, ${window.bgTransparent})`;
+        messageDiv.style.padding = '4px 8px';
+        messageDiv.style.borderRadius = '4px';
+        messageDiv.style.marginBottom = '2px';
+    }
+    
     const textSpan = document.createElement('span');
     textSpan.textContent = text; // безопасное отображение
     textSpan.style.color = '#FF69B4';
@@ -124,6 +132,14 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         messageDiv.style.wordBreak = 'break-all';
         messageDiv.style.fontSize = `${window.size}px`;
         messageDiv.style.fontFamily = window.font;
+
+        // Применяем задний фон, если включено
+        if (window.showBackground) {
+            messageDiv.style.backgroundColor = `rgba(0, 0, 0, ${window.bgTransparent})`;
+            messageDiv.style.padding = '4px 8px';
+            messageDiv.style.borderRadius = '4px';
+            messageDiv.style.marginBottom = '2px';
+        }
 
         // Создаем контейнер для ника и бейджиков
         const userSpan = document.createElement('span');

@@ -33,6 +33,103 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        /* Стилизация input[type="color"] */
+        .color-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 100%;
+            height: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 0;
+        }
+
+        .color-input-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 10px 10px;
+            background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+            border-radius: 6px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .color-input-wrapper input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 6px;
+            padding: 0;
+        }
+
+        .color-input-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+            border: none;
+            padding: 0;
+            border-radius: 6px;
+        }
+
+        .color-input-wrapper input[type="color"]::-moz-color-swatch {
+            border: none;
+            border-radius: 6px;
+        }
+
+        /* Стиль для слайдера прозрачности */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #262626;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #f9c7a0;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #f9c7a0;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+            color: #f9c7a0;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-6 bg-primary-bg text-text-primary">
@@ -97,16 +194,28 @@
             <div class="bg-card-bg border border-border-color rounded-lg p-6">
                 <h2 class="text-lg font-semibold text-accent-orange mb-4" id="advancedSettingsTitle">Дополнительные настройки</h2>
                 <div class="space-y-6">
-                    <div>
-                        <label class="block text-text-primary mb-2" id="shadowColorLabel">Цвет тени</label>
-                        <input id="shadowColor" type="color" class="w-full h-10 rounded bg-input-bg border border-border-color" onchange="updateUrl()">
-                        <p class="text-text-secondary text-sm mt-1" id="shadowColorDesc">Цвет тени текста для лучшей читаемости</p>
+                    <!-- Новый параметр: Отображать задний фон сообщений -->
+                    <div class="flex items-start">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="showBackground" class="sr-only peer" onchange="toggleBackgroundSettings(); updateUrl();">
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                        </label>
+                        <div class="ml-3">
+                            <label class="block text-text-primary" id="backgroundLabel">Отображать задний фон сообщений</label>
+                            <p class="text-text-secondary text-sm" id="backgroundDesc">Показывать полупрозрачный черный фон за сообщениями</p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-text-primary mb-2" id="shadowBlurLabel">Размытие тени</label>
-                        <input id="shadowBlur" type="number" min="0" max="10" value="3" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
-                        <p class="text-text-secondary text-sm mt-1" id="shadowBlurDesc">Сила размытия тени (в пикселях)</p>
+                    
+                    <!-- Настройки фона (изначально скрыты) -->
+                    <div id="backgroundSettings" class="hidden mt-4 p-4 bg-input-bg rounded-lg border border-border-color">
+                        <label class="block text-text-primary mb-2" id="bgTransparencyLabel">Прозрачность фона</label>
+                        <div class="slider-container">
+                            <input type="range" id="bgTransparency" min="0" max="1" step="0.05" value="0.3" class="slider" oninput="updateBgTransparencyValue(); updateUrl();">
+                            <span id="bgTransparencyValue" class="slider-value">0.30</span>
+                        </div>
+                        <p class="text-text-secondary text-sm mt-2" id="bgTransparencyDesc">0 = полностью прозрачный, 1 = непрозрачный</p>
                     </div>
+
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="showBadges" class="sr-only peer" checked onchange="updateUrl()">
@@ -144,7 +253,7 @@
                     </div>
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="colonEnabled" class="sr-only peer" checked onchange="updateUrl();">
+                            <input type="checkbox" id="colonEnabled" class="sr-only peer" onchange="updateUrl();">
                             <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
                         </label>
                         <div class="ml-3">
@@ -238,10 +347,10 @@
                 sizeLabel: 'Размер шрифта',
                 sizeDesc: 'Размер текста в чате в пикселях',
                 advancedSettingsTitle: 'Дополнительные настройки',
-                shadowColorLabel: 'Цвет тени',
-                shadowColorDesc: 'Цвет тени текста для лучшей читаемости',
-                shadowBlurLabel: 'Размытие тени',
-                shadowBlurDesc: 'Сила размытия тени (в пикселях)',
+                backgroundLabel: 'Отображать задний фон сообщений',
+                backgroundDesc: 'Показывать полупрозрачный черный фон за сообщениями',
+                bgTransparencyLabel: 'Прозрачность фона',
+                bgTransparencyDesc: '0 = полностью прозрачный, 1 = непрозрачный',
                 badgesLabel: 'Отображать бейджики',
                 badgesDesc: 'Показывать бейджики модератора, подписчика и т.д.',
                 autoRemoveLabel: 'Автоудаление сообщений',
@@ -278,10 +387,10 @@
                 sizeLabel: 'Font Size',
                 sizeDesc: 'The size of the text in the chat in pixels',
                 advancedSettingsTitle: 'Advanced Settings',
-                shadowColorLabel: 'Shadow Color',
-                shadowColorDesc: 'Text shadow color for better readability',
-                shadowBlurLabel: 'Shadow Blur',
-                shadowBlurDesc: 'Shadow blur strength (in pixels)',
+                backgroundLabel: 'Show message background',
+                backgroundDesc: 'Display a semi-transparent black background behind messages',
+                bgTransparencyLabel: 'Background transparency',
+                bgTransparencyDesc: '0 = fully transparent, 1 = opaque',
                 badgesLabel: 'Display Badges',
                 badgesDesc: 'Show moderator, subscriber, etc. badges',
                 autoRemoveLabel: 'Auto Remove Messages',
@@ -326,10 +435,10 @@
             document.getElementById('sizeDesc').textContent = t.sizeDesc;
 
             document.getElementById('advancedSettingsTitle').textContent = t.advancedSettingsTitle;
-            document.getElementById('shadowColorLabel').textContent = t.shadowColorLabel;
-            document.getElementById('shadowColorDesc').textContent = t.shadowColorDesc;
-            document.getElementById('shadowBlurLabel').textContent = t.shadowBlurLabel;
-            document.getElementById('shadowBlurDesc').textContent = t.shadowBlurDesc;
+            document.getElementById('backgroundLabel').textContent = t.backgroundLabel;
+            document.getElementById('backgroundDesc').textContent = t.backgroundDesc;
+            document.getElementById('bgTransparencyLabel').textContent = t.bgTransparencyLabel;
+            document.getElementById('bgTransparencyDesc').textContent = t.bgTransparencyDesc;
             document.getElementById('badgesLabel').textContent = t.badgesLabel;
             document.getElementById('badgesDesc').textContent = t.badgesDesc;
             document.getElementById('autoRemoveLabel').textContent = t.autoRemoveLabel;
@@ -397,6 +506,24 @@
             });
         });
 
+        // Переключение настроек фона
+        function toggleBackgroundSettings() {
+            const backgroundSettings = document.getElementById('backgroundSettings');
+            if (document.getElementById('showBackground').checked) {
+                backgroundSettings.classList.remove('hidden');
+            } else {
+                backgroundSettings.classList.add('hidden');
+            }
+            updateUrl();
+        }
+
+        // Обновление значения прозрачности
+        function updateBgTransparencyValue() {
+            const slider = document.getElementById('bgTransparency');
+            const value = parseFloat(slider.value).toFixed(2);
+            document.getElementById('bgTransparencyValue').textContent = value;
+        }
+
         // Переключение таймаута
         function toggleTimeout() {
             const timeoutGroup = document.getElementById('timeoutGroup');
@@ -455,8 +582,6 @@
             }
             params.append('font', encodeURIComponent(fontValue));
             params.append('size', document.getElementById('fontSize').value);
-            params.append('shadowColor', document.getElementById('shadowColor').value.replace('#', ''));
-            params.append('shadowBlur', document.getElementById('shadowBlur').value);
             params.append('showBadges', document.getElementById('showBadges').checked);
             params.append('clearChatOnCommand', document.getElementById('clearChatOnCommand').checked);
             params.append('colon', document.getElementById('colonEnabled').checked);
@@ -476,6 +601,13 @@
 
             // bot!
             params.append('ignorebots', document.getElementById('botModuleToggle').checked);
+
+            // Новые параметры фона
+            params.append('background', document.getElementById('showBackground').checked);
+            if (document.getElementById('showBackground').checked) {
+                const transparency = parseFloat(document.getElementById('bgTransparency').value).toFixed(2);
+                params.append('bgtransparent', transparency);
+            }
 
             // Язык
             params.append('lang', currentLang);
@@ -499,20 +631,22 @@
                 document.getElementById('channel').value = 'ikuza47';
                 document.getElementById('fontFamily').value = "'Segoe UI', sans-serif";
                 document.getElementById('fontSize').value = '24';
-                document.getElementById('shadowColor').value = '#000000';
-                document.getElementById('shadowBlur').value = '3';
                 document.getElementById('showBadges').checked = true;
                 document.getElementById('autoRemove').checked = false;
                 document.getElementById('clearChatOnCommand').checked = true;
-                document.getElementById('colonEnabled').checked = true;
+                document.getElementById('colonEnabled').checked = false; // По умолчанию выключено
                 document.getElementById('osuModuleToggle').checked = false;
                 document.getElementById('osuApiKey').value = '';
                 document.getElementById('botModuleToggle').checked = false;
+                document.getElementById('showBackground').checked = false; // Новый параметр по умолчанию выключен
+                document.getElementById('bgTransparency').value = '0.3';
+                updateBgTransparencyValue();
                 document.getElementById('customFontInput').classList.add('hidden');
                 document.querySelector('.font-preview').textContent = 'Пример текста';
                 document.querySelector('.font-preview').style.fontFamily = "'Segoe UI', sans-serif";
                 document.getElementById('timeoutGroup').classList.add('hidden');
                 document.getElementById('osuModuleSettings').classList.add('hidden');
+                document.getElementById('backgroundSettings').classList.add('hidden'); // Скрыть настройки фона
                 document.querySelector('.tab[data-tab="basic"]').click();
                 updateUrl();
                 alert('Настройки сброшены');
@@ -522,6 +656,7 @@
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
             initLanguage();
+            updateBgTransparencyValue(); // Инициализация значения слайдера
             updateUrl();
         });
     </script>
