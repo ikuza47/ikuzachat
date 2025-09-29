@@ -1,9 +1,7 @@
 // Функция для получения osu! API ключа из URL
 function getOsuApiKey() {
     const urlParams = new URLSearchParams(window.location.search);
-    const key = urlParams.get('osuapi') || null;
-    console.log('🔑 OSU_API_KEY из URL:', key);
-    return key;
+    return urlParams.get('osuapi') || null;
 }
 
 // Инициализируем API ключ из URL
@@ -16,19 +14,14 @@ if (!OSU_API_KEY) {
 // Функция для извлечения beatmapset_id и beatmap_id из ссылки
 function extractBeatmapIds(url) {
     console.log('🔍 Проверяем ссылку:', url);
-    // Регулярное выражение: ищем beatmapset_id и опционально beatmap_id
     const match = url.match(/https?:\/\/osu\.ppy\.sh\/beatmapsets\/(\d+)(?:#(?:osu|taiko|fruits|mania)\/(\d+))?/);
     if (match) {
-        const beatmapset_id = match[1];
-        const beatmap_id = match[2] || null;
-
-        if (beatmap_id) {
-            console.log('📋 Извлечены ID: beatmapset_id =', beatmapset_id, ', beatmap_id =', beatmap_id);
-            return { beatmapset_id, beatmap_id };
-        } else {
-            console.log('📋 Извлечён только beatmapset_id =', beatmapset_id, ', сложность не указана');
-            return { beatmapset_id, beatmap_id: null };
-        }
+        const ids = {
+            beatmapset_id: match[1],
+            beatmap_id: match[2] || null
+        };
+        console.log('📋 Извлечённые ID:', ids);
+        return ids;
     } else {
         console.log('❌ Не найдены ID в ссылке:', url);
         return null;
@@ -43,12 +36,9 @@ async function getBeatmapInfo(beatmapset_id, beatmap_id = null) {
     }
 
     let url;
-    let isSpecificBeatmap = false;
-
     if (beatmap_id) {
         console.log('🔍 Запрашиваем информацию о конкретной сложности (b):', beatmap_id);
         url = `https://osu.ppy.sh/api/get_beatmaps?k=${OSU_API_KEY}&b=${beatmap_id}`;
-        isSpecificBeatmap = true;
     } else {
         console.log('🔍 Запрашиваем информацию о beatmapset (s):', beatmapset_id);
         url = `https://osu.ppy.sh/api/get_beatmaps?k=${OSU_API_KEY}&s=${beatmapset_id}`;
@@ -63,15 +53,8 @@ async function getBeatmapInfo(beatmapset_id, beatmap_id = null) {
         const data = await response.json();
         console.log('📥 Полученные данные:', data);
         if (data && data.length > 0) {
-            // Если запрашивали по beatmap_id — возвращаем конкретную сложность
-            if (isSpecificBeatmap) {
-                console.log('✅ Найдена информация о конкретной сложности:', data[0]);
-                return data[0];
-            } else {
-                // Если запрашивали по beatmapset_id — возвращаем первую сложность (или любую)
-                console.log('✅ Найдена информация о beatmapset, используем первую сложность:', data[0]);
-                return data[0];
-            }
+            console.log('✅ Найдена информация о карте:', data[0]);
+            return data[0];
         } else {
             console.warn('⚠️ Карта не найдена в API.');
             return null;
@@ -128,19 +111,20 @@ async function replaceOsuLinksInText(text) {
         const beatmapInfo = await getBeatmapInfo(beatmapset_id, beatmap_id);
 
         if (beatmapInfo) {
-            const artist = beatmapInfo.artist;
-            const title = beatmapInfo.title;
-            const creator = beatmapInfo.creator;
-
             let replacement;
-
             if (beatmap_id) {
                 // Полная ссылка — показываем всё
+                const artist = beatmapInfo.artist;
+                const title = beatmapInfo.title;
+                const creator = beatmapInfo.creator;
                 const version = beatmapInfo.version;
                 const params = formatBeatmapParams(beatmapInfo);
                 replacement = `${artist} - ${title} (${creator}) - ${version} (${params})`;
             } else {
                 // Ссылка только на beatmapset — без сложности и параметров
+                const artist = beatmapInfo.artist;
+                const title = beatmapInfo.title;
+                const creator = beatmapInfo.creator;
                 replacement = `${artist} - ${title} (${creator})`;
             }
 

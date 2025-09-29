@@ -201,27 +201,8 @@ async function addMessage(username, text, tags, originalText, channelId, color =
             }
         }
 
-        // Если включён модуль 7TV эмодзи после ника — проверяем и добавляем эмодзи перед ником
-        // Если включён модуль 7TV эмодзи после ника — проверяем и добавляем эмодзи перед ником
-        let finalNickElement = nickSpan;
-        if (window.sevenTvNickModule && typeof window.sevenTvNickModule.addSevenTvEmojiToUsername === 'function') {
-            console.log('🔍 Проверка 7TV эмодзи для ника:', username);
-            const emojiElement = window.sevenTvNickModule.addSevenTvEmojiToUsername(username);
-            if (emojiElement) {
-                console.log('✅ Эмодзи найден и добавлен перед ником');
-                const container = document.createElement('span');
-                container.appendChild(emojiElement);
-                container.appendChild(nickSpan);
-                finalNickElement = container;
-            } else {
-                console.log('❌ Эмодзи для ника не найден');
-            }
-        } else {
-            console.log('ℹ️ Модуль 7TV эмодзи после ника не загружен или отключён');
-        }
-
-        // Добавляем ник (или контейнер с эмодзи) в userSpan
-        userSpan.appendChild(finalNickElement);
+        // Добавляем ник в userSpan
+        userSpan.appendChild(nickSpan);
 
         // Обрабатываем эмодзи
         let processedText = text;
