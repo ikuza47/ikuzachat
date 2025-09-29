@@ -78,6 +78,12 @@ function applyChatStyles() {
             from { opacity: 1; transform: scale(1); }
             to { opacity: 0; transform: scale(0.9); }
         }
+        .message-content {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            align-items: flex-start;
+        }
     `;
     document.head.appendChild(style);
     

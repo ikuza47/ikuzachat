@@ -8,11 +8,13 @@ function addSystemMessage(text) {
     }
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message';
+    messageDiv.style.display = 'block';
     
     const textSpan = document.createElement('span');
     textSpan.textContent = text;
     textSpan.style.color = '#FF69B4';
     textSpan.style.fontStyle = 'italic';
+    textSpan.style.display = 'inline';
     
     messageDiv.appendChild(textSpan);
     chatContainer.appendChild(messageDiv);
@@ -35,19 +37,19 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
         
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message';
+        messageDiv.style.display = 'block';
         
         // Создаем контейнер для всего сообщения
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
-        messageContent.style.display = 'flex';
-        messageContent.style.flexDirection = 'column';
+        messageContent.style.display = 'inline';
+        messageContent.style.verticalAlign = 'top';
         messageContent.style.gap = '5px';
-        messageContent.style.padding = '0';
 
         // Создаем контейнер для ника и бейджиков
         const usernameContainer = document.createElement('div');
-        usernameContainer.style.display = 'flex';
-        usernameContainer.style.alignItems = 'center';
+        usernameContainer.style.display = 'inline';
+        usernameContainer.style.verticalAlign = 'top';
         usernameContainer.style.gap = '5px';
         usernameContainer.style.flexWrap = 'nowrap';
         usernameContainer.style.flexShrink = '0';
@@ -72,6 +74,18 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
             }
         } else {
             if (window.debugMode) console.log('ℹ️ Отображение бейджиков отключено или модуль badges не загружен');
+        }
+
+        // Создаем контейнер для бейджиков
+        const badgesContainer = document.createElement('div');
+        badgesContainer.className = 'message-badges';
+        badgesContainer.style.display = 'inline';
+        badgesContainer.style.verticalAlign = 'top';
+        badgesContainer.style.gap = '3px';
+        if (badgesHtml) {
+            badgesContainer.innerHTML = badgesHtml;
+        } else {
+            badgesContainer.style.display = 'none';
         }
 
         // Создаем и стилизуем никнейм
@@ -103,6 +117,7 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
                 userSpan.style.color = userColorCache[username];
             }
         }
+        userSpan.style.display = 'inline';
 
         // Обрабатываем эмодзи
         let processedText = text;
@@ -116,34 +131,23 @@ function addMessage(username, text, tags, originalText, channelId, color = null)
 
         // Создаем контейнер для текста сообщения
         const messageTextContainer = document.createElement('div');
-        messageTextContainer.style.width = '100%';
-        messageTextContainer.style.lineHeight = '1.4';
-        messageTextContainer.style.wordBreak = 'break-word';
-        messageTextContainer.style.overflowWrap = 'break-word';
+        messageTextContainer.style.display = 'inline';
+        messageTextContainer.style.verticalAlign = 'top';
 
         // Создаем и стилизуем текст сообщения
         const textSpan = document.createElement('span');
         textSpan.innerHTML = processedText;
         textSpan.style.textShadow = `0 0 ${shadowBlur}px ${shadowColor}`;
+        textSpan.style.display = 'inline';
 
         // Добавляем элементы в контейнер ника
         if (badgesPosition === 'left' && badgesHtml) {
-            const badgesContainer = document.createElement('div');
-            badgesContainer.innerHTML = badgesHtml;
-            badgesContainer.style.display = 'flex';
-            badgesContainer.style.alignItems = 'center';
-            badgesContainer.style.gap = '3px';
             usernameContainer.appendChild(badgesContainer);
         }
         
         usernameContainer.appendChild(userSpan);
         
         if (badgesPosition === 'right' && badgesHtml) {
-            const badgesContainer = document.createElement('div');
-            badgesContainer.innerHTML = badgesHtml;
-            badgesContainer.style.display = 'flex';
-            badgesContainer.style.alignItems = 'center';
-            badgesContainer.style.gap = '3px';
             usernameContainer.appendChild(badgesContainer);
         }
 
@@ -196,5 +200,6 @@ function createGradientUsername(username) {
     const userSpan = document.createElement('span');
     userSpan.className = 'gradient-username';
     userSpan.textContent = username + ':';
+    userSpan.style.display = 'inline';
     return userSpan;
 }
