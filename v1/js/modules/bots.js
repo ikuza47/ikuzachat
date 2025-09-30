@@ -5,16 +5,23 @@ let botListLoaded = false;
 // Функция для загрузки списка ботов
 async function loadBotList() {
     if (botListLoaded) {
-        console.log('📋 Список ботов уже загружен из кэша');
+        console.log('ℹ️ Список ботов уже загружен из кэша');
         return botListCache;
     }
 
     try {
         console.log('🔄 Загрузка списка ботов...');
         const response = await fetch('https://raw.githubusercontent.com/ikuza47/ikuzachat/refs/heads/main/public/bots');
+        
         if (!response.ok) {
+            // Если ошибка 404, возможно у канала нет ботов
+            if (response.status === 404) {
+                console.log('ℹ️ У канала нет ботов');
+                return [];
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const text = await response.text();
         console.log('📥 Получен список ботов:', text);
 
@@ -45,8 +52,57 @@ function isUserBot(username) {
     return isBot;
 }
 
+// Функция для тестирования модуля ботов
+function testBotModule() {
+    console.log('🧪 Тестирование модуля ботов...');
+    
+    // Проверяем, загружен ли список
+    if (!botListLoaded) {
+        console.warn('⚠️ Список ботов не загружен. Загружаем...');
+        loadBotList().then(() => {
+            console.log('✅ Список ботов загружен. Повторный тест...');
+            testBotModule();
+        }).catch(error => {
+            console.error('❌ Ошибка загрузки списка ботов:', error);
+        });
+        return;
+    }
+
+    // Тестируем несколько известных ботов
+    const testBots = ['moobot', 'nightbot', 'ronniabot', 'streamlabs', 'streamelements'];
+    const testUsers = ['ikuza47', 'hellcake47', 'randomuser123'];
+
+    console.log('📊 Результаты тестирования:');
+    console.log('========================');
+
+    // Тест ботов
+    testBots.forEach(bot => {
+        const result = isUserBot(bot);
+        console.log(`🤖 ${bot}: ${result ? '✅ БОТ' : '❌ Не бот'}`);
+    });
+
+    console.log('--------------------');
+
+    // Тест обычных пользователей
+    testUsers.forEach(user => {
+        const result = isUserBot(user);
+        console.log(`👤 ${user}: ${result ? '✅ БОТ' : '❌ Не бот'}`);
+    });
+
+    console.log('========================');
+    console.log('✅ Тестирование завершено');
+}
+
+// Добавляем тестовую команду в консоль как глобальную функцию
+window.testBotModule = testBotModule;
+
+// Инициализация модуля ботов
+console.log('✅ Модуль ботов инициализирован');
+console.log('🔧 Для тестирования используйте: testBotModule() в консоли');
+
 // Экспортируем функции
 window.botModule = {
     loadBotList,
-    isUserBot
+    isUserBot,
+    testBotModule
 };

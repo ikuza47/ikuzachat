@@ -1,6 +1,35 @@
 // Кэш цветов ников
 const userColorCache = {};
 
+// Глобальный таймер для синхронизации анимаций
+let glowTimer = null;
+let startTime = null;
+
+// Функция для запуска синхронизированной анимации
+function startGlowSync() {
+    // Если таймер уже запущен — выходим
+    if (glowTimer) return;
+
+    console.log('⏱️ Запуск синхронизированного таймера анимаций');
+    startTime = Date.now();
+
+    // Обновляем позицию градиента каждые 50 мс
+    glowTimer = setInterval(() => {
+        // Прошедшее время в секундах
+        const elapsed = (Date.now() - startTime) / 1000;
+        // Прогресс анимации (4 секунды — длительность одного цикла)
+        const progress = (elapsed % 4) / 4;
+
+        // Вычисляем позицию градиента (от 0% до 100% и обратно)
+        const pos = Math.sin(progress * Math.PI * 2) * 50 + 50;
+
+        // Применяем ко всем градиентным никам
+        document.querySelectorAll('.IkuzaUsername, .HellCakeUsername, .YatagarasuUsername').forEach(el => {
+            el.style.backgroundPosition = `${pos}% 50%`;
+        });
+    }, 50); // 20 FPS
+}
+
 // Функция для безопасного экранирования HTML
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -30,7 +59,14 @@ function processMentions(text) {
         const specialClass = getSpecialUsernameClass(username);
         if (specialClass) {
             // Если специальный ник — применяем его класс, и шрифт
-            return `<span class="${specialClass}" style="font-family: ${window.font};">@${username}</span>`;
+            if (specialClass === 'IkuzaUsername' || specialClass === 'HellCakeUsername' || specialClass === 'YatagarasuUsername') {
+                // Для градиентных ников — запускаем синхронизацию
+                startGlowSync();
+                return `<span class="${specialClass}" style="font-family: ${window.font};">@${username}</span>`;
+            } else {
+                // Для других специальных ников
+                return `<span class="${specialClass}" style="font-family: ${window.font};">@${username}</span>`;
+            }
         } else {
             // Если обычный пользователь — применяем его цвет и шрифт
             if (!userColorCache[username]) {
@@ -57,14 +93,6 @@ function addSystemMessage(text) {
     messageDiv.style.fontSize = `${window.size}px`;
     messageDiv.style.fontFamily = window.font;
     
-    // Применяем задний фон, если включено
-    if (window.showBackground) {
-        messageDiv.style.backgroundColor = `rgba(0, 0, 0, ${window.bgTransparent})`;
-        messageDiv.style.padding = '4px 8px';
-        messageDiv.style.borderRadius = '4px';
-        messageDiv.style.marginBottom = '2px';
-    }
-    
     const textSpan = document.createElement('span');
     textSpan.textContent = text; // безопасное отображение
     textSpan.style.color = '#FF69B4';
@@ -89,6 +117,10 @@ function CreateSpecialUsernameStyles(username) {
         userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
+
+        // Синхронизация анимации
+        startGlowSync();
+
         return userSpan;
     }
 
@@ -100,6 +132,10 @@ function CreateSpecialUsernameStyles(username) {
         userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
+
+        // Синхронизация анимации
+        startGlowSync();
+
         return userSpan;
     }
 
@@ -111,6 +147,10 @@ function CreateSpecialUsernameStyles(username) {
         userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
+
+        // Синхронизация анимации
+        startGlowSync();
+
         return userSpan;
     }
 
@@ -132,14 +172,6 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         messageDiv.style.wordBreak = 'break-word';
         messageDiv.style.fontSize = `${window.size}px`;
         messageDiv.style.fontFamily = window.font;
-
-        // Применяем задний фон, если включено
-        if (window.showBackground) {
-            messageDiv.style.backgroundColor = `rgba(0, 0, 0, ${window.bgTransparent})`;
-            messageDiv.style.padding = '4px 8px';
-            messageDiv.style.borderRadius = '4px';
-            messageDiv.style.marginBottom = '2px';
-        }
 
         // Создаем контейнер для ника и бейджиков
         const userSpan = document.createElement('span');
