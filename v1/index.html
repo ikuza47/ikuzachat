@@ -17,7 +17,8 @@
 
         #chat-container {
             width: 100%;
-            height: 100%;
+            position: absolute;
+            bottom: 0;
             overflow-y: auto;
             padding: 0;
             box-sizing: border-box;
@@ -189,6 +190,14 @@
             document.body.appendChild(errorIndicator);
         };
         
+        // Глобальная функция для обновления статуса загрузки
+        window.updateLoadingStatus = function(message) {
+            const loadingSubtext = document.querySelector('.loading-subtext');
+            if (loadingSubtext) {
+                loadingSubtext.textContent = message;
+            }
+        };
+
         // Функция для отслеживания загрузки скриптов
         function loadScript(src, callback) {
             const script = document.createElement('script');
@@ -251,94 +260,25 @@
             });
         }
         
-        // Сначала загружаем анимацию загрузки
-        (function() {
-            const loadingScript = document.createElement('script');
-            loadingScript.src = 'js/loading-anim.js';
-            loadingScript.onload = function() {
-                console.log('✅ Анимация загрузки инициализирована');
-                
-                // Обновляем статус загрузки
-                if (typeof window.updateLoadingStatus === 'function') {
-                    window.updateLoadingStatus('Инициализация системы...');
-                }
-                
-                // Затем загружаем основные скрипты
-                setTimeout(() => {
-                    const scriptsToLoad = [
-                        'js/modules/osu.js',
-                        'js/params.js',
-                        'js/utils.js',
-                        'js/badges.js',
-                        'js/emotes.js',
-                        'js/styles.js',
-                        'js/message-add.js',
-                        'js/twitch-connect.js'
-                    ];
-                    
-                    loadScriptsSequentially(scriptsToLoad);
-                }, 100); // Небольшая задержка для отображения анимации
-            };
-            loadingScript.onerror = function() {
-                console.error('❌ Ошибка загрузки анимации загрузки');
-                // Создаем минимальный индикатор загрузки
-                let loadingIndicator = document.getElementById('loading-indicator');
-                if (!loadingIndicator) {
-                    loadingIndicator = document.createElement('div');
-                    loadingIndicator.id = 'loading-indicator';
-                    loadingIndicator.style.position = 'fixed';
-                    loadingIndicator.style.top = '0';
-                    loadingIndicator.style.left = '0';
-                    loadingIndicator.style.width = '100%';
-                    loadingIndicator.style.height = '100%';
-                    loadingIndicator.style.display = 'flex';
-                    loadingIndicator.style.flexDirection = 'column';
-                    loadingIndicator.style.justifyContent = 'center';
-                    loadingIndicator.style.alignItems = 'center';
-                    loadingIndicator.style.background = 'transparent';
-                    loadingIndicator.style.zIndex = '1000';
-                    
-                    const loadingText = document.createElement('div');
-                    loadingText.className = 'loading-text';
-                    loadingText.style.fontSize = '3.5rem';
-                    loadingText.style.fontWeight = 'bold';
-                    loadingText.textContent = 'IkuzaChat';
-                    
-                    const loadingSubtext = document.createElement('div');
-                    loadingSubtext.className = 'loading-subtext';
-                    loadingSubtext.style.marginTop = '20px';
-                    loadingSubtext.textContent = 'Загрузка ресурсов чата...';
-                    
-                    loadingIndicator.appendChild(loadingText);
-                    loadingIndicator.appendChild(loadingSubtext);
-                    
-                    document.body.appendChild(loadingIndicator);
-                    
-                    window.updateLoadingStatus = function(message) {
-                        const loadingSubtext = document.querySelector('.loading-subtext');
-                        if (loadingSubtext) {
-                            loadingSubtext.textContent = message;
-                        }
-                    };
-                }
-                
-                // Продолжаем загрузку без анимации
-                const scriptsToLoad = [
-                    'js/modules/osu.js',
-                    'js/params.js',
-                    'js/utils.js',
-                    'js/badges.js',
-                    'js/emotes.js',
-                    'js/styles.js',
-                    'js/message-add.js',
-                    'js/twitch-connect.js'
-                ];
-                
-                loadScriptsSequentially(scriptsToLoad);
-            };
-            
-            document.head.appendChild(loadingScript);
-        })();
+        // Загружаем основные скрипты сразу (без ожидания loading-anim.js)
+        const scriptsToLoad = [
+            'js/modules/osu.js',
+            'js/params.js',
+            'js/utils.js',
+            'js/badges.js',
+            'js/emotes.js',
+            'js/styles.js',
+            'js/message-add.js',
+            'js/twitch-connect.js'
+        ];
+        
+        // Обновляем статус загрузки
+        window.updateLoadingStatus('Инициализация системы...');
+
+        // Небольшая задержка для отображения анимации
+        setTimeout(() => {
+            loadScriptsSequentially(scriptsToLoad);
+        }, 100);
     </script>
 </body>
 </html>

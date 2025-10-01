@@ -214,10 +214,24 @@ function connectToChat() {
                             console.log('⚠️ Текст сообщения пуст');
                             return;
                         }
-                        
-                        // Добавляем сообщение с учетом выделения
-                        console.log('📨 Добавление сообщения в чат');
-                        addMessage(username, text, tags, text, roomId);
+
+                        // Проверка на HTML-комментарии
+                        if (text.includes('<!--')) {
+                            console.log('💬 Сообщение содержит комментарий, игнорируем');
+                            return;
+                        }
+
+                        // Проверка на другие HTML-теги и экранирование
+                        if (/<[a-z][\s\S]*>/i.test(text)) {
+                            console.log('💬 Сообщение содержит HTML-теги, экранируем');
+                            // Используем функцию из utils.js
+                            const escapedText = escapeHtml(text);
+                            console.log(`📝 Экранированный текст: ${escapedText}`);
+                            addMessage(username, escapedText, tags, escapedText, roomId);
+                        } else {
+                            console.log('💬 Безопасное сообщение, добавляем');
+                            addMessage(username, text, tags, text, roomId);
+                        }
                     } catch (error) {
                         console.error('❌ Ошибка обработки сообщения:', error);
                         console.log('Сообщение:', message);
