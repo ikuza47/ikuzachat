@@ -2,7 +2,7 @@
 # IkuzaChat - чат созданный с душой <3
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/ikuzachat)
+[![Version](https://img.shields.io/badge/version-1.1-blue.svg)](https://github.com/ikuza47/ikuzachat)
 
 **IkuzaChat** — это оверлей для Twitch чата, который имеет в своём арсенале много настроек, которые найдут отклик в каждом
 
