@@ -117,6 +117,7 @@ function CreateSpecialUsernameStyles(username) {
         userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
+        userSpan.style.fontWeight = 'bold'; // жирный
 
         // Синхронизация анимации
         startGlowSync();
@@ -132,6 +133,7 @@ function CreateSpecialUsernameStyles(username) {
         userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
+        userSpan.style.fontWeight = 'bold'; // жирный
 
         // Синхронизация анимации
         startGlowSync();
@@ -147,6 +149,7 @@ function CreateSpecialUsernameStyles(username) {
         userSpan.style.wordBreak = 'break-word';
         userSpan.style.fontSize = `${window.size}px`;
         userSpan.style.fontFamily = window.font;
+        userSpan.style.fontWeight = 'bold'; // жирный
 
         // Синхронизация анимации
         startGlowSync();
@@ -155,6 +158,16 @@ function CreateSpecialUsernameStyles(username) {
     }
 
     return null;
+}
+
+// Функция для получения времени в нужном часовом поясе
+function getTimeString(timeZone) {
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const targetTime = new Date(utc + (3600000 * timeZone));
+    const hours = String(targetTime.getHours()).padStart(2, '0');
+    const minutes = String(targetTime.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
 }
 
 // Добавление сообщения
@@ -172,6 +185,17 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         messageDiv.style.wordBreak = 'break-word';
         messageDiv.style.fontSize = `${window.size}px`;
         messageDiv.style.fontFamily = window.font;
+
+        // Создаем элемент времени, если нужно
+        if (window.showTime) {
+            const timeSpan = document.createElement('span');
+            timeSpan.textContent = getTimeString(window.timeZone) + ' ';
+            timeSpan.style.color = '#c0c0c0'; // чуть светлее (раньше был #a0a0a0)
+            timeSpan.style.fontSize = `${window.size}px`;
+            timeSpan.style.fontFamily = window.font;
+            timeSpan.style.marginRight = '4px';
+            messageDiv.appendChild(timeSpan);
+        }
 
         // Создаем контейнер для ника и бейджиков
         const userSpan = document.createElement('span');
@@ -228,6 +252,7 @@ async function addMessage(username, text, tags, originalText, channelId, color =
             nickSpan.style.wordBreak = 'break-word';
             nickSpan.style.fontSize = `${window.size}px`;
             nickSpan.style.fontFamily = window.font;
+            nickSpan.style.fontWeight = 'bold'; // делаем обычные ники жирными
 
             // Используем цвет из тегов, если есть
             if (color) {

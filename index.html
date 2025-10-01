@@ -194,6 +194,53 @@
             <div class="bg-card-bg border border-border-color rounded-lg p-6">
                 <h2 class="text-lg font-semibold text-accent-orange mb-4" id="advancedSettingsTitle">Дополнительные настройки</h2>
                 <div class="space-y-6">
+                    <!-- Новый параметр: Показывать время -->
+                    <div class="flex items-start">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="showTime" class="sr-only peer" onchange="toggleTimeSettings(); updateUrl();">
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                        </label>
+                        <div class="ml-3">
+                            <label class="block text-text-primary" id="timeLabel">Показывать время</label>
+                            <p class="text-text-secondary text-sm" id="timeDesc">Показывать текущее время в формате HH:MM перед ником</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Настройки часового пояса (изначально скрыты) -->
+                    <div id="timeSettings" class="hidden mt-4 p-4 bg-input-bg rounded-lg border border-border-color">
+                        <label class="block text-text-primary mb-2" id="timeZoneLabel">Часовой пояс</label>
+                        <select id="timeZone" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
+                            <option value="-12">UTC-12</option>
+                            <option value="-11">UTC-11</option>
+                            <option value="-10">UTC-10</option>
+                            <option value="-9">UTC-9</option>
+                            <option value="-8">UTC-8</option>
+                            <option value="-7">UTC-7</option>
+                            <option value="-6">UTC-6</option>
+                            <option value="-5">UTC-5</option>
+                            <option value="-4">UTC-4</option>
+                            <option value="-3">UTC-3</option>
+                            <option value="-2">UTC-2</option>
+                            <option value="-1">UTC-1</option>
+                            <option value="0" selected>UTC+0</option>
+                            <option value="+1">UTC+1</option>
+                            <option value="+2">UTC+2</option>
+                            <option value="+3">UTC+3</option>
+                            <option value="+4">UTC+4</option>
+                            <option value="+5">UTC+5</option>
+                            <option value="+6">UTC+6</option>
+                            <option value="+7">UTC+7</option>
+                            <option value="+8">UTC+8</option>
+                            <option value="+9">UTC+9</option>
+                            <option value="+10">UTC+10</option>
+                            <option value="+11">UTC+11</option>
+                            <option value="+12">UTC+12</option>
+                            <option value="+13">UTC+13</option>
+                            <option value="+14">UTC+14</option>
+                        </select>
+                        <p class="text-text-secondary text-sm mt-2" id="timeZoneDesc">Выберите часовой пояс для отображения времени</p>
+                    </div>
+
                     <!-- Новый параметр: Отображать задний фон сообщений -->
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -272,7 +319,7 @@
                     <!-- osu! -->
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="osuModuleToggle" class="sr-only peer" onchange="updateUrl();">
+                            <input type="checkbox" id="osuModuleToggle" class="sr-only peer" onchange="toggleOsuSettings(); updateUrl();">
                             <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
                         </label>
                         <div class="ml-3 flex-1">
@@ -282,9 +329,55 @@
                                 <label class="block text-text-primary mb-2" id="osuApiKeyLabel">osu! API ключ</label>
                                 <input id="osuApiKey" type="text" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" placeholder="osu! API ключ" onchange="updateUrl()">
                                 <p class="text-text-secondary text-sm mt-1">
-                                    <span id="osuApiInstructionText">Ключ от osu! API v1 для получения информации о картах. </span>
-                                    <a href="#" id="osuApiLink" class="text-accent-orange hover:underline" target="_blank" id="osuApiLinkText">инструкция</a>
+                                    <a href="https://github.com/ikuza47/ikuzachat/blob/main/publics/howgetosuapi.md" id="osuApiLink" class="text-accent-orange hover:underline" target="_blank" id="osuApiLinkText">Instruction</a>
                                 </p>
+
+                                <!-- Новые настройки osu! -->
+                                <div class="mt-4 space-y-4">
+                                    <div class="flex items-start">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="osuMap" class="sr-only peer" checked onchange="updateUrl();">
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                                        </label>
+                                        <div class="ml-3">
+                                            <label class="block text-text-primary" id="osuMapLabel">Парсинг карты</label>
+                                            <p class="text-text-secondary text-sm" id="osuMapDesc">Парсит ссылку на мапу и выводит информацию</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="osuScore" class="sr-only peer" disabled onchange="updateUrl();">
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange opacity-50 cursor-not-allowed"></div>
+                                        </label>
+                                        <div class="ml-3">
+                                            <label class="block text-text-primary" id="osuScoreLabel">Парсинг скоры</label>
+                                            <p class="text-text-secondary text-sm" id="osuScoreDesc">Парсит ссылку на скор и выводит информацию о скоре (не работает)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="osuUser" class="sr-only peer" checked onchange="updateUrl();">
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                                        </label>
+                                        <div class="ml-3">
+                                            <label class="block text-text-primary" id="osuUserLabel">Парсинг юзера</label>
+                                            <p class="text-text-secondary text-sm" id="osuUserDesc">Парсит ссылку на юзера и выводит информацию о нём</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="osuHighlight" class="sr-only peer" onchange="updateUrl();">
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                                        </label>
+                                        <div class="ml-3">
+                                            <label class="block text-text-primary" id="osuHighlightLabel">Выделять информацию</label>
+                                            <p class="text-text-secondary text-sm" id="osuHighlightDesc">Меняет часть текста на другой цвет: \n Карта - розовый \n Скор - жёлтый \n Юзер - синий</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -324,341 +417,6 @@
         </div>
     </div>
 
-    <script>
-        // Определение языка системы
-        const userLang = navigator.language || navigator.userLanguage;
-        let currentLang = userLang.startsWith('ru') ? 'ru' : 'en';
-        console.log('🌐 Язык системы:', userLang, 'Выбран язык:', currentLang);
-
-        // Языковые строки
-        const translations = {
-            ru: {
-                title: 'IkuzaChat - Настройки',
-                mainTitle: 'IkuzaChat',
-                subtitle: 'Настройте ваш оверлей для Twitch чата',
-                tabBasic: 'Основное',
-                tabAdvanced: 'Дополнительно',
-                tabModules: 'Модули',
-                basicSettingsTitle: 'Основные настройки',
-                channelLabel: 'Имя канала',
-                channelDesc: 'Введите имя Twitch-канала, с которого будет читаться чат',
-                fontLabel: 'Шрифт',
-                fontDesc: 'Выберите шрифт для отображения сообщений в чате',
-                sizeLabel: 'Размер шрифта',
-                sizeDesc: 'Размер текста в чате в пикселях',
-                advancedSettingsTitle: 'Дополнительные настройки',
-                backgroundLabel: 'Отображать задний фон сообщений',
-                backgroundDesc: 'Показывать полупрозрачный черный фон за сообщениями',
-                bgTransparencyLabel: 'Прозрачность фона',
-                bgTransparencyDesc: '0 = полностью прозрачный, 1 = непрозрачный',
-                badgesLabel: 'Отображать бейджики',
-                badgesDesc: 'Показывать бейджики модератора, подписчика и т.д.',
-                autoRemoveLabel: 'Автоудаление сообщений',
-                autoRemoveDesc: 'Автоматически удалять старые сообщения через указанное время',
-                timeoutLabel: 'Время до удаления (сек)',
-                timeoutDesc: 'Через сколько секунд удалять сообщение',
-                clearChatLabel: 'Автоочистка чата',
-                clearChatDesc: 'Чат будет очищаться при команде /clear в Twitch',
-                colonLabel: 'Добавлять двоеточие после ника',
-                colonDesc: 'Добавлять : после имени пользователя в сообщениях',
-                modulesTitle: 'Модули',
-                osuModuleLabel: 'osu! модуль',
-                osuModuleDesc: 'Включает поддержку отображения информации о картах osu! по ссылке',
-                osuApiKeyLabel: 'osu! API ключ',
-                osuApiInstructionText: 'Ключ от osu! API v1 для получения информации о картах. ',
-                osuApiLinkText: 'инструкция',
-                botModuleLabel: 'Блокировка ботов',
-                botModuleDesc: 'Скрывать сообщения от ботов (список загружается с GitHub)',
-                copyBtnText: 'Скопировать ссылку',
-                resetBtnText: 'Сбросить',
-            },
-            en: {
-                title: 'IkuzaChat - Settings',
-                mainTitle: 'IkuzaChat',
-                subtitle: 'Configure your Twitch chat overlay',
-                tabBasic: 'Basic',
-                tabAdvanced: 'Advanced',
-                tabModules: 'Modules',
-                basicSettingsTitle: 'Basic Settings',
-                channelLabel: 'Channel Name',
-                channelDesc: 'Enter the name of the Twitch channel from which the chat will be read',
-                fontLabel: 'Font',
-                fontDesc: 'Choose a font for displaying messages in chat',
-                sizeLabel: 'Font Size',
-                sizeDesc: 'The size of the text in the chat in pixels',
-                advancedSettingsTitle: 'Advanced Settings',
-                backgroundLabel: 'Show message background',
-                backgroundDesc: 'Display a semi-transparent black background behind messages',
-                bgTransparencyLabel: 'Background transparency',
-                bgTransparencyDesc: '0 = fully transparent, 1 = opaque',
-                badgesLabel: 'Display Badges',
-                badgesDesc: 'Show moderator, subscriber, etc. badges',
-                autoRemoveLabel: 'Auto Remove Messages',
-                autoRemoveDesc: 'Automatically delete old messages after a specified time',
-                timeoutLabel: 'Time until deletion (sec)',
-                timeoutDesc: 'How many seconds to delete the message after',
-                clearChatLabel: 'Auto Clear Chat',
-                clearChatDesc: 'Chat will be cleared when using /clear command in Twitch',
-                colonLabel: 'Add colon after nickname',
-                colonDesc: 'Add : after the username in messages',
-                modulesTitle: 'Modules',
-                osuModuleLabel: 'osu! module',
-                osuModuleDesc: 'Enables support for displaying osu! map info from a link',
-                osuApiKeyLabel: 'osu! API key',
-                osuApiInstructionText: 'osu! API v1 key for getting beatmap info. ',
-                osuApiLinkText: 'instruction',
-                botModuleLabel: 'Block Bots',
-                botModuleDesc: 'Hide messages from bots (list loaded from GitHub)',
-                copyBtnText: 'Copy Link',
-                resetBtnText: 'Reset',
-            }
-        };
-
-        // Функция для обновления текста на странице
-        function updateTexts() {
-            const t = translations[currentLang];
-
-            document.title = t.title;
-            document.getElementById('mainTitle').textContent = t.mainTitle;
-            document.getElementById('subtitle').textContent = t.subtitle;
-
-            document.getElementById('tabBasic').textContent = t.tabBasic;
-            document.getElementById('tabAdvanced').textContent = t.tabAdvanced;
-            document.getElementById('tabModules').textContent = t.tabModules;
-
-            document.getElementById('basicSettingsTitle').textContent = t.basicSettingsTitle;
-            document.getElementById('channelLabel').textContent = t.channelLabel;
-            document.getElementById('channelDesc').textContent = t.channelDesc;
-            document.getElementById('fontLabel').textContent = t.fontLabel;
-            document.getElementById('fontDesc').textContent = t.fontDesc;
-            document.getElementById('sizeLabel').textContent = t.sizeLabel;
-            document.getElementById('sizeDesc').textContent = t.sizeDesc;
-
-            document.getElementById('advancedSettingsTitle').textContent = t.advancedSettingsTitle;
-            document.getElementById('backgroundLabel').textContent = t.backgroundLabel;
-            document.getElementById('backgroundDesc').textContent = t.backgroundDesc;
-            document.getElementById('bgTransparencyLabel').textContent = t.bgTransparencyLabel;
-            document.getElementById('bgTransparencyDesc').textContent = t.bgTransparencyDesc;
-            document.getElementById('badgesLabel').textContent = t.badgesLabel;
-            document.getElementById('badgesDesc').textContent = t.badgesDesc;
-            document.getElementById('autoRemoveLabel').textContent = t.autoRemoveLabel;
-            document.getElementById('autoRemoveDesc').textContent = t.autoRemoveDesc;
-            document.getElementById('timeoutLabel').textContent = t.timeoutLabel;
-            document.getElementById('timeoutDesc').textContent = t.timeoutDesc;
-            document.getElementById('clearChatLabel').textContent = t.clearChatLabel;
-            document.getElementById('clearChatDesc').textContent = t.clearChatDesc;
-            document.getElementById('colonLabel').textContent = t.colonLabel;
-            document.getElementById('colonDesc').textContent = t.colonDesc;
-
-            document.getElementById('modulesTitle').textContent = t.modulesTitle;
-            document.getElementById('osuModuleLabel').textContent = t.osuModuleLabel;
-            document.getElementById('osuModuleDesc').textContent = t.osuModuleDesc;
-            document.getElementById('osuApiKeyLabel').textContent = t.osuApiKeyLabel;
-            document.getElementById('osuApiInstructionText').textContent = t.osuApiInstructionText;
-            document.getElementById('osuApiLinkText').textContent = t.osuApiLinkText;
-            document.getElementById('botModuleLabel').textContent = t.botModuleLabel;
-            document.getElementById('botModuleDesc').textContent = t.botModuleDesc;
-
-            document.getElementById('copyBtnText').innerHTML = `<i class="fas fa-copy mr-2"></i>${t.copyBtnText}`;
-            document.getElementById('resetBtnText').innerHTML = `<i class="fas fa-redo mr-2"></i>${t.resetBtnText}`;
-        }
-
-        // Функция для обновления ссылки на инструкцию
-        function updateInstructionLink() {
-            const osuApiLink = document.getElementById('osuApiLink');
-            if (currentLang === 'ru') {
-                osuApiLink.href = 'https://github.com/ikuza47/ikuzachat/blob/main/public/howgetosuapiRU.md';
-            } else {
-                osuApiLink.href = 'https://github.com/ikuza47/ikuzachat/blob/main/public/howgetosuapiEN.md';
-            }
-        }
-
-        // Функция смены языка
-        function changeLanguage() {
-            const langSelect = document.getElementById('langSelector');
-            currentLang = langSelect.value;
-            console.log('🌐 Язык изменён на:', currentLang);
-            updateTexts();
-            updateInstructionLink();
-            updateUrl();
-        }
-
-        // Инициализация при загрузке
-        function initLanguage() {
-            const langSelect = document.getElementById('langSelector');
-            langSelect.value = currentLang;
-            updateTexts();
-            updateInstructionLink();
-        }
-
-        // Переключение вкладок
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active', 'bg-card-bg', 'text-accent-orange', 'border-l-2', 'border-accent-orange'));
-                document.querySelectorAll('.tab').forEach(t => t.classList.add('bg-primary-bg', 'text-text-secondary', 'hover:bg-card-bg', 'hover:text-text-primary'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.remove('bg-primary-bg', 'text-text-secondary', 'hover:bg-card-bg', 'hover:text-text-primary');
-                tab.classList.add('active', 'bg-card-bg', 'text-accent-orange', 'border-l-2', 'border-accent-orange');
-                const tabId = tab.getAttribute('data-tab') + '-tab';
-                document.getElementById(tabId).classList.remove('hidden');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // Переключение настроек фона
-        function toggleBackgroundSettings() {
-            const backgroundSettings = document.getElementById('backgroundSettings');
-            if (document.getElementById('showBackground').checked) {
-                backgroundSettings.classList.remove('hidden');
-            } else {
-                backgroundSettings.classList.add('hidden');
-            }
-            updateUrl();
-        }
-
-        // Обновление значения прозрачности
-        function updateBgTransparencyValue() {
-            const slider = document.getElementById('bgTransparency');
-            const value = parseFloat(slider.value).toFixed(2);
-            document.getElementById('bgTransparencyValue').textContent = value;
-        }
-
-        // Переключение таймаута
-        function toggleTimeout() {
-            const timeoutGroup = document.getElementById('timeoutGroup');
-            if (document.getElementById('autoRemove').checked) {
-                timeoutGroup.classList.remove('hidden');
-            } else {
-                timeoutGroup.classList.add('hidden');
-            }
-        }
-
-        document.getElementById('osuModuleToggle').addEventListener('change', function() {
-            const osuSettings = document.getElementById('osuModuleSettings');
-            if (this.checked) {
-                osuSettings.classList.remove('hidden');
-            } else {
-                osuSettings.classList.add('hidden');
-            }
-            updateUrl();
-        });
-
-        // Обработка выбора шрифта
-        document.getElementById('fontFamily').addEventListener('change', function() {
-            const customInput = document.getElementById('customFontInput');
-            const preview = document.querySelector('.font-preview');
-            if (this.value === 'custom') {
-                customInput.classList.remove('hidden');
-                preview.textContent = 'Введите название шрифта';
-            } else {
-                customInput.classList.add('hidden');
-                preview.textContent = 'Пример текста';
-                preview.style.fontFamily = this.value;
-            }
-            updateUrl();
-        });
-
-        // Обновление превью шрифта
-        document.getElementById('customFontInput').addEventListener('input', function() {
-            const preview = document.querySelector('.font-preview');
-            preview.textContent = 'Проверка шрифта: ' + this.value;
-            preview.style.fontFamily = this.value + ', sans-serif';
-            updateUrl();
-        });
-
-        // Генерация ссылки
-        function updateUrl() {
-            const channel = document.getElementById('channel').value.trim().toLowerCase();
-            if (!channel) return;
-
-            const params = new URLSearchParams();
-            params.append('channel', channel);
-
-            let fontValue = document.getElementById('fontFamily').value;
-            if (fontValue === 'custom') {
-                const customFont = document.getElementById('customFontInput').value.trim();
-                fontValue = customFont ? `'${customFont}', sans-serif` : 'sans-serif';
-            }
-            params.append('font', encodeURIComponent(fontValue));
-            params.append('size', document.getElementById('fontSize').value);
-            params.append('showBadges', document.getElementById('showBadges').checked);
-            params.append('clearChatOnCommand', document.getElementById('clearChatOnCommand').checked);
-            params.append('colon', document.getElementById('colonEnabled').checked);
-
-            if (document.getElementById('autoRemove').checked) {
-                params.append('autoRemove', 'true');
-                params.append('timeout', document.getElementById('removeTimeout').value || '5');
-            }
-
-            // osu!
-            if (document.getElementById('osuModuleToggle').checked) {
-                const osuKey = document.getElementById('osuApiKey').value.trim();
-                if (osuKey) {
-                    params.append('osuapi', osuKey);
-                }
-            }
-
-            // bot!
-            params.append('ignorebots', document.getElementById('botModuleToggle').checked);
-
-            // Новые параметры фона
-            params.append('background', document.getElementById('showBackground').checked);
-            if (document.getElementById('showBackground').checked) {
-                const transparency = parseFloat(document.getElementById('bgTransparency').value).toFixed(2);
-                params.append('bgtransparent', transparency);
-            }
-
-            // Язык
-            params.append('lang', currentLang);
-
-            const url = `v1/index.html?${params.toString()}`;
-            const fullUrl = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)}${url}`;
-            document.getElementById('overlayUrl').value = fullUrl;
-        }
-
-        // Копирование ссылки
-        function copyUrl() {
-            const input = document.getElementById('overlayUrl');
-            input.select();
-            document.execCommand('copy');
-            alert('Ссылка скопирована!');
-        }
-
-        // Сброс настроек
-        function resetSettings() {
-            if (confirm('Сбросить все настройки?')) {
-                document.getElementById('channel').value = 'ikuza47';
-                document.getElementById('fontFamily').value = "'Segoe UI', sans-serif";
-                document.getElementById('fontSize').value = '24';
-                document.getElementById('showBadges').checked = true;
-                document.getElementById('autoRemove').checked = false;
-                document.getElementById('clearChatOnCommand').checked = true;
-                document.getElementById('colonEnabled').checked = false; // По умолчанию выключено
-                document.getElementById('osuModuleToggle').checked = false;
-                document.getElementById('osuApiKey').value = '';
-                document.getElementById('botModuleToggle').checked = false;
-                document.getElementById('showBackground').checked = false; // Новый параметр по умолчанию выключен
-                document.getElementById('bgTransparency').value = '0.3';
-                updateBgTransparencyValue();
-                document.getElementById('customFontInput').classList.add('hidden');
-                document.querySelector('.font-preview').textContent = 'Пример текста';
-                document.querySelector('.font-preview').style.fontFamily = "'Segoe UI', sans-serif";
-                document.getElementById('timeoutGroup').classList.add('hidden');
-                document.getElementById('osuModuleSettings').classList.add('hidden');
-                document.getElementById('backgroundSettings').classList.add('hidden'); // Скрыть настройки фона
-                document.querySelector('.tab[data-tab="basic"]').click();
-                updateUrl();
-                alert('Настройки сброшены');
-            }
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', () => {
-            initLanguage();
-            updateBgTransparencyValue(); // Инициализация значения слайдера
-            updateUrl();
-        });
-    </script>
+    <script src="index.js"></script>
 </body>
 </html>

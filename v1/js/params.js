@@ -25,6 +25,10 @@ const showBadges = urlParams.get('showBadges') === 'true';
 // Параметры двоеточия
 const colonEnabled = urlParams.get('colon') === 'true';
 
+// Новый параметр: время
+const showTime = urlParams.get('msgtime') !== null;
+const timeZone = parseInt(urlParams.get('msgtime') || '0', 10); // по умолчанию UTC+0
+
 // Форматируем цвета
 const shadowColor = `#${shadowColorHex}`;
 
@@ -51,6 +55,7 @@ if (window.debugMode) {
     console.log(`- Бейджики: ${showBadges ? 'включены' : 'отключены'}`);
     console.log(`- Двоеточие после ника: ${colonEnabled ? 'включено' : 'отключено'}`);
     console.log(`- Задний фон: ${showBackground ? `включён (прозрачность: ${bgTransparent})` : 'отключён'}`);
+    console.log(`- Показывать время: ${showTime ? `включено (часовой пояс: UTC${timeZone >= 0 ? '+' : ''}${timeZone})` : 'отключено'}`);
 }
 
 // Экспортируем параметры как глобальные переменные
@@ -68,3 +73,5 @@ window.animationIn = animationIn;
 window.animationOut = animationOut;
 window.showBackground = showBackground; // Новый параметр
 window.bgTransparent = bgTransparent;   // Новый параметр
+window.showTime = showTime;             // Новый параметр
+window.timeZone = timeZone;             // Новый параметр
