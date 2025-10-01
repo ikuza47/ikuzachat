@@ -64,11 +64,11 @@ cd ikuzachat
 - [X] User-Friendly Settings Page
 - [ ] Twitch Emoji Support
 - [ ] Presets
-- [ ] Message Reading Fix
-- [ ] Message Sent Time Display Setting
+- [x] Message Reading Fix
+- [x] Message Sent Time Display Setting
 - [ ] User First Message Mark
 - [ ] Sound Effect Setting with Cooldown, etc.
-- [ ] Message Ignoring Setting
+- [x] Message Ignoring Setting
 - [ ] Commands
 - [ ] Modules
 
