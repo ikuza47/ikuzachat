@@ -1,100 +1,104 @@
-**Русский** | [English](READMEEN.md)
-# IkuzaChat - чат созданный с душой <3
+[Русский](READMERU.md) | **English**
+# IkuzaChat - chat created with love <3
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.1-blue.svg)](https://github.com/ikuza47/ikuzachat)
+[![Version](https://img.shields.io/badge/version-1.2-blue.svg)](https://github.com/ikuza47/ikuzachat)
 
-**IkuzaChat** — это оверлей для Twitch чата, который имеет в своём арсенале много настроек, которые найдут отклик в каждом
+**IkuzaChat** is a Twitch chat overlay with a wide range of customization options to suit everyone.
 
+## ✨ What does the chat have?
 
-## ✨ Что есть у чата?
-
-- **Современный дизайн** страницы настроек для удобного и приятного создания оверлея мечты
-- **Полная настройка чата** под ваши предпочтения
-- **Поддержка эмодзи** 7TV и не только их
-- **Гибкие настройки шрифтов** с выбором из нескольких популярных шрифтов, а так же загрузкой своих
-- **Автоудаление сообщений** через заданный промежуток времени
-- **Автоочистка чата** при использовании команды `/clear` в Twitch
-- **Анимации** появления и исчезновения сообщений
-- **Модульность** изюминка этого чата - модули, о них поподробнее в другом разделе
-
----
-### Использование через сайт
-
-1. **Открыть [сайт](https://ikuza.space/)**
-
-2. **Настройте оверлей**
-   - Введите имя вашего Twitch канала
-   - Настройте шрифт, и другие параметры
-   - Нажмите "Скопировать ссылку"
-
-3. **Добавьте оверлей в OBS**
-   - Добавьте новый источник "Браузер" в OBS
-   - Вставьте сгенерированную ссылку в поле URL
-   - Установите подходящие размеры
-   - Отключите "Захват курсора" (необязательно)
----
-### Установка на свой пк (Рекомендуется)
-
-1. **Клонируйте репозиторий**
-   ```bash
-   git clone https://github.com/ikuza47/ikuzachat.git
-   cd ikuzachat
-   ```
-
-2. **Запустите index.html**
-
-3. **Настройте оверлей**
-   - Введите имя вашего Twitch канала
-   - Настройте шрифт, и другие параметры
-   - Нажмите "Скопировать ссылку"
-
-4. **Добавьте оверлей в OBS**
-   - Добавьте новый источник "Браузер" в OBS
-   - Вставьте сгенерированную ссылку в поле URL
-   - Установите подходящие размеры
-   - Отключите "Захват курсора" (необязательно)
----
-## Модули
-*maybe soon*
+- Modern settings page design for easy and enjoyable creation of the overlay of your dreams
+- Fully customizable chat settings to suit your preferences
+- Support for emojis from 7TV, BTTV, FFZ and Twitch
+- Flexible font settings with a choice of several popular fonts, as well as the ability to upload your own
+- Auto-delete messages after a set period of time
+- Auto-clear chat when using the /clear command in Twitch
+- Animations for message appearance and disappearance
+- Modularity: The highlight of this chat is its modules, more about them in another section
+- Proper emoji replacement that doesn't break text sequences like "((( "
+- Colored user mentions with personalized colors
+- Time display customization with timezone support
 
 ---
-## 📖 Планы
-- [X] Модуль осу (Основа)
-- [X] Цветное упоминание пользователя
-- [X] Удобная страница настроек
-- [ ] Поддержка твич-эмодзи
-- [ ] Пресеты
-- [X] Фикс чтения сообщения
-- [X] Настройка отображения времени отправки сообщения
-- [ ] Отметка первого сообщения пользователя
-- [ ] Настройка звукового сопровождения с кулдауном и т.п.
-- [X] Настройка игнорирования сообщений
-- [ ] Комманды
-- [X] Модули
+### Using via the website
 
-## 🤝 Как внести вклад
+1. **Open [website](https://ikuza.space/)**
 
-Мы приветствуем любые предложения по улучшению проекта! Вот как вы можете помочь:
+2. **Configure the overlay**
+- Enter the name of your Twitch channel
+- Configure the font and other settings
+- Click "Copy link"
 
-1. Предложить идею для чата
-2. Зарепортить баг
-3. Создать форк
-4. Помочь с решением багов
+3. **Add Overlay in OBS**
+- Add a new "Browser" source to OBS
+- Paste the generated link into the URL field
+- Set the appropriate dimensions
+- Disable "Curse Capture" (optional)
+---
+### Installing on your PC (Recommended)
 
-## 📜 Лицензия
+1. **Clone the repository**
+```bash
+git clone https://github.com/ikuza47/ikuzachat.git
+cd ikuzachat
+```
 
-Этот проект лицензирован по лицензии MIT - смотрите файл [LICENSE](LICENSE) для подробностей.
+2. **Run index.html**
 
-## ❤️ Поддержка
-Если чат понравился и хочется, чтобы он смог стать чем-то большим, то можете помочь: [клик](https://boosty.to/ikuza47)
+3. **Configure the overlay**
+- Enter your Twitch channel name
+- Adjust the font and other settings
+- Click "Copy link"
 
-## 🙏 Благодарности
+4. **Add the overlay to OBS**
+- Add a new "Browser" source to OBS
+- Paste the generated link into the URL field
+- Set the appropriate dimensions
+- Disable "Curse Capture" (optional)
+---
+## Modules
+- **osu! module**: Enables support for displaying osu! map info from a link (API key required)
+- **Bot blocker module**: Hide messages from bots (list loaded from GitHub)
 
-Спасибо за использование IkuzaChat! Если вам нравится проект, не забудьте поставить звезду ⭐ на GitHub.
+---
+## 📖 Plans
+- [X] OSU Module (Basic)
+- [X] Colored User Mentions
+- [X] User-Friendly Settings Page
+- [X] Proper emoji replacement (preventing text breakage like "((( ")
+- [ ] Twitch Emoji Support (through tags)
+- [ ] Presets
+- [X] Message Reading Fix
+- [X] Message Sent Time Display Setting
+- [ ] User First Message Mark
+- [ ] Sound Effect Setting with Cooldown, etc.
+- [X] Message Ignoring Setting
+- [ ] Commands
+- [X] Modules
 
-Создано с ❤️ для тех, кто ищет идеальный чат для твича
+## 🤝 How to Contribute
+
+We welcome any suggestions for improving the project! Here's how you can help:
+
+1. Suggest a chat idea
+2. Report a bug
+3. Create a fork
+4. Help with bug fixes
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ❤️ Support
+If you liked the chat and want to see it grow into something bigger, you can help: [click](https://boosty.to/ikuza47)
+
+## 🙏 Thanks
+
+Thanks for using IkuzaChat! If you like the project, don't forget to give it a ⭐ star on GitHub.
+
+Created with ❤️ for those looking for the perfect Twitch chat
 
 ---
 
-**IkuzaChat** © 2025 - Twitch Chat Overlay | Разработано ikuza47
+**IkuzaChat** © 2025 - Twitch Chat Overlay | Developed by ikuza47

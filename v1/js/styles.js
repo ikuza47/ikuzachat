@@ -39,6 +39,20 @@ function applyChatStyles() {
     font-family: var(--font, 'Segoe UI', sans-serif);
 }
 
+/* Стиль для упоминаний пользователей (@username) */
+.mention {
+    word-break: break-all;
+    font-size: calc(var(--size, 24) * 1px);
+    font-family: var(--font, 'Segoe UI', sans-serif);
+}
+
+.emote {
+    vertical-align: middle;
+    height: calc(var(--size, 24) * 1.2 * 1px);
+    margin: 0 2px;
+    border-radius: 2px;
+}
+
 /* Стиль для IkuzaUsername (градиент без анимации) */
 .IkuzaUsername {
     background: linear-gradient(90deg, #FFD700, #FFA500, #DAA520, #F0E68C, #FFD700);
@@ -81,6 +95,23 @@ function applyChatStyles() {
     word-break: break-word;
     font-size: calc(var(--size, 24) * 1px);
     font-family: var(--font, 'Segoe UI', sans-serif);
+}
+
+
+/* Анимация удаления сообщений */
+.msg.removing {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 }
     `;
     document.head.appendChild(style);

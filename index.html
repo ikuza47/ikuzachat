@@ -241,36 +241,40 @@
                         <p class="text-text-secondary text-sm mt-2" id="timeZoneDesc">Выберите часовой пояс для отображения времени</p>
                     </div>
 
-                    <!-- Новый параметр: Отображать задний фон сообщений -->
+
+                    <!-- Отображать бейджики пользователей -->
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="showBackground" class="sr-only peer" onchange="toggleBackgroundSettings(); updateUrl();">
+                            <input type="checkbox" id="showUserBadges" class="sr-only peer" checked onchange="updateUrl()">
                             <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="backgroundLabel">Отображать задний фон сообщений</label>
-                            <p class="text-text-secondary text-sm" id="backgroundDesc">Показывать полупрозрачный черный фон за сообщениями</p>
+                            <label class="block text-text-primary" id="userBadgesLabel">Отображать бейджики пользователей</label>
+                            <p class="text-text-secondary text-sm" id="userBadgesDesc">Показывать бейджики премиум, турбо и другие</p>
                         </div>
-                    </div>
-                    
-                    <!-- Настройки фона (изначально скрыты) -->
-                    <div id="backgroundSettings" class="hidden mt-4 p-4 bg-input-bg rounded-lg border border-border-color">
-                        <label class="block text-text-primary mb-2" id="bgTransparencyLabel">Прозрачность фона</label>
-                        <div class="slider-container">
-                            <input type="range" id="bgTransparency" min="0" max="1" step="0.05" value="0.3" class="slider" oninput="updateBgTransparencyValue(); updateUrl();">
-                            <span id="bgTransparencyValue" class="slider-value">0.30</span>
-                        </div>
-                        <p class="text-text-secondary text-sm mt-2" id="bgTransparencyDesc">0 = полностью прозрачный, 1 = непрозрачный</p>
                     </div>
 
+                    <!-- Отображать бейджики канала -->
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="showBadges" class="sr-only peer" checked onchange="updateUrl()">
+                            <input type="checkbox" id="showChannelBadges" class="sr-only peer" checked onchange="updateUrl()">
                             <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="badgesLabel">Отображать бейджики</label>
-                            <p class="text-text-secondary text-sm" id="badgesDesc">Показывать бейджики модератора, подписчика и т.д.</p>
+                            <label class="block text-text-primary" id="channelBadgesLabel">Отображать бейджики канала</label>
+                            <p class="text-text-secondary text-sm" id="channelBadgesDesc">Показывать бейджики модератора, подписчика и т.д.</p>
+                        </div>
+                    </div>
+
+                    <!-- Отображать бейджики достижений -->
+                    <div class="flex items-start">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="showAchievementBadges" class="sr-only peer" checked onchange="updateUrl()">
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                        </label>
+                        <div class="ml-3">
+                            <label class="block text-text-primary" id="achievementBadgesLabel">Отображать бейджики достижений</label>
+                            <p class="text-text-secondary text-sm" id="achievementBadgesDesc">Показывать бейджики Hype Train, First Time Chatter и т.д.</p>
                         </div>
                     </div>
                     <div class="flex items-start">
@@ -298,6 +302,31 @@
                             <p class="text-text-secondary text-sm" id="clearChatDesc">Чат будет очищаться при команде /clear в Twitch</p>
                         </div>
                     </div>
+                    <!-- Анимация появления/исчезновения -->
+                    <div>
+                        <label class="block text-text-primary mb-2" id="animationInLabel">Анимация появления</label>
+                        <select id="animationIn" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
+                            <option value="none">none</option>
+                            <option value="fadeIn">fadeIn</option>
+                            <option value="slideInUp">slideInUp</option>
+                            <option value="bounceIn">bounceIn</option>
+                            <option value="zoomIn">zoomIn</option>
+                        </select>
+                        <p class="text-text-secondary text-sm mt-1" id="animationInDesc">Выберите анимацию появления сообщений</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-text-primary mb-2" id="animationOutLabel">Анимация исчезновения</label>
+                        <select id="animationOut" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
+                            <option value="none">none</option>
+                            <option value="fadeOut">fadeOut</option>
+                            <option value="slideOutDown">slideOutDown</option>
+                            <option value="bounceOut">bounceOut</option>
+                            <option value="zoomOut">zoomOut</option>
+                        </select>
+                        <p class="text-text-secondary text-sm mt-1" id="animationOutDesc">Выберите анимацию исчезновения сообщений</p>
+                    </div>
+
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="colonEnabled" class="sr-only peer" onchange="updateUrl();">

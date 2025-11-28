@@ -1,7 +1,7 @@
-// Функция для получения osu! API ключа из URL
+// Функция для получения osu! API ключа из URL (с поддержкой нового короткого имени)
 function getOsuApiKey() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('osuapi') || null;
+    return urlParams.get('osu') || urlParams.get('osuapi') || null;
 }
 
 // Инициализируем API ключ из URL
@@ -231,11 +231,11 @@ async function replaceOsuLinksInText(text) {
         return text; // Если нет ключа — не обрабатываем
     }
 
-    // Проверяем, включены ли соответствующие опции
-    const osuMap = new URLSearchParams(window.location.search).get('osuMap') !== 'false';
-    const osuUser = new URLSearchParams(window.location.search).get('osuUser') !== 'false';
-    const osuScore = new URLSearchParams(window.location.search).get('osuScore') !== 'false';
-    const osuHighlight = new URLSearchParams(window.location.search).get('osuHighlight') === 'true';
+    // Проверяем, включены ли соответствующие опции (через глобальные переменные)
+    const osuMap = window.osuMap !== undefined ? window.osuMap : (new URLSearchParams(window.location.search).get('osuMap') !== 'false');
+    const osuUser = window.osuUser !== undefined ? window.osuUser : (new URLSearchParams(window.location.search).get('osuUser') !== 'false');
+    const osuScore = window.osuScore !== undefined ? window.osuScore : (new URLSearchParams(window.location.search).get('osuScore') !== 'false');
+    const osuHighlight = window.osuHighlight !== undefined ? window.osuHighlight : (new URLSearchParams(window.location.search).get('osuHighlight') === 'true');
 
     // Регулярное выражение для поиска ссылки osu.ppy.sh
     const osuLinkRegex = /(https?:\/\/osu\.ppy\.sh\/(?:beatmapsets|beatmaps|users|scores)\/\d+(?:#[a-z]+\/\d+)?)\b/g;

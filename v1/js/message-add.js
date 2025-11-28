@@ -1,6 +1,9 @@
 // Кэш цветов ников
 const userColorCache = {};
 
+// Кэш для отслеживания первых сообщений пользователей
+const firstMessageCache = new Set();
+
 // Глобальный таймер для синхронизации анимаций
 let glowTimer = null;
 let startTime = null;
@@ -51,6 +54,59 @@ function getSpecialUsernameClass(username) {
     return null;
 }
 
+// Функция для обработки Twitch эмодзи из тегов
+function processTwitchEmotesFromTags(text, emotesTag) {
+    if (!text || !emotesTag) return text;
+
+    console.log(`🔄 Обработка Twitch эмодзи: "${emotesTag}" в тексте: "${text}"`);
+
+    const emoteReplacements = {};
+
+    // Парсим тег эмодзи
+    const emotePairs = emotesTag.split('/');
+    for (const pair of emotePairs) {
+        if (!pair) continue;
+
+        const [emoteId, positions] = pair.split(':');
+        if (!emoteId || !positions) continue;
+
+        const positionRanges = positions.split(',');
+        for (const range of positionRanges) {
+            const [start, end] = range.split('-').map(Number);
+            if (start !== undefined && end !== undefined && start <= text.length && end <= text.length) {
+                const emoteCode = text.substring(start, end + 1);
+                emoteReplacements[emoteCode] = {
+                    id: emoteId,
+                    code: emoteCode
+                };
+            }
+        }
+    }
+
+    let resultText = text;
+
+    // Заменяем эмодзи в тексте, начиная с самых длинных
+    const sortedEmotes = Object.keys(emoteReplacements).sort((a, b) => b.length - a.length);
+
+    for (const emoteCode of sortedEmotes) {
+        if (!emoteCode) continue;
+
+        const emoteData = emoteReplacements[emoteCode];
+        // Экранируем специальные символы регулярного выражения
+        const escapedEmoteCode = emoteCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Используем глобальный флаг для замены всех вхождений
+        const regex = new RegExp(escapedEmoteCode, 'g');
+
+        resultText = resultText.replace(regex,
+            `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${emoteData.id}/default/dark/3.0" ` +
+            `alt="${emoteData.code}" class="emote" loading="lazy" />`
+        );
+    }
+
+    console.log(`✅ Результат обработки Twitch эмодзи: "${resultText}"`);
+    return resultText;
+}
+
 // Функция для обработки упоминаний в тексте
 function processMentions(text) {
     // Регулярное выражение для поиска @username
@@ -62,10 +118,10 @@ function processMentions(text) {
             if (specialClass === 'IkuzaUsername' || specialClass === 'HellCakeUsername' || specialClass === 'YatagarasuUsername') {
                 // Для градиентных ников — запускаем синхронизацию
                 startGlowSync();
-                return `<span class="${specialClass}" style="font-family: ${window.font};">@${username}</span>`;
+                return `<span class="${specialClass}" style="font-family: ${window.font}; font-size: ${window.size}px;">@${username}</span>`;
             } else {
                 // Для других специальных ников
-                return `<span class="${specialClass}" style="font-family: ${window.font};">@${username}</span>`;
+                return `<span class="${specialClass}" style="font-family: ${window.font}; font-size: ${window.size}px;">@${username}</span>`;
             }
         } else {
             // Если обычный пользователь — применяем его цвет и шрифт
@@ -77,7 +133,7 @@ function processMentions(text) {
                 userColorCache[username] = colors[Math.floor(Math.random() * colors.length)];
             }
             const color = userColorCache[username];
-            return `<span class="mention" style="color: ${color}; font-family: ${window.font};">@${username}</span>`;
+            return `<span class="mention" style="color: ${color}; font-family: ${window.font}; font-size: ${window.size}px;">@${username}</span>`;
         }
     });
 }
@@ -206,32 +262,53 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         userSpan.style.fontFamily = window.font;
 
         // Добавляем бейджики, если включено
-        if (showBadges && typeof badges !== 'undefined' && typeof badges.parse === 'function') {
+        if ((window.showUserBadges || window.showChannelBadges || window.showAchievementBadges) && typeof badges !== 'undefined' && typeof badges.parse === 'function') {
             if (window.debugMode) console.log('🔄 Парсинг бейджиков...');
             const badgesArray = badges.parse(tags);
-            
+
             if (badgesArray.length > 0) {
                 if (window.debugMode) console.log(`✅ Найдено ${badgesArray.length} бейджиков`);
-                
-                if (typeof badges.createHtml === 'function') {
-                    const badgesHtml = badges.createHtml(badgesArray, window.size, 'left');
-                    if (window.debugMode) console.log('✅ HTML для бейджиков создан');
-                    
-                    // Вставляем бейджики в userSpan
-                    userSpan.innerHTML = badgesHtml;
-                    // Применяем стили к каждому бейджику
-                    const badgeElements = userSpan.querySelectorAll('img');
-                    badgeElements.forEach(img => {
-                        img.className = 'badge';
-                        img.style.wordBreak = 'break-word';
-                        img.style.verticalAlign = 'middle';
-                        img.style.borderRadius = '10%';
-                        img.style.marginRight = '5px';
-                        img.style.marginBottom = '8px';
-                        img.style.height = `${parseInt(window.size) * 0.6}px`; // уменьшено в 2 раза
-                    });
+
+                // Фильтруем бейджики по типам в зависимости от настроек
+                const filteredBadges = badgesArray.filter(badge => {
+                    const badgeType = badge.type;
+
+                    // Определяем тип бейджика и проверяем, разрешен ли он в настройках
+                    if (['moderator', 'broadcaster', 'vip', 'artist', 'subscriber', 'founder', 'sub-gifter', 'subscriber-gift-leader'].includes(badgeType)) {
+                        return window.showChannelBadges; // Канальные бейджики
+                    } else if (['premium', 'turbo', 'hype-train', 'first-time-chatter', 'sub-unlocked', 'bits', 'bits-leader', 'clap', 'cheer', 'hype-chat'].includes(badgeType)) {
+                        return window.showAchievementBadges; // Бейджики достижений
+                    } else {
+                        // Все остальные считаем как пользовательские бейджики
+                        return window.showUserBadges;
+                    }
+                });
+
+                if (filteredBadges.length > 0) {
+                    if (window.debugMode) console.log(`✅ Отфильтровано ${filteredBadges.length} бейджиков для отображения`);
+
+                    if (typeof badges.createHtml === 'function') {
+                        const badgesHtml = badges.createHtml(filteredBadges, window.size, 'left');
+                        if (window.debugMode) console.log('✅ HTML для бейджиков создан');
+
+                        // Вставляем бейджики в userSpan
+                        userSpan.innerHTML = badgesHtml;
+                        // Применяем стили к каждому бейджику
+                        const badgeElements = userSpan.querySelectorAll('img');
+                        badgeElements.forEach(img => {
+                            img.className = 'badge';
+                            img.style.wordBreak = 'break-word';
+                            img.style.verticalAlign = 'middle';
+                            img.style.borderRadius = '10%';
+                            img.style.marginRight = '5px';
+                            img.style.marginBottom = '8px';
+                            img.style.height = `${parseInt(window.size) * 0.6}px`; // уменьшено в 2 раза
+                        });
+                    } else {
+                        console.error('❌ Функция createHtml не найдена в модуле badges');
+                    }
                 } else {
-                    console.error('❌ Функция createHtml не найдена в модуле badges');
+                    if (window.debugMode) console.log('ℹ️ Нет разрешенных бейджиков для отображения');
                 }
             } else {
                 if (window.debugMode) console.log('ℹ️ Бейджики не найдены в тегах');
@@ -277,16 +354,27 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         // Добавляем ник в userSpan
         userSpan.appendChild(nickSpan);
 
-        // Обрабатываем эмодзи
+        // Обрабатываем Twitch эмодзи из тегов сообщения (если есть)
         let processedText = text;
+        if (tags && typeof emotes !== 'undefined') {
+            // Проверяем наличие Twitch эмодзи в тегах
+            const twitchEmotesData = tags.match(/emotes=([^;]+)/);
+            if (twitchEmotesData && twitchEmotesData[1]) {
+                if (window.debugMode) console.log('🔄 Обработка Twitch эмодзи из тегов...');
+                // Сначала обрабатываем Twitch эмодзи напрямую из тегов
+                processedText = processTwitchEmotesFromTags(processedText, twitchEmotesData[1]);
+            }
+        }
+
+        // Затем обрабатываем кэшированные эмодзи (7TV, BTTV, FFZ)
         if (channelId && typeof emotes !== 'undefined' && typeof emotes.replace === 'function') {
-            if (window.debugMode) console.log('🔄 Замена эмодзи в тексте...');
+            if (window.debugMode) console.log('🔄 Замена дополнительных эмодзи (7TV, BTTV, FFZ)...');
             // Передаем имя канала вместе с ID
-            processedText = emotes.replace(text, channelId, channel);
+            processedText = emotes.replace(processedText, channelId, channel);
         } else {
-            if (window.debugMode) console.log('ℹ️ Обработка эмодзи пропущена');
+            if (window.debugMode) console.log('ℹ️ Обработка дополнительных эмодзи (7TV, BTTV, FFZ) пропущена');
             // Если эмодзи не обрабатываются, экранируем HTML в тексте
-            processedText = escapeHtml(text);
+            processedText = escapeHtml(processedText);
         }
 
         // Обрабатываем osu! ссылки (если модуль загружен)
@@ -322,7 +410,27 @@ async function addMessage(username, text, tags, originalText, channelId, color =
         messageDiv.appendChild(userSpan);
         messageDiv.appendChild(spaceSpan); // пробел между ником и сообщением
         messageDiv.appendChild(messageSpan);
-        
+
+        // Проверяем, является ли это первым сообщением пользователя
+        const userLower = username.toLowerCase();
+        if (!firstMessageCache.has(userLower)) {
+            firstMessageCache.add(userLower);
+            // Добавляем элемент "FM" перед ником
+            const fmSpan = document.createElement('span');
+            fmSpan.textContent = 'FM ';
+            fmSpan.style.color = '#ff6bcb'; // розовый цвет для "FM"
+            fmSpan.style.fontWeight = 'bold';
+            fmSpan.style.marginRight = '4px';
+            fmSpan.style.fontSize = '0.8em';
+
+            // Вставляем FM перед ником (в userSpan)
+            if (userSpan.firstChild) {
+                userSpan.insertBefore(fmSpan, userSpan.firstChild);
+            } else {
+                userSpan.appendChild(fmSpan);
+            }
+        }
+
         chatContainer.appendChild(messageDiv);
         
         // Прокрутка вниз только если debugMode = false

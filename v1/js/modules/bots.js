@@ -11,17 +11,17 @@ async function loadBotList() {
 
     try {
         console.log('🔄 Загрузка списка ботов...');
-        const response = await fetch('https://raw.githubusercontent.com/ikuza47/ikuzachat/refs/heads/main/public/bots');
-        
+        const response = await fetch('bots'); // Загружаем файл из той же папки
+
         if (!response.ok) {
             // Если ошибка 404, возможно у канала нет ботов
             if (response.status === 404) {
-                console.log('ℹ️ У канала нет ботов');
+                console.log('ℹ️ Файл со списком ботов не найден');
                 return [];
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const text = await response.text();
         console.log('📥 Получен список ботов:', text);
 
@@ -39,6 +39,14 @@ async function loadBotList() {
 
 // Функция для проверки, является ли пользователь ботом
 function isUserBot(username) {
+    // Проверяем, включена ли блокировка ботов
+    const ignoreBots = window.ignoreBots !== undefined ? window.ignoreBots :
+                      (new URLSearchParams(window.location.search).get('ignorebots') === 'true');
+
+    if (!ignoreBots) {
+        return false; // Блокировка ботов отключена
+    }
+
     if (!botListLoaded) {
         console.warn('⚠️ Список ботов ещё не загружен');
         return false;

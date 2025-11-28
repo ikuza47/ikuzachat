@@ -15,37 +15,51 @@ async function loadTwitchEmotes(channelId) {
 
     try {
         console.log(`🔍 Загрузка Twitch эмодзи для канала: ${channelId}`);
+
+        // Сначала загрузим глобальные Twitch эмодзи через другой API
+        let globalEmotes = {};
+        try {
+            const globalResponse = await fetch(`https://api.ivr.fi/v2/twitch/emotes/global`);
+            if (globalResponse.ok) {
+                const globalData = await globalResponse.json();
+                console.log(`📥 Получены глобальные Twitch эмодзи:`, globalData);
+
+                if (Array.isArray(globalData)) {
+                    console.log(`ℹ️ Найдено ${globalData.length} глобальных Twitch эмодзи`);
+                    for (const emote of globalData) {
+                        globalEmotes[emote.code] = {
+                            url: `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0`,
+                            type: 'twitch'
+                        };
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('❌ Ошибка загрузки глобальных Twitch эмодзи:', err);
+        }
+
+        // Загрузка эмодзи для канала
         const response = await fetch(`https://api.ivr.fi/v2/twitch/emotes/channel/${channelId}`);
-        
+
         if (!response.ok) {
             // Если ошибка 404, возможно у канала нет кастомных эмодзи
             if (response.status === 404) {
                 console.log(`ℹ️ У канала ${channelId} нет кастомных Twitch эмодзи`);
-                return {};
+                // Возвращаем только глобальные эмодзи
+                emotesCache.twitch[channelId] = globalEmotes;
+                console.log(`✅ Загружено ${Object.keys(globalEmotes).length} глобальных Twitch эмодзи`);
+                return globalEmotes;
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log(`📥 Получены Twitch эмодзи для канала ${channelId}:`, data);
-        
-        const emotes = {};
-        
-        // Добавляем глобальные эмодзи
-        if (data.global) {
-            console.log(`ℹ️ Найдено ${data.global.length} глобальных Twitch эмодзи`);
-            for (const emote of data.global) {
-                emotes[emote.code] = {
-                    url: emote.emoteSet === 'global' ? 
-                        `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0` :
-                        `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/2.0`,
-                    type: 'twitch'
-                };
-            }
-        }
-        
+
+        const emotes = {...globalEmotes}; // Начинаем с глобальных эмодзи
+
         // Добавляем эмодзи канала
-        if (data.channel) {
+        if (data?.channel && Array.isArray(data.channel)) {
             console.log(`ℹ️ Найдено ${data.channel.length} эмодзи канала`);
             for (const emote of data.channel) {
                 emotes[emote.code] = {
@@ -54,9 +68,9 @@ async function loadTwitchEmotes(channelId) {
                 };
             }
         }
-        
+
         emotesCache.twitch[channelId] = emotes;
-        console.log(`✅ Загружено ${Object.keys(emotes).length} Twitch эмодзи`);
+        console.log(`✅ Загружено ${Object.keys(emotes).length} Twitch эмодзи (глобальные + канал)`);
         return emotes;
     } catch (error) {
         console.error(`❌ Ошибка загрузки Twitch эмодзи для канала ${channelId}:`, error);
@@ -74,34 +88,55 @@ async function loadBTTVEmotes(channelName) {
 
     try {
         console.log(`🔍 Загрузка BTTV эмодзи для канала: ${channelName}`);
+
+        // Загрузка сначала глобальных BTTV эмодзи
+        let globalResponse;
+        try {
+            globalResponse = await fetch(`https://api.betterttv.net/3/cached/emotes/global`);
+        } catch (err) {
+            console.error('❌ Ошибка загрузки глобальных BTTV эмодзи:', err);
+            globalResponse = null;
+        }
+
+        let globalEmotes = {};
+        if (globalResponse && globalResponse.ok) {
+            const globalData = await globalResponse.json();
+            console.log(`📥 Получены глобальные BTTV эмодзи:`, globalData);
+
+            if (globalData && Array.isArray(globalData)) {
+                console.log(`ℹ️ Найдено ${globalData.length} глобальных BTTV эмодзи`);
+                for (const emote of globalData) {
+                    globalEmotes[emote.code] = {
+                        url: `https://cdn.betterttv.net/emote/${emote.id}/3x`,
+                        type: 'bttv'
+                    };
+                }
+            }
+        } else if (globalResponse?.status === 404) {
+            console.log(`ℹ️ Нет глобальных BTTV эмодзи`);
+        }
+
+        // Загрузка эмодзи канала
         const response = await fetch(`https://api.betterttv.net/3/cached/users/twitch/${channelName}`);
-        
+
         if (!response.ok) {
             // Если ошибка 404, возможно у канала нет BTTV эмодзи
             if (response.status === 404) {
                 console.log(`ℹ️ У канала ${channelName} нет BTTV эмодзи`);
-                return {};
+                // Возвращаем только глобальные эмодзи
+                emotesCache.bttv[channelName] = globalEmotes;
+                console.log(`✅ Загружено ${Object.keys(globalEmotes).length} глобальных BTTV эмодзи`);
+                return globalEmotes;
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log(`📥 Получены BTTV эмодзи для канала ${channelName}:`, data);
-        
-        const emotes = {};
-        
-        // Добавляем глобальные BTTV эмодзи
-        if (data?.sharedEmotes) {
-            console.log(`ℹ️ Найдено ${data.sharedEmotes.length} глобальных BTTV эмодзи`);
-            for (const emote of data.sharedEmotes) {
-                emotes[emote.code] = {
-                    url: `https://cdn.betterttv.net/emote/${emote.id}/3x`,
-                    type: 'bttv'
-                };
-            }
-        }
-        
-        // Добавляем эмодзи канала
+
+        const emotes = {...globalEmotes}; // Начинаем с глобальных эмодзи
+
+        // Добавляем эмодзи канала (если есть)
         if (data?.channelEmotes) {
             console.log(`ℹ️ Найдено ${data.channelEmotes.length} эмодзи канала BTTV`);
             for (const emote of data.channelEmotes) {
@@ -111,9 +146,20 @@ async function loadBTTVEmotes(channelName) {
                 };
             }
         }
-        
+
+        // Старый формат (на случай, если используется)
+        if (data?.sharedEmotes) {
+            console.log(`ℹ️ Найдено ${data.sharedEmotes.length} shared BTTV эмодзи`);
+            for (const emote of data.sharedEmotes) {
+                emotes[emote.code] = {
+                    url: `https://cdn.betterttv.net/emote/${emote.id}/3x`,
+                    type: 'bttv'
+                };
+            }
+        }
+
         emotesCache.bttv[channelName] = emotes;
-        console.log(`✅ Загружено ${Object.keys(emotes).length} BTTV эмодзи`);
+        console.log(`✅ Загружено ${Object.keys(emotes).length} BTTV эмодзи (глобальные + канал)`);
         return emotes;
     } catch (error) {
         console.error(`❌ Ошибка загрузки BTTV эмодзи для канала ${channelName}:`, error);
@@ -167,33 +213,53 @@ async function loadFFZEmotes(channelName) {
 
     try {
         console.log(`🔍 Загрузка FFZ эмодзи для канала: ${channelName}`);
+
+        // Сначала загрузим глобальные FFZ эмодзи
+        let globalEmotes = {};
+        try {
+            const globalResponse = await fetch(`https://api.frankerfacez.com/v1/set/global`);
+            if (globalResponse.ok) {
+                const globalData = await globalResponse.json();
+                console.log(`📥 Получены глобальные FFZ эмодзи:`, globalData);
+
+                if (globalData?.sets) {
+                    for (const [setId, set] of Object.entries(globalData.sets)) {
+                        if (set?.emoticons) {
+                            console.log(`ℹ️ Найдено ${set.emoticons.length} глобальных FFZ эмодзи из сета ${setId}`);
+                            for (const emote of set.emoticons) {
+                                globalEmotes[emote.name] = {
+                                    url: emote.urls['4'] || emote.urls['2'] || emote.urls['1'],
+                                    type: 'ffz'
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('❌ Ошибка загрузки глобальных FFZ эмодзи:', err);
+        }
+
+        // Теперь загрузим эмодзи канала
         const response = await fetch(`https://api.frankerfacez.com/v1/room/${channelName}`);
-        
+
         if (!response.ok) {
             // Если ошибка 404, возможно у канала нет FFZ эмодзи
             if (response.status === 404) {
                 console.log(`ℹ️ У канала ${channelName} нет FFZ эмодзи`);
-                return {};
+                // Возвращаем только глобальные эмодзи
+                emotesCache.ffz[channelName] = globalEmotes;
+                console.log(`✅ Загружено ${Object.keys(globalEmotes).length} глобальных FFZ эмодзи`);
+                return globalEmotes;
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log(`📥 Получены FFZ эмодзи для канала ${channelName}:`, data);
-        
-        const emotes = {};
-        
-        // Добавляем глобальные FFZ эмодзи
-        if (data?.sets?.[3]?.emoticons) {
-            console.log(`ℹ️ Найдено ${data.sets[3].emoticons.length} глобальных FFZ эмодзи`);
-            for (const emote of data.sets[3].emoticons) {
-                emotes[emote.name] = {
-                    url: emote.urls['4'] || emote.urls['2'] || emote.urls['1'],
-                    type: 'ffz'
-                };
-            }
-        }
-        
+
+        const emotes = {...globalEmotes}; // Начинаем с глобальных эмодзи
+
         // Добавляем эмодзи канала
         if (data?.room?.set && data?.sets?.[data.room.set]?.emoticons) {
             console.log(`ℹ️ Найдено ${data.sets[data.room.set].emoticons.length} эмодзи канала FFZ`);
@@ -204,9 +270,24 @@ async function loadFFZEmotes(channelName) {
                 };
             }
         }
-        
+
+        // Обработка альтернативного формата
+        if (data?.sets) {
+            for (const [setId, set] of Object.entries(data.sets)) {
+                if (set?.emoticons) {
+                    console.log(`ℹ️ Найдено ${set.emoticons.length} FFZ эмодзи из сета ${setId} (альтернативный формат)`);
+                    for (const emote of set.emoticons) {
+                        emotes[emote.name] = {
+                            url: emote.urls['4'] || emote.urls['2'] || emote.urls['1'],
+                            type: 'ffz'
+                        };
+                    }
+                }
+            }
+        }
+
         emotesCache.ffz[channelName] = emotes;
-        console.log(`✅ Загружено ${Object.keys(emotes).length} FFZ эмодзи`);
+        console.log(`✅ Загружено ${Object.keys(emotes).length} FFZ эмодзи (глобальные + канал)`);
         return emotes;
     } catch (error) {
         console.error(`❌ Ошибка загрузки FFZ эмодзи для канала ${channelName}:`, error);
@@ -224,23 +305,49 @@ async function load7TVEmotes(channelId) {
 
     try {
         console.log(`🔍 Загрузка 7TV эмодзи для канала: ${channelId}`);
+
+        // Загрузка глобальных 7TV эмодзи
+        let globalEmotes = {};
+        try {
+            const globalResponse = await fetch(`https://7tv.io/v3/emote-sets/global`);
+            if (globalResponse.ok) {
+                const globalData = await globalResponse.json();
+                console.log(`📥 Получены глобальные 7TV эмодзи:`, globalData);
+
+                if (globalData?.emotes) {
+                    console.log(`ℹ️ Найдено ${globalData.emotes.length} глобальных 7TV эмодзи`);
+                    for (const emote of globalData.emotes) {
+                        globalEmotes[emote.name] = {
+                            url: `https://cdn.7tv.app/emote/${emote.id}/2x`,
+                            type: '7tv'
+                        };
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('❌ Ошибка загрузки глобальных 7TV эмодзи:', err);
+        }
+
         const response = await fetch(`https://7tv.io/v3/users/twitch/${channelId}`);
-        
+
         if (!response.ok) {
             // Если ошибка 404, возможно у канала нет 7TV эмодзи
             if (response.status === 404) {
                 console.log(`ℹ️ У канала ${channelId} нет 7TV эмодзи`);
-                return {};
+                // Возвращаем только глобальные эмодзи
+                emotesCache['7tv'][channelId] = globalEmotes;
+                console.log(`✅ Загружено ${Object.keys(globalEmotes).length} глобальных 7TV эмодзи`);
+                return globalEmotes;
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log(`📥 Получены 7TV эмодзи для канала ${channelId}:`, data);
-        
-        const emotes = {};
-        
-        // Добавляем эмодзи канала
+
+        const emotes = {...globalEmotes}; // Начинаем с глобальных эмодзи
+
+        // Добавляем эмодзи канала через emote_set
         if (data?.emote_set?.emotes) {
             console.log(`ℹ️ Найдено ${data.emote_set.emotes.length} 7TV эмодзи`);
             for (const emote of data.emote_set.emotes) {
@@ -250,9 +357,31 @@ async function load7TVEmotes(channelId) {
                 };
             }
         }
-        
+
+        // Также проверим альтернативный путь к эмодзи (если emote_set в корне объекта)
+        if (data?.emote_set_id) {
+            // Если указан ID набора, попробуем получить его отдельно
+            try {
+                const emoteSetResponse = await fetch(`https://7tv.io/v3/emote-sets/${data.emote_set_id}`);
+                if (emoteSetResponse.ok) {
+                    const emoteSetData = await emoteSetResponse.json();
+                    if (emoteSetData?.emotes) {
+                        console.log(`ℹ️ Найдено ${emoteSetData.emotes.length} 7TV эмодзи из набора`);
+                        for (const emote of emoteSetData.emotes) {
+                            emotes[emote.name] = {
+                                url: `https://cdn.7tv.app/emote/${emote.id}/2x`,
+                                type: '7tv'
+                            };
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('⚠️ Ошибка при загрузке эмодзи из конкретного набора:', err);
+            }
+        }
+
         emotesCache['7tv'][channelId] = emotes;
-        console.log(`✅ Загружено ${Object.keys(emotes).length} 7TV эмодзи`);
+        console.log(`✅ Загружено ${Object.keys(emotes).length} 7TV эмодзи (глобальные + канал)`);
         return emotes;
     } catch (error) {
         console.error(`❌ Ошибка загрузки 7TV эмодзи для канала ${channelId}:`, error);
@@ -292,44 +421,55 @@ function replaceEmotes(text, channelId, channelName) {
         console.log('⚠️ Не указан текст для замены эмодзи');
         return text;
     }
-    
+
     console.log(`🔍 Замена эмодзи в тексте: "${text}"`);
-    
+
     // Получаем все эмодзи
     const twitchEmotes = emotesCache.twitch[channelId] || {};
     const bttvEmotes = emotesCache.bttv[channelName] || {};
     const ffzEmotes = emotesCache.ffz[channelName] || {};
     const sevenTVEmotes = emotesCache['7tv'][channelId] || {};
-    
+
     console.log(`ℹ️ Доступно эмодзи: Twitch=${Object.keys(twitchEmotes).length}, BTTV=${Object.keys(bttvEmotes).length}, FFZ=${Object.keys(ffzEmotes).length}, 7TV=${Object.keys(sevenTVEmotes).length}`);
-    
+
     // Объединяем все эмодзи в один объект
     const allEmotes = { ...twitchEmotes, ...bttvEmotes, ...ffzEmotes, ...sevenTVEmotes };
-    
+
     if (Object.keys(allEmotes).length === 0) {
         console.log('⚠️ Нет доступных эмодзи для замены');
         return text;
     }
-    
-    // Сортируем эмодзи по длине (от самых длинных к самым коротким)
+
+    // Сортируем эмодзи по длине (от самых длинных к самым коротким) для правильной замены
     const sortedEmotes = Object.keys(allEmotes).sort((a, b) => b.length - a.length);
-    
+
     let replacedText = text;
-    
-    // Заменяем каждый эмодзи
+
+    // Проходим по каждому эмодзи в порядке убывания длины
     for (const emote of sortedEmotes) {
-        // Создаем регулярное выражение для поиска эмодзи как отдельного слова
-        // Учитываем кириллицу и специальные символы
         const escapedEmote = escapeRegExp(emote);
-        const regex = new RegExp(`\\b${escapedEmote}\\b`, 'gu'); // добавлен флаг 'u' для Unicode
-        
-        replacedText = replacedText.replace(regex, (match) => {
+        // Используем регулярное выражение с границами слов
+        // Ищем эмодзи как отдельное слово: с границами слов, пробелами или специальными символами
+        const regex = new RegExp(`(^|\\s)(${escapedEmote})(?=$|\\s)`, 'g');
+
+        replacedText = replacedText.replace(regex, (match, prefix, emoteMatch) => {
             const emoteData = allEmotes[emote];
+            if (!emoteData || !emoteData.url) {
+                console.warn(`⚠️ Нет данных для эмодзи: "${emote}"`);
+                return match; // Возвращаем оригинальное совпадение, если нет данных
+            }
             console.log(`✅ Замена эмодзи: "${emote}" -> ${emoteData.url}`);
-            return `<img src="${emoteData.url}" alt="${emote}" class="emote" loading="lazy" />`;
+            // Создаем безопасный URL, экранируем кавычки и проверяем формат
+            let safeUrl = String(emoteData.url || '').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            // Проверяем, что URL начинается с http://, https:// или data: (для base64 изображений)
+            if (!safeUrl.startsWith('http://') && !safeUrl.startsWith('https://') && !safeUrl.startsWith('//') && !safeUrl.startsWith('data:')) {
+                console.warn(`⚠️ Недопустимый URL для эмодзи: "${emote}", URL: "${safeUrl}"`);
+                return match; // Возвращаем оригинальное совпадение, если URL недопустим
+            }
+            return `${prefix}<img src="${safeUrl}" alt="${emote}" class="emote" loading="lazy" />`;
         });
     }
-    
+
     console.log(`✅ Результат замены: "${replacedText}"`);
     return replacedText;
 }
@@ -371,23 +511,8 @@ async function initEmotes(channel) {
 
 // Добавление стилей для эмодзи
 function addEmotesStyles() {
-    // Проверяем, не добавлены ли уже стили
-    if (document.querySelector('style#emotes-styles')) {
-        return;
-    }
-    
-    const style = document.createElement('style');
-    style.id = 'emotes-styles';
-    style.textContent = `
-        .emote {
-            vertical-align: middle;
-            height: ${parseInt(size) * 1.2}px;
-            margin: 0 2px;
-            border-radius: 2px;
-        }
-    `;
-    document.head.appendChild(style);
-    console.log('✅ Стили для эмодзи добавлены');
+    // Стили для эмодзи теперь определены в styles.js
+    console.log('ℹ️ Стили для эмодзи определены в styles.js');
 }
 
 // Обработка ошибок загрузки эмодзи

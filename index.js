@@ -28,8 +28,16 @@ const translations = {
         backgroundDesc: 'Показывать полупрозрачный черный фон за сообщениями',
         bgTransparencyLabel: 'Прозрачность фона',
         bgTransparencyDesc: '0 = полностью прозрачный, 1 = непрозрачный',
-        badgesLabel: 'Отображать бейджики',
-        badgesDesc: 'Показывать бейджики модератора, подписчика и т.д.',
+        userBadgesLabel: 'Отображать бейджики пользователей',
+        userBadgesDesc: 'Показывать бейджики премиум, турбо и другие',
+        channelBadgesLabel: 'Отображать бейджики канала',
+        channelBadgesDesc: 'Показывать бейджики модератора, подписчика и т.д.',
+        achievementBadgesLabel: 'Отображать бейджики достижений',
+        achievementBadgesDesc: 'Показывать бейджики Hype Train, First Time Chatter и т.д.',
+        animationInLabel: 'Анимация появления',
+        animationInDesc: 'Выберите анимацию появления сообщений',
+        animationOutLabel: 'Анимация исчезновения',
+        animationOutDesc: 'Выберите анимацию исчезновения сообщений',
         autoRemoveLabel: 'Автоудаление сообщений',
         autoRemoveDesc: 'Автоматически удалять старые сообщения через указанное время',
         timeoutLabel: 'Время до удаления (сек)',
@@ -80,8 +88,16 @@ const translations = {
         backgroundDesc: 'Display a semi-transparent black background behind messages',
         bgTransparencyLabel: 'Background transparency',
         bgTransparencyDesc: '0 = fully transparent, 1 = opaque',
-        badgesLabel: 'Display Badges',
-        badgesDesc: 'Show moderator, subscriber, etc. badges',
+        userBadgesLabel: 'Display User Badges',
+        userBadgesDesc: 'Show premium, turbo and other user badges',
+        channelBadgesLabel: 'Display Channel Badges',
+        channelBadgesDesc: 'Show moderator, subscriber, etc. badges',
+        achievementBadgesLabel: 'Display Achievement Badges',
+        achievementBadgesDesc: 'Show Hype Train, First Time Chatter and other achievement badges',
+        animationInLabel: 'Animation on appearance',
+        animationInDesc: 'Select the animation when messages appear',
+        animationOutLabel: 'Animation on disappearance',
+        animationOutDesc: 'Select the animation when messages disappear',
         autoRemoveLabel: 'Auto Remove Messages',
         autoRemoveDesc: 'Automatically delete old messages after a specified time',
         timeoutLabel: 'Time until deletion (sec)',
@@ -140,8 +156,16 @@ function updateTexts() {
     document.getElementById('backgroundDesc').textContent = t.backgroundDesc;
     document.getElementById('bgTransparencyLabel').textContent = t.bgTransparencyLabel;
     document.getElementById('bgTransparencyDesc').textContent = t.bgTransparencyDesc;
-    document.getElementById('badgesLabel').textContent = t.badgesLabel;
-    document.getElementById('badgesDesc').textContent = t.badgesDesc;
+    document.getElementById('userBadgesLabel').textContent = t.userBadgesLabel;
+    document.getElementById('userBadgesDesc').textContent = t.userBadgesDesc;
+    document.getElementById('channelBadgesLabel').textContent = t.channelBadgesLabel;
+    document.getElementById('channelBadgesDesc').textContent = t.channelBadgesDesc;
+    document.getElementById('achievementBadgesLabel').textContent = t.achievementBadgesLabel;
+    document.getElementById('achievementBadgesDesc').textContent = t.achievementBadgesDesc;
+    document.getElementById('animationInLabel').textContent = t.animationInLabel;
+    document.getElementById('animationInDesc').textContent = t.animationInDesc;
+    document.getElementById('animationOutLabel').textContent = t.animationOutLabel;
+    document.getElementById('animationOutDesc').textContent = t.animationOutDesc;
     document.getElementById('autoRemoveLabel').textContent = t.autoRemoveLabel;
     document.getElementById('autoRemoveDesc').textContent = t.autoRemoveDesc;
     document.getElementById('timeoutLabel').textContent = t.timeoutLabel;
@@ -301,49 +325,56 @@ function updateUrl() {
         const customFont = document.getElementById('customFontInput').value.trim();
         fontValue = customFont ? `'${customFont}', sans-serif` : 'sans-serif';
     }
-    params.append('font', encodeURIComponent(fontValue));
-    params.append('size', document.getElementById('fontSize').value);
-    params.append('showBadges', document.getElementById('showBadges').checked);
-    params.append('clearChatOnCommand', document.getElementById('clearChatOnCommand').checked);
-    params.append('colon', document.getElementById('colonEnabled').checked);
+    params.append('f', encodeURIComponent(fontValue));  // короткое имя для шрифта
+    params.append('sz', document.getElementById('fontSize').value);  // короткое имя для размера
+
+    // Параметры бейджиков - теперь с отдельными переключателями
+    params.append('ubdg', document.getElementById('showUserBadges').checked); // короткое имя для showUserBadges
+    params.append('cbdg', document.getElementById('showChannelBadges').checked); // короткое имя для showChannelBadges
+    params.append('abdg', document.getElementById('showAchievementBadges').checked); // короткое имя для showAchievementBadges
+
+    params.append('clrc', document.getElementById('clearChatOnCommand').checked);  // короткое имя
+    params.append('col', document.getElementById('colonEnabled').checked);  // короткое имя
 
     if (document.getElementById('autoRemove').checked) {
-        params.append('autoRemove', 'true');
-        params.append('timeout', document.getElementById('removeTimeout').value || '5');
+        params.append('rm', 'true');  // короткое имя
+        params.append('tm', document.getElementById('removeTimeout').value || '5');  // короткое имя
     }
 
     // Время
     if (document.getElementById('showTime').checked) {
         const timeZone = document.getElementById('timeZone').value;
-        params.append('msgtime', timeZone);
+        params.append('mt', timeZone);  // короткое имя
     }
 
     // osu!
     if (document.getElementById('osuModuleToggle').checked) {
         const osuKey = document.getElementById('osuApiKey').value.trim();
         if (osuKey) {
-            params.append('osuapi', osuKey);
+            params.append('osu', osuKey);  // короткое имя
         }
 
         // Новые параметры osu!
-        params.append('osuMap', document.getElementById('osuMap').checked);
-        params.append('osuScore', document.getElementById('osuScore').checked); // выключен, но передаётся как false
-        params.append('osuUser', document.getElementById('osuUser').checked);
-        params.append('osuHighlight', document.getElementById('osuHighlight').checked);
+        params.append('osum', document.getElementById('osuMap').checked);  // короткое имя
+        params.append('osus', document.getElementById('osuScore').checked);  // короткое имя
+        params.append('osuu', document.getElementById('osuUser').checked);  // короткое имя
+        params.append('osuh', document.getElementById('osuHighlight').checked);  // короткое имя
     }
 
     // bot!
-    params.append('ignorebots', document.getElementById('botModuleToggle').checked);
+    params.append('bb', document.getElementById('botModuleToggle').checked);  // короткое имя (block bots)
 
-    // Новые параметры фона
-    params.append('background', document.getElementById('showBackground').checked);
-    if (document.getElementById('showBackground').checked) {
-        const transparency = parseFloat(document.getElementById('bgTransparency').value).toFixed(2);
-        params.append('bgtransparent', transparency);
+
+    // Добавляем параметры анимаций (если они включены)
+    const animationIn = document.getElementById('animationIn').value;
+    const animationOut = document.getElementById('animationOut').value;
+
+    if (animationIn !== 'none') {
+        params.append('animationIn', animationIn);
     }
-
-    // Язык
-    params.append('lang', currentLang);
+    if (animationOut !== 'none') {
+        params.append('animationOut', animationOut);
+    }
 
     const url = `v1/index.html?${params.toString()}`;
     const fullUrl = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)}${url}`;
@@ -364,7 +395,11 @@ function resetSettings() {
         document.getElementById('channel').value = 'ikuza47';
         document.getElementById('fontFamily').value = "'Segoe UI', sans-serif";
         document.getElementById('fontSize').value = '24';
-        document.getElementById('showBadges').checked = true;
+        document.getElementById('showUserBadges').checked = true;
+        document.getElementById('showChannelBadges').checked = true;
+        document.getElementById('showAchievementBadges').checked = true;
+        document.getElementById('animationIn').value = 'none';
+        document.getElementById('animationOut').value = 'none';
         document.getElementById('autoRemove').checked = false;
         document.getElementById('clearChatOnCommand').checked = true;
         document.getElementById('colonEnabled').checked = false; // По умолчанию выключено
@@ -377,16 +412,12 @@ function resetSettings() {
         document.getElementById('osuUser').checked = true; // По умолчанию включено
         document.getElementById('osuHighlight').checked = false; // По умолчанию выключено
         document.getElementById('botModuleToggle').checked = false;
-        document.getElementById('showBackground').checked = false; // Новый параметр по умолчанию выключен
-        document.getElementById('bgTransparency').value = '0.3';
-        updateBgTransparencyValue();
         document.getElementById('customFontInput').classList.add('hidden');
         document.querySelector('.font-preview').textContent = 'Пример текста';
         document.querySelector('.font-preview').style.fontFamily = "'Segoe UI', sans-serif";
         document.getElementById('timeoutGroup').classList.add('hidden');
         document.getElementById('osuModuleSettings').classList.add('hidden');
         document.getElementById('timeSettings').classList.add('hidden'); // Скрыть настройки времени
-        document.getElementById('backgroundSettings').classList.add('hidden'); // Скрыть настройки фона
         document.querySelector('.tab[data-tab="basic"]').click();
         updateUrl();
         alert('Настройки сброшены');
