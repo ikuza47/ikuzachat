@@ -13,6 +13,7 @@
     --color-indigo-500: oklch(58.5% 0.233 277.117);
     --color-indigo-600: oklch(51.1% 0.262 276.966);
     --color-indigo-700: oklch(45.7% 0.24 277.023);
+    --color-secondary-500: #6c75cf;
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-300: oklch(87.2% 0.01 258.338);
@@ -476,6 +477,9 @@
   .bg-indigo-600 {
     background-color: var(--color-indigo-600);
   }
+  .bg-secondary-500 {
+    background-color: var(--color-secondary-500);
+  }
   .bg-transparent {
     background-color: transparent;
   }
@@ -581,6 +585,9 @@
   }
   .text-red-500 {
     color: var(--color-red-500);
+  }
+  .text-secondary-500 {
+    color: var(--color-secondary-500);
   }
   .text-white {
     color: var(--color-white);
@@ -751,6 +758,13 @@
       }
     }
   }
+  .hover\:bg-secondary-500 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-secondary-500);
+      }
+    }
+  }
   .hover\:text-gray-200 {
     &:hover {
       @media (hover: hover) {
@@ -774,6 +788,11 @@
   .focus\:ring-indigo-500 {
     &:focus {
       --tw-ring-color: var(--color-indigo-500);
+    }
+  }
+  .focus\:ring-secondary-500 {
+    &:focus {
+      --tw-ring-color: var(--color-secondary-500);
     }
   }
   .focus\:outline-none {

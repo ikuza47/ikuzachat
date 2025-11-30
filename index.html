@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru" style="background-color: #0a0a0a; color: #f0f0f0;">
+<html lang="en" style="background-color: #0a0a0a; color: #f0f0f0;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">IkuzaChat - Настройки</title>
+    <title id="pageTitle">IkuzaChat - Settings</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,6 +25,8 @@
                         'accent-orange-hover': '#fbd8c0',
                         'input-bg': '#1a1a1a',
                         'button-text': '#0a0a0a',
+                        'secondary': '#6C75CF',
+                        'secondary-hover': '#5a62b8',
                     }
                 }
             }
@@ -111,7 +114,7 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            background: #f9c7a0;
+            background: #6C75CF;
             cursor: pointer;
         }
 
@@ -119,7 +122,7 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            background: #f9c7a0;
+            background: #6C75CF;
             cursor: pointer;
             border: none;
         }
@@ -127,8 +130,43 @@
         .slider-value {
             min-width: 40px;
             text-align: center;
-            color: #f9c7a0;
+            color: #6C75CF;
             font-weight: 500;
+        }
+
+        .hover\:text-secondary:hover {
+            color: #6C75CF;
+        }
+
+        .hover\:text-primary:hover {
+            color: #f0f0f0;
+        }
+
+        /* Custom scrollbar - always visible to prevent layout shift */
+        html {
+            overflow-y: scroll; /* Always show vertical scrollbar to prevent layout shift */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(86, 88, 103, 0.4) transparent;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(86, 88, 103, 0.4); /* Subtle thumb color */
+            border-radius: 6px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(108, 117, 207, 0.7); /* Secondary color with transparency */
         }
     </style>
 </head>
@@ -140,52 +178,54 @@
                 <img src="logo.png" alt="IkuzaChat Logo" class="w-10 h-10 rounded-full border border-accent-orange/50">
                 <h1 id="mainTitle" class="text-xl md:text-2xl font-bold text-white">IkuzaChat</h1>
             </div>
-            <select id="langSelector" class="px-3 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="changeLanguage()">
-                <option value="ru">Русский</option>
-                <option value="en">English</option>
-            </select>
+            <div class="flex items-center gap-2">
+                <a href="https://twitch.tv/ikuza47" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center hover:opacity-80 transition-opacity">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/twitch.svg" alt="Twitch" class="w-8 h-8" width="32" height="32" style="filter: invert(1);">
+                </a>
+                <a href="https://github.com/ikuza47/ikuzachat" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center hover:opacity-80 transition-opacity">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg" alt="GitHub" class="w-8 h-8" width="32" height="32" style="filter: invert(1);">
+                </a>
+            </div>
         </header>
-
-        <p id="subtitle" class="text-text-secondary text-center mb-6">Настройте ваш оверлей для Twitch чата</p>
 
         <!-- Табы -->
         <div class="flex flex-wrap gap-2 mb-6 border-b border-border-color pb-2">
-            <button class="tab active px-4 py-2 rounded-md bg-card-bg text-accent-orange font-medium border-l-2 border-accent-orange" data-tab="basic" id="tabBasic">Основное</button>
-            <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-text-primary font-medium" data-tab="advanced" id="tabAdvanced">Дополнительно</button>
-            <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-text-primary font-medium" data-tab="modules" id="tabModules">Модули</button>
-            <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-text-primary font-medium" data-tab="debug" id="tabDebug">Отладка</button>
+            <button class="tab active px-4 py-2 rounded-md bg-card-bg text-accent-orange font-medium" data-tab="basic" id="tabBasic">Basic</button>
+            <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-secondary font-medium" data-tab="advanced" id="tabAdvanced">Advanced</button>
+            <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-secondary font-medium" data-tab="modules" id="tabModules">Modules</button>
+            <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-secondary font-medium" data-tab="debug" id="tabDebug">Debug</button>
         </div>
 
         <!-- Контент вкладок -->
         <div class="tab-content active space-y-6" id="basic-tab">
             <div class="bg-card-bg border border-border-color rounded-lg p-6">
-                <h2 class="text-lg font-semibold text-accent-orange mb-4" id="basicSettingsTitle">Основные настройки</h2>
+                <h2 class="text-lg font-semibold text-accent-orange mb-4" id="basicSettingsTitle">Basic Settings</h2>
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-text-primary mb-2" id="channelLabel">Имя канала</label>
-                        <input id="channel" type="text" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" placeholder="Введите имя канала" value="ikuza47" onchange="updateUrl()">
-                        <p class="text-text-secondary text-sm mt-1" id="channelDesc">Введите имя Twitch-канала, с которого будет читаться чат</p>
+                        <label class="block text-text-primary mb-2" id="channelLabel">Channel Name</label>
+                        <input id="channel" type="text" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="Enter channel name" value="ikuza47" onchange="updateUrl()">
+                        <p class="text-text-secondary text-sm mt-1" id="channelDesc">Enter the name of the Twitch channel from which the chat will be read</p>
                     </div>
                     <div>
-                        <label class="block text-text-primary mb-2" id="fontLabel">Шрифт</label>
-                        <select id="fontFamily" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
+                        <label class="block text-text-primary mb-2" id="fontLabel">Font</label>
+                        <select id="fontFamily" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary" onchange="updateUrl()">
                             <option value="'Segoe UI', sans-serif">Segoe UI</option>
                             <option value="Arial, sans-serif">Arial</option>
                             <option value="'Helvetica Neue', sans-serif">Helvetica</option>
                             <option value="'Open Sans', sans-serif">Open Sans</option>
                             <option value="'Roboto', sans-serif">Roboto</option>
                             <option value="'Inter', sans-serif">Inter</option>
-                            <option value="system-ui">Системные шрифты</option>
-                            <option value="custom">Другой шрифт...</option>
+                            <option value="system-ui">System fonts</option>
+                            <option value="custom">Other font...</option>
                         </select>
-                        <input id="customFontInput" type="text" class="w-full mt-2 px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange hidden" placeholder="Введите название шрифта" onchange="updateUrl()">
-                        <div class="font-preview text-text-secondary mt-2 px-2 py-1">Пример текста</div>
-                        <p class="text-text-secondary text-sm mt-1" id="fontDesc">Выберите шрифт для отображения сообщений в чате</p>
+                        <input id="customFontInput" type="text" class="w-full mt-2 px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary hidden" placeholder="Enter font name" onchange="updateUrl()">
+                        <div class="font-preview text-text-secondary mt-2 px-2 py-1" id="fontPreviewText">Example text</div>
+                        <p class="text-text-secondary text-sm mt-1" id="fontDesc">Choose a font for displaying messages in chat</p>
                     </div>
                     <div>
-                        <label class="block text-text-primary mb-2" id="sizeLabel">Размер шрифта</label>
+                        <label class="block text-text-primary mb-2" id="sizeLabel">Font Size</label>
                         <input id="fontSize" type="number" min="12" max="36" value="24" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
-                        <p class="text-text-secondary text-sm mt-1" id="sizeDesc">Размер текста в чате в пикселях</p>
+                        <p class="text-text-secondary text-sm mt-1" id="sizeDesc">The size of the text in the chat in pixels</p>
                     </div>
                 </div>
             </div>
@@ -193,53 +233,51 @@
 
         <div class="tab-content space-y-6 hidden" id="advanced-tab">
             <div class="bg-card-bg border border-border-color rounded-lg p-6">
-                <h2 class="text-lg font-semibold text-accent-orange mb-4" id="advancedSettingsTitle">Дополнительные настройки</h2>
+                <h2 class="text-lg font-semibold text-accent-orange mb-4" id="advancedSettingsTitle">Advanced Settings</h2>
                 <div class="space-y-6">
                     <!-- Новый параметр: Показывать время -->
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="showTime" class="sr-only peer" onchange="toggleTimeSettings(); updateUrl();">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="timeLabel">Показывать время</label>
-                            <p class="text-text-secondary text-sm" id="timeDesc">Показывать текущее время в формате HH:MM перед ником</p>
+                            <label class="block text-text-primary" id="timeLabel">Show time</label>
+                            <p class="text-text-secondary text-sm" id="timeDesc">Show current time in HH:MM format before the username</p>
                         </div>
                     </div>
-                    
+
                     <!-- Настройки часового пояса (изначально скрыты) -->
                     <div id="timeSettings" class="hidden mt-4 p-4 bg-input-bg rounded-lg border border-border-color">
-                        <label class="block text-text-primary mb-2" id="timeZoneLabel">Часовой пояс</label>
-                        <select id="timeZone" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
-                            <option value="-12">UTC-12</option>
-                            <option value="-11">UTC-11</option>
-                            <option value="-10">UTC-10</option>
-                            <option value="-9">UTC-9</option>
-                            <option value="-8">UTC-8</option>
-                            <option value="-7">UTC-7</option>
-                            <option value="-6">UTC-6</option>
-                            <option value="-5">UTC-5</option>
-                            <option value="-4">UTC-4</option>
-                            <option value="-3">UTC-3</option>
-                            <option value="-2">UTC-2</option>
-                            <option value="-1">UTC-1</option>
-                            <option value="0" selected>UTC+0</option>
-                            <option value="+1">UTC+1</option>
-                            <option value="+2">UTC+2</option>
-                            <option value="+3">UTC+3</option>
-                            <option value="+4">UTC+4</option>
-                            <option value="+5">UTC+5</option>
-                            <option value="+6">UTC+6</option>
-                            <option value="+7">UTC+7</option>
-                            <option value="+8">UTC+8</option>
-                            <option value="+9">UTC+9</option>
-                            <option value="+10">UTC+10</option>
-                            <option value="+11">UTC+11</option>
-                            <option value="+12">UTC+12</option>
-                            <option value="+13">UTC+13</option>
-                            <option value="+14">UTC+14</option>
+                        <label class="block text-text-primary mb-2" id="timeZoneLabel">Time zone</label>
+                        <select id="timeZone" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary" onchange="updateUrl()">
+                            <option value="-12">UTC -12</option>
+                            <option value="-11">UTC -11</option>
+                            <option value="-10">UTC -10</option>
+                            <option value="-9">UTC -9</option>
+                            <option value="-8">UTC -8</option>
+                            <option value="-7">UTC -7</option>
+                            <option value="-6">UTC -6</option>
+                            <option value="-5">UTC -5</option>
+                            <option value="-4">UTC -4</option>
+                            <option value="-3">UTC -3</option>
+                            <option value="-2">UTC -2</option>
+                            <option value="-1">UTC -1</option>
+                            <option value="0" selected>UTC 0</option>
+                            <option value="+1">UTC +1</option>
+                            <option value="+2">UTC +2</option>
+                            <option value="+3">UTC +3</option>
+                            <option value="+4">UTC +4</option>
+                            <option value="+5">UTC +5</option>
+                            <option value="+6">UTC +6</option>
+                            <option value="+7">UTC +7</option>
+                            <option value="+8">UTC +8</option>
+                            <option value="+9">UTC +9</option>
+                            <option value="+10">UTC +10</option>
+                            <option value="+11">UTC +11</option>
+                            <option value="+12">UTC +12</option>
                         </select>
-                        <p class="text-text-secondary text-sm mt-2" id="timeZoneDesc">Выберите часовой пояс для отображения времени</p>
+                        <p class="text-text-secondary text-sm mt-2" id="timeZoneDesc">Select the time zone for displaying time</p>
                     </div>
 
 
@@ -247,11 +285,11 @@
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="showUserBadges" class="sr-only peer" checked onchange="updateUrl()">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="userBadgesLabel">Отображать бейджики пользователей</label>
-                            <p class="text-text-secondary text-sm" id="userBadgesDesc">Показывать бейджики премиум, турбо и другие</p>
+                            <label class="block text-text-primary" id="userBadgesLabel">Display User Badges</label>
+                            <p class="text-text-secondary text-sm" id="userBadgesDesc">Show premium, turbo and other user badges</p>
                         </div>
                     </div>
 
@@ -259,11 +297,11 @@
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="showChannelBadges" class="sr-only peer" checked onchange="updateUrl()">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="channelBadgesLabel">Отображать бейджики канала</label>
-                            <p class="text-text-secondary text-sm" id="channelBadgesDesc">Показывать бейджики модератора, подписчика и т.д.</p>
+                            <label class="block text-text-primary" id="channelBadgesLabel">Display Channel Badges</label>
+                            <p class="text-text-secondary text-sm" id="channelBadgesDesc">Show moderator, subscriber, etc. badges</p>
                         </div>
                     </div>
 
@@ -271,71 +309,71 @@
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="showAchievementBadges" class="sr-only peer" checked onchange="updateUrl()">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="achievementBadgesLabel">Отображать бейджики достижений</label>
-                            <p class="text-text-secondary text-sm" id="achievementBadgesDesc">Показывать бейджики Hype Train, First Time Chatter и т.д.</p>
+                            <label class="block text-text-primary" id="achievementBadgesLabel">Display Achievement Badges</label>
+                            <p class="text-text-secondary text-sm" id="achievementBadgesDesc">Show Hype Train and other achievement badges</p>
                         </div>
                     </div>
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="autoRemove" class="sr-only peer" onchange="toggleTimeout(); updateUrl();">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="autoRemoveLabel">Автоудаление сообщений</label>
-                            <p class="text-text-secondary text-sm" id="autoRemoveDesc">Автоматически удалять старые сообщения через указанное время</p>
+                            <label class="block text-text-primary" id="autoRemoveLabel">Auto Remove Messages</label>
+                            <p class="text-text-secondary text-sm" id="autoRemoveDesc">Automatically delete old messages after a specified time</p>
                         </div>
                     </div>
                     <div id="timeoutGroup" class="hidden">
-                        <label class="block text-text-primary mb-2" id="timeoutLabel">Время до удаления (сек)</label>
-                        <input id="removeTimeout" type="number" min="3" max="30" value="5" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
-                        <p class="text-text-secondary text-sm mt-1" id="timeoutDesc">Через сколько секунд удалять сообщение</p>
+                        <label class="block text-text-primary mb-2" id="timeoutLabel">Time until deletion (sec)</label>
+                        <input id="removeTimeout" type="number" min="3" max="30" value="5" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary" onchange="updateUrl()">
+                        <p class="text-text-secondary text-sm mt-1" id="timeoutDesc">How many seconds to delete the message after</p>
                     </div>
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="clearChatOnCommand" class="sr-only peer" checked onchange="updateUrl();">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="clearChatLabel">Автоочистка чата</label>
-                            <p class="text-text-secondary text-sm" id="clearChatDesc">Чат будет очищаться при команде /clear в Twitch</p>
+                            <label class="block text-text-primary" id="clearChatLabel">Auto Clear Chat</label>
+                            <p class="text-text-secondary text-sm" id="clearChatDesc">Chat will be cleared when using /clear command in Twitch</p>
                         </div>
                     </div>
                     <!-- Анимация появления/исчезновения -->
                     <div>
-                        <label class="block text-text-primary mb-2" id="animationInLabel">Анимация появления</label>
-                        <select id="animationIn" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
+                        <label class="block text-text-primary mb-2" id="animationInLabel">Animation on appearance</label>
+                        <select id="animationIn" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary" onchange="updateUrl()">
                             <option value="none">none</option>
                             <option value="fadeIn">fadeIn</option>
                             <option value="slideInUp">slideInUp</option>
                             <option value="bounceIn">bounceIn</option>
                             <option value="zoomIn">zoomIn</option>
                         </select>
-                        <p class="text-text-secondary text-sm mt-1" id="animationInDesc">Выберите анимацию появления сообщений</p>
+                        <p class="text-text-secondary text-sm mt-1" id="animationInDesc">Select the animation when messages appear</p>
                     </div>
 
                     <div>
-                        <label class="block text-text-primary mb-2" id="animationOutLabel">Анимация исчезновения</label>
-                        <select id="animationOut" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" onchange="updateUrl()">
+                        <label class="block text-text-primary mb-2" id="animationOutLabel">Animation on disappearance</label>
+                        <select id="animationOut" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary" onchange="updateUrl()">
                             <option value="none">none</option>
                             <option value="fadeOut">fadeOut</option>
                             <option value="slideOutDown">slideOutDown</option>
                             <option value="bounceOut">bounceOut</option>
                             <option value="zoomOut">zoomOut</option>
                         </select>
-                        <p class="text-text-secondary text-sm mt-1" id="animationOutDesc">Выберите анимацию исчезновения сообщений</p>
+                        <p class="text-text-secondary text-sm mt-1" id="animationOutDesc">Select the animation when messages disappear</p>
                     </div>
 
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="colonEnabled" class="sr-only peer" onchange="updateUrl();">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="colonLabel">Добавлять двоеточие после ника</label>
-                            <p class="text-text-secondary text-sm" id="colonDesc">Добавлять : после имени пользователя в сообщениях</p>
+                            <label class="block text-text-primary" id="colonLabel">Add colon after nickname</label>
+                            <p class="text-text-secondary text-sm" id="colonDesc">Add : after the username in messages</p>
                         </div>
                     </div>
                 </div>
@@ -344,22 +382,22 @@
 
         <div class="tab-content space-y-6 hidden" id="modules-tab">
             <div class="bg-card-bg border border-border-color rounded-lg p-6">
-                <h2 class="text-lg font-semibold text-accent-orange mb-4" id="modulesTitle">Модули</h2>
+                <h2 class="text-lg font-semibold text-accent-orange mb-4" id="modulesTitle">Modules</h2>
                 <div class="space-y-6">
                     <!-- osu! -->
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="osuModuleToggle" class="sr-only peer" onchange="toggleOsuSettings(); updateUrl();">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3 flex-1">
-                            <label class="block text-text-primary" id="osuModuleLabel">osu! модуль</label>
-                            <p class="text-text-secondary text-sm" id="osuModuleDesc">Включает поддержку отображения информации о картах osu! по ссылке</p>
+                            <label class="block text-text-primary" id="osuModuleLabel">osu! module</label>
+                            <p class="text-text-secondary text-sm" id="osuModuleDesc">Enables support for displaying osu! map info from a link</p>
                             <div id="osuModuleSettings" class="mt-4 hidden">
-                                <label class="block text-text-primary mb-2" id="osuApiKeyLabel">osu! API ключ</label>
-                                <input id="osuApiKey" type="text" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-orange" placeholder="osu! API ключ" onchange="updateUrl()">
+                                <label class="block text-text-primary mb-2" id="osuApiKeyLabel">osu! API key</label>
+                                <input id="osuApiKey" type="text" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="osu! API key" onchange="updateUrl()">
                                 <p class="text-text-secondary text-sm mt-1">
-                                    <a href="https://github.com/ikuza47/ikuzachat/blob/main/publics/howgetosuapi.md" id="osuApiLink" class="text-accent-orange hover:underline" target="_blank" id="osuApiLinkText">Instruction</a>
+                                    <a href="https://github.com/ikuza47/ikuzachat/blob/main/publics/howgetosuapi.md" id="osuApiLink" class="text-secondary hover:underline" target="_blank" id="osuApiLinkText">Instruction</a>
                                 </p>
 
                                 <!-- Новые настройки osu! -->
@@ -367,44 +405,44 @@
                                     <div class="flex items-start">
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" id="osuMap" class="sr-only peer" checked onchange="updateUrl();">
-                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                                         </label>
                                         <div class="ml-3">
-                                            <label class="block text-text-primary" id="osuMapLabel">Парсинг карты</label>
-                                            <p class="text-text-secondary text-sm" id="osuMapDesc">Парсит ссылку на мапу и выводит информацию</p>
+                                            <label class="block text-text-primary" id="osuMapLabel">Parse map</label>
+                                            <p class="text-text-secondary text-sm" id="osuMapDesc">Parses map link and displays information</p>
                                         </div>
                                     </div>
 
                                     <div class="flex items-start">
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" id="osuScore" class="sr-only peer" disabled onchange="updateUrl();">
-                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange opacity-50 cursor-not-allowed"></div>
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary opacity-50 cursor-not-allowed"></div>
                                         </label>
                                         <div class="ml-3">
-                                            <label class="block text-text-primary" id="osuScoreLabel">Парсинг скоры</label>
-                                            <p class="text-text-secondary text-sm" id="osuScoreDesc">Парсит ссылку на скор и выводит информацию о скоре (не работает)</p>
+                                            <label class="block text-text-primary" id="osuScoreLabel">Parse score</label>
+                                            <p class="text-text-secondary text-sm" id="osuScoreDesc">Parses score link and displays score info (not working)</p>
                                         </div>
                                     </div>
 
                                     <div class="flex items-start">
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" id="osuUser" class="sr-only peer" checked onchange="updateUrl();">
-                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                                         </label>
                                         <div class="ml-3">
-                                            <label class="block text-text-primary" id="osuUserLabel">Парсинг юзера</label>
-                                            <p class="text-text-secondary text-sm" id="osuUserDesc">Парсит ссылку на юзера и выводит информацию о нём</p>
+                                            <label class="block text-text-primary" id="osuUserLabel">Parse user</label>
+                                            <p class="text-text-secondary text-sm" id="osuUserDesc">Parses user link and displays user info</p>
                                         </div>
                                     </div>
 
                                     <div class="flex items-start">
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" id="osuHighlight" class="sr-only peer" onchange="updateUrl();">
-                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                                         </label>
                                         <div class="ml-3">
-                                            <label class="block text-text-primary" id="osuHighlightLabel">Выделять информацию</label>
-                                            <p class="text-text-secondary text-sm" id="osuHighlightDesc">Меняет часть текста на другой цвет: \n Карта - розовый \n Скор - жёлтый \n Юзер - синий</p>
+                                            <label class="block text-text-primary" id="osuHighlightLabel">Highlight info</label>
+                                            <p class="text-text-secondary text-sm" id="osuHighlightDesc">Changes part of the text to another color: \n Map - pink \n Score - yellow \n User - blue</p>
                                         </div>
                                     </div>
                                 </div>
@@ -416,11 +454,11 @@
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="botModuleToggle" class="sr-only peer" onchange="updateUrl();">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="botModuleLabel">Блокировка ботов</label>
-                            <p class="text-text-secondary text-sm" id="botModuleDesc">Скрывать сообщения от ботов (список загружается с GitHub)</p>
+                            <label class="block text-text-primary" id="botModuleLabel">Block Bots</label>
+                            <p class="text-text-secondary text-sm" id="botModuleDesc">Hide messages from bots (list loaded from GitHub)</p>
                         </div>
                     </div>
                 </div>
@@ -429,17 +467,17 @@
 
         <div class="tab-content space-y-6 hidden" id="debug-tab">
             <div class="bg-card-bg border border-border-color rounded-lg p-6">
-                <h2 class="text-lg font-semibold text-accent-orange mb-4">Отладочные настройки</h2>
+                <h2 class="text-lg font-semibold text-accent-orange mb-4" id="debugSettingsTitle">Debug settings</h2>
                 <div class="space-y-6">
                     <!-- Тестовый режим -->
                     <div class="flex items-start">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="testModeToggle" class="sr-only peer" onchange="updateUrl();">
-                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
                         </label>
                         <div class="ml-3">
-                            <label class="block text-text-primary" id="testModeLabel">Тестовый режим</label>
-                            <p class="text-text-secondary text-sm" id="testModeDesc">Генерирует рандомные сообщения с эмодзи для тестирования</p>
+                            <label class="block text-text-primary" id="testModeLabel">Test mode</label>
+                            <p class="text-text-secondary text-sm" id="testModeDesc">Generates random messages with emotes for testing</p>
                         </div>
                     </div>
                 </div>
@@ -450,18 +488,18 @@
         <div class="flex flex-col sm:flex-row gap-3 mt-6">
             <button class="btn flex-1 px-4 py-2 bg-accent-orange hover:bg-accent-orange-hover text-button-text rounded-md font-medium transition" onclick="copyUrl()" id="copyBtnText">
                 <i class="fas fa-copy mr-2"></i>
-                Скопировать ссылку
+                Copy Link
             </button>
-            <button class="btn flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md font-medium transition" onclick="resetSettings()" id="resetBtnText">
+            <button class="btn flex-1 px-4 py-2 bg-secondary hover:bg-secondary-hover text-white rounded-md font-medium transition" onclick="resetSettings()" id="resetBtnText">
                 <i class="fas fa-redo mr-2"></i>
-                Сбросить
+                Reset
             </button>
         </div>
 
         <!-- Ссылка -->
         <div class="mt-6 p-4 bg-card-bg border border-border-color rounded-lg">
             <div class="bg-input-bg border border-border-color rounded-md p-3">
-                <input id="overlayUrl" type="text" readonly class="w-full bg-transparent text-accent-orange outline-none font-mono text-sm" value="">
+                <input id="overlayUrl" type="text" readonly class="w-full bg-transparent text-secondary outline-none font-mono text-sm" value="">
             </div>
         </div>
     </div>
