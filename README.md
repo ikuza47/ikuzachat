@@ -1,8 +1,9 @@
 # IkuzaChat - chat created with love <3
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.2-blue.svg)](https://github.com/ikuza47/ikuzachat)
-
+![ ](./publics/ikuzachat-preview.png)
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg"></a>
+  <a href="https://github.com/ikuza47/ikuzachat"><img src="https://img.shields.io/badge/version-1.2-blue.svg"></a>
+</p>
 **IkuzaChat** is a Twitch chat overlay with a wide range of customization options to suit everyone.
 
 ## What does the chat have?
