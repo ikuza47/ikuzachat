@@ -53,6 +53,9 @@ const osuHighlight = urlParams.get('osuh') === 'true' || urlParams.get('osuHighl
 // Параметры ботов (с поддержкой короткого имени)
 const ignoreBots = urlParams.get('bb') === 'true' || urlParams.get('ignorebots') === 'true'; // ignorebots -> bb (block bots)
 
+// Параметр тестового режима (с поддержкой короткого имени)
+const testMode = urlParams.get('tm') === 'true' || urlParams.get('testmode') === 'true';
+
 // Форматируем цвета
 const shadowColor = `#${shadowColorHex}`;
 
@@ -88,6 +91,7 @@ if (window.debugMode) {
     console.log(`- osu! парсинг юзера: ${osuUser ? 'включён' : 'отключён'}`);
     console.log(`- osu! выделение: ${osuHighlight ? 'включено' : 'отключено'}`);
     console.log(`- Блокировка ботов: ${ignoreBots ? 'включена' : 'отключена'}`);
+    console.log(`- Тестовый режим: ${testMode ? 'включён' : 'отключён'}`);
 }
 
 // Экспортируем параметры как глобальные переменные
@@ -115,3 +119,4 @@ window.osuScore = osuScore;             // Новый параметр
 window.osuUser = osuUser;               // Новый параметр
 window.osuHighlight = osuHighlight;     // Новый параметр
 window.ignoreBots = ignoreBots;         // Новый параметр
+window.testMode = testMode;             // Новый параметр

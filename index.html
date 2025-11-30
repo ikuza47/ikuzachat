@@ -153,6 +153,7 @@
             <button class="tab active px-4 py-2 rounded-md bg-card-bg text-accent-orange font-medium border-l-2 border-accent-orange" data-tab="basic" id="tabBasic">Основное</button>
             <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-text-primary font-medium" data-tab="advanced" id="tabAdvanced">Дополнительно</button>
             <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-text-primary font-medium" data-tab="modules" id="tabModules">Модули</button>
+            <button class="tab px-4 py-2 rounded-md bg-primary-bg text-text-secondary hover:bg-card-bg hover:text-text-primary font-medium" data-tab="debug" id="tabDebug">Отладка</button>
         </div>
 
         <!-- Контент вкладок -->
@@ -420,6 +421,25 @@
                         <div class="ml-3">
                             <label class="block text-text-primary" id="botModuleLabel">Блокировка ботов</label>
                             <p class="text-text-secondary text-sm" id="botModuleDesc">Скрывать сообщения от ботов (список загружается с GitHub)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content space-y-6 hidden" id="debug-tab">
+            <div class="bg-card-bg border border-border-color rounded-lg p-6">
+                <h2 class="text-lg font-semibold text-accent-orange mb-4">Отладочные настройки</h2>
+                <div class="space-y-6">
+                    <!-- Тестовый режим -->
+                    <div class="flex items-start">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="testModeToggle" class="sr-only peer" onchange="updateUrl();">
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-orange"></div>
+                        </label>
+                        <div class="ml-3">
+                            <label class="block text-text-primary" id="testModeLabel">Тестовый режим</label>
+                            <p class="text-text-secondary text-sm" id="testModeDesc">Генерирует рандомные сообщения с эмодзи для тестирования</p>
                         </div>
                     </div>
                 </div>

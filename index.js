@@ -12,6 +12,7 @@ const translations = {
         tabBasic: 'Основное',
         tabAdvanced: 'Дополнительно',
         tabModules: 'Модули',
+        tabDebug: 'Отладка',
         basicSettingsTitle: 'Основные настройки',
         channelLabel: 'Имя канала',
         channelDesc: 'Введите имя Twitch-канала, с которого будет читаться чат',
@@ -72,6 +73,7 @@ const translations = {
         tabBasic: 'Basic',
         tabAdvanced: 'Advanced',
         tabModules: 'Modules',
+        tabDebug: 'Debug',
         basicSettingsTitle: 'Basic Settings',
         channelLabel: 'Channel Name',
         channelDesc: 'Enter the name of the Twitch channel from which the chat will be read',
@@ -138,6 +140,7 @@ function updateTexts() {
     document.getElementById('tabBasic').textContent = t.tabBasic;
     document.getElementById('tabAdvanced').textContent = t.tabAdvanced;
     document.getElementById('tabModules').textContent = t.tabModules;
+    document.getElementById('tabDebug').textContent = t.tabDebug;
 
     document.getElementById('basicSettingsTitle').textContent = t.basicSettingsTitle;
     document.getElementById('channelLabel').textContent = t.channelLabel;
@@ -191,6 +194,10 @@ function updateTexts() {
     document.getElementById('osuHighlightDesc').textContent = t.osuHighlightDesc;
     document.getElementById('botModuleLabel').textContent = t.botModuleLabel;
     document.getElementById('botModuleDesc').textContent = t.botModuleDesc;
+
+    // Debug tab labels
+    document.getElementById('testModeLabel').textContent = currentLang === 'ru' ? 'Тестовый режим' : 'Test mode';
+    document.getElementById('testModeDesc').textContent = currentLang === 'ru' ? 'Генерирует рандомные сообщения с эмодзи для тестирования' : 'Generates random messages with emotes for testing';
 
     document.getElementById('copyBtnText').innerHTML = `<i class="fas fa-copy mr-2"></i>${t.copyBtnText}`;
     document.getElementById('resetBtnText').innerHTML = `<i class="fas fa-redo mr-2"></i>${t.resetBtnText}`;
@@ -364,6 +371,9 @@ function updateUrl() {
     // bot!
     params.append('bb', document.getElementById('botModuleToggle').checked);  // короткое имя (block bots)
 
+    // testmode
+    params.append('tm', document.getElementById('testModeToggle').checked);  // короткое имя
+
 
     // Добавляем параметры анимаций (если они включены)
     const animationIn = document.getElementById('animationIn').value;
@@ -412,6 +422,7 @@ function resetSettings() {
         document.getElementById('osuUser').checked = true; // По умолчанию включено
         document.getElementById('osuHighlight').checked = false; // По умолчанию выключено
         document.getElementById('botModuleToggle').checked = false;
+        document.getElementById('testModeToggle').checked = false;
         document.getElementById('customFontInput').classList.add('hidden');
         document.querySelector('.font-preview').textContent = 'Пример текста';
         document.querySelector('.font-preview').style.fontFamily = "'Segoe UI', sans-serif";

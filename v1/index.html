@@ -225,6 +225,10 @@
                 if (typeof window.updateLoadingStatus === 'function') {
                     window.updateLoadingStatus('Подключение к Twitch чату...');
                 }
+            } else if (src.includes('test-mode.js')) {
+                if (typeof window.updateLoadingStatus === 'function') {
+                    window.updateLoadingStatus('Загрузка тестового режима...');
+                }
             }
             
             script.onload = function() {
@@ -269,7 +273,8 @@
             'js/emotes.js',
             'js/styles.js',
             'js/message-add.js',
-            'js/twitch-connect.js'
+            'js/twitch-connect.js',
+            'js/test-mode.js'
         ];
         
         // Обновляем статус загрузки
