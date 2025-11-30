@@ -121,17 +121,26 @@ async function initializeEmotes() {
 
 function connectToChat() {
     console.log(`📡 Подключение к Twitch IRC для канала #${channel}...`);
-    
+
     // Обновляем статус загрузки
     if (typeof window.updateLoadingStatus === 'function') {
         window.updateLoadingStatus('Подключение к Twitch чату...');
     }
-    
+
     // Искусственная задержка для более продолжительной анимации
     setTimeout(() => {
         try {
+            // Закрываем предыдущее соединение, если оно существует
+            if (socket) {
+                socket.onclose = null;  // Убираем предыдущий обработчик
+                socket.onmessage = null;  // Убираем предыдущий обработчик сообщений
+                socket.onerror = null;  // Убираем предыдущий обработчик ошибок
+                socket.onopen = null;  // Убираем предыдущий обработчик открытия
+                socket.close();  // Закрываем соединение
+            }
+
             socket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
-            
+
             socket.onopen = () => {
                 console.log('✅ WebSocket соединение установлено');
                 reconnectAttempts = 0;
@@ -141,10 +150,10 @@ function connectToChat() {
                 socket.send('USER justinfan12345 8 * :justinfan12345');
                 socket.send(`JOIN #${channel}`);
                 console.log(`✅ Отправлен запрос на подключение к #${channel}`);
-                
+
                 // Устанавливаем флаг успешного подключения
                 connectionEstablished = true;
-                
+
                 // Проверяем, все ли ресурсы загружены
                 if (badgesInitialized && emotesInitialized) {
                     console.log('✅ Все ресурсы загружены, скрываем индикатор загрузки');
@@ -159,18 +168,18 @@ function connectToChat() {
             socket.onmessage = async (event) => {
                 const message = event.data;
                 console.log(`📩 Получено сообщение: ${message}`);
-                
+
                 // Обработка PING
                 if (message.startsWith('PING')) {
                     console.log('📨 Ответ на PING');
                     socket.send('PONG :tmi.twitch.tv');
                     return;
                 }
-                
+
                 // Обработка CLEARCHAT (очистка чата)
                 if (message.includes(' CLEARCHAT #')) {
                     console.log('🧹 Обнаружена команда очистки чата');
-                    
+
                     // Проверяем, включена ли настройка автоочистки
                     if (clearChatOnCommand) {
                         console.log('🧹 Автоочистка чата включена, очищаем чат');
@@ -180,7 +189,7 @@ function connectToChat() {
                     }
                     return;
                 }
-                
+
                 // Обработка PRIVMSG (сообщения)
                 if (message.includes(' PRIVMSG #')) {
                     console.log('💬 Обнаружено сообщение чата');
@@ -188,16 +197,16 @@ function connectToChat() {
                         // Извлекаем теги
                         const tags = extractTags(message);
                         console.log(`🔖 Теги сообщения: ${tags}`);
-                        
+
                         // Извлекаем room-id
                         const roomIdMatch = message.match(/@.*?room-id=(\d+);/);
                         let roomId = roomIdMatch ? roomIdMatch[1] : null;
                         console.log(`🆔 Room ID из сообщения: ${roomId || 'не найден'}`);
-                        
+
                         // Извлекаем никнейм
                         const username = extractUsername(message);
                         console.log(`👤 Имя пользователя: ${username}`);
-                        
+
                         // Проверка на бота (если модуль загружен)
                         if (window.botModule && typeof window.botModule.isUserBot === 'function') {
                             if (window.botModule.isUserBot(username)) {
@@ -207,11 +216,11 @@ function connectToChat() {
                         } else {
                             console.log('ℹ️ Модуль ботов не загружен или не доступен');
                         }
-                        
+
                         // Извлекаем текст сообщения
                         const text = extractMessageText(message);
                         console.log(`📝 Текст сообщения: ${text}`);
-                        
+
                         if (!text) {
                             console.log('⚠️ Текст сообщения пуст');
                             return;
@@ -364,16 +373,16 @@ function connectToChat() {
 
             socket.onclose = (event) => {
                 console.log(`🔌 Соединение закрыто (код: ${event.code}, причина: ${event.reason})`);
-                
+
                 if (!connectionEstablished && reconnectAttempts >= maxReconnectAttempts) {
                     console.error('❌ Превышено максимальное количество попыток переподключения');
                     if (typeof window.showErrorIndicator === 'function') {
-                        window.showErrorIndicator('Не удалось подключиться к чату Twitch', 
+                        window.showErrorIndicator('Не удалось подключиться к чату Twitch',
                             'Проверьте имя канала и интернет-соединение');
                     }
                     return;
                 }
-                
+
                 if (reconnectAttempts < maxReconnectAttempts) {
                     reconnectAttempts++;
                     const delay = Math.min(5000 * reconnectAttempts, 30000);
