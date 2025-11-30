@@ -6,8 +6,6 @@ let channelUserId = null;
 let badgesInitialized = false;
 let emotesInitialized = false;
 let connectionEstablished = false;
-// Переменная для отслеживания скрытия сообщений
-let messageHidden = false;
 
 // Инициализация бейджиков
 async function initializeBadges() {
@@ -226,56 +224,24 @@ function connectToChat() {
                             return;
                         }
 
-                        // Проверка на HTML-комментарии (исключая новые команды <!- и ->)
-                        if (text.includes('<!--') && !text.includes('<!-')) {
-                            console.log('💬 Сообщение содержит HTML-комментарий <!--, игнорируем');
-                            return;
+                        // Заменяем потенциально проблемные символы на безопасные
+                        // Заменяем <!- и -> на безопасные символы
+                        let processedText = text;
+                        processedText = processedText.replace(/<!-/g, '&lt;!-');
+                        processedText = processedText.replace(/->/g, '-&gt;');
+                        processedText = processedText.replace(/<!--/g, '&lt;!--');
+
+                        // Проверка на HTML-комментарии и замена на безопасные символы
+                        if (processedText.includes('&lt;!--')) {
+                            console.log('💬 Обнаружен HTML-комментарий, экранирован для безопасности');
                         }
 
-                        // Проверяем на команды скрытия/показа сообщений
-                        // <!- скрывает сообщения после этого символа
-                        // -> показывает сообщения после этого символа, если были скрыты
-
-                        // Если сообщения скрыты, пропускаем их
-                        if (messageHidden) {
-                            console.log('💬 Сообщение скрыто командой <!-');
-                            // Проверяем, есть ли в сообщении команда показа, чтобы переключить состояние
-                            if (text.includes('->')) {
-                                messageHidden = false;
-                                console.log('💬 Команда показа сообщений получена, последующие сообщения будут отображаться');
-                            }
-                            return;
-                        } else if (text.includes('<!-')) {
-                            messageHidden = true;
-                            console.log('💬 Команда скрытия сообщений получена, последующие сообщения будут скрыты');
-                            // Текущее сообщение будет отображено, а следующие - скрыты
-                        }
-
-                        // Проверяем на команды скрытия/показа сообщений
-                        // <!- скрывает сообщения после этого символа
-                        // -> показывает сообщения после этого символа, если были скрыты
-
-                        // Если сообщения скрыты, пропускаем их
-                        if (messageHidden) {
-                            console.log('💬 Сообщение скрыто командой <!-');
-                            // Проверяем, есть ли в сообщении команда показа, чтобы переключить состояние
-                            if (text.includes('->')) {
-                                messageHidden = false;
-                                console.log('💬 Команда показа сообщений получена, последующие сообщения будут отображаться');
-                            }
-                            return;
-                        } else if (text.includes('<!-')) {
-                            messageHidden = true;
-                            console.log('💬 Команда скрытия сообщений получена, последующие сообщения будут скрыты');
-                            // Текущее сообщение будет отображено, а следующие - скрыты
-                        }
-
-                        // Проверяем, есть ли HTML-теги
-                        const hasHtmlTags = /<[^>]*>/.test(text);
+                        // Проверяем, есть ли HTML-теги в уже обработанном тексте
+                        const hasHtmlTags = /<[^>]*>/.test(processedText);
 
                         // Ищем потенциальные HTML-сущности (включая невалидные)
                         // Это любые последовательности вида &...;
-                        const potentialEntities = text.match(/&[^;\s]*;/g) || [];
+                        const potentialEntities = processedText.match(/&[^;\s]*;/g) || [];
 
                         // Если есть HTML-теги, экранируем только их
                         if (hasHtmlTags) {
@@ -285,35 +251,35 @@ function connectToChat() {
                             if (potentialEntities.length > 0) {
                                 // Разбиваем текст по HTML-тегам, сохраняя и сущности
                                 const tagRegex = /(<[^>]*>)/g;
-                                const parts = text.split(tagRegex);
+                                const parts = processedText.split(tagRegex);
 
-                                let processedText = '';
+                                let finalProcessedText = '';
                                 for (const part of parts) {
                                     if (tagRegex.test(part)) { // Это HTML-тег
-                                        processedText += escapeHtml(part);
+                                        finalProcessedText += escapeHtml(part);
                                     } else { // Это контент между тегами
-                                        processedText += part;
+                                        finalProcessedText += part;
                                     }
                                 }
 
-                                addMessage(username, processedText, tags, processedText, roomId);
+                                addMessage(username, finalProcessedText, tags, finalProcessedText, roomId);
                             } else {
                                 const tagRegex = /<[^>]*>/g;
-                                const escapedText = text.replace(tagRegex, function(match) {
+                                const escapedText = processedText.replace(tagRegex, function(match) {
                                     return escapeHtml(match);
                                 });
                                 addMessage(username, escapedText, tags, escapedText, roomId);
                             }
                         }
                         // Если есть потенциальные HTML-сущности или комбинации &#, обрабатываем осторожно
-                        else if (text.includes('&#')) {
+                        else if (processedText.includes('&#')) {
                             // Если в тексте есть &# (даже в неправильной комбинации), заменяем & и # на безопасные символы
                             console.log('💬 Сообщение содержит комбинацию &#, заменяем & на &amp; и # на безопасный символ');
 
                             // Заменяем &# на &amp;# для предотвращения интерпретации как HTML entity
-                            let processedText = text.replace(/&(#)/g, '&amp;$1');
+                            let finalProcessedText = processedText.replace(/&(#)/g, '&amp;$1');
 
-                            addMessage(username, processedText, tags, processedText, roomId);
+                            addMessage(username, finalProcessedText, tags, finalProcessedText, roomId);
                         } else if (potentialEntities.length > 0) {
                             // Проверяем, какие из них валидные
                             const validEntityPattern = /^(?:&[a-zA-Z][a-zA-Z0-9]*;|&#\d+;|&#x[a-fA-F0-9]+;)$/;
@@ -329,36 +295,36 @@ function connectToChat() {
                             if (hasOnlyValidEntities) {
                                 // Все сущности валидные, добавляем как есть
                                 console.log('💬 Безопасное сообщение с валидными HTML-сущностями, добавляем');
-                                addMessage(username, text, tags, text, roomId);
+                                addMessage(username, processedText, tags, processedText, roomId);
                             } else {
                                 // Есть невалидные сущности (включая &41;), экранируем & чтобы предотвратить их обработку
                                 console.log('💬 Сообщение содержит невалидные HTML-сущности, экранируем &');
                                 // Для правильной обработки заменим все &, за которыми НЕ следует валидная HTML entity, на &amp;
 
                                 // Сохраним валидные entity в временный контейнер
-                                let processedText = text;
+                                let finalProcessedText = processedText;
                                 const tempPlaceholders = [];
 
                                 // Заменим валидные entity на временные плейсхолдеры
-                                processedText = processedText.replace(/(&[a-zA-Z][a-zA-Z0-9]*;|&#\d+;|&#x[a-fA-F0-9]+;)/g, function(match) {
+                                finalProcessedText = finalProcessedText.replace(/(&[a-zA-Z][a-zA-Z0-9]*;|&#\d+;|&#x[a-fA-F0-9]+;)/g, function(match) {
                                     const index = tempPlaceholders.length;
                                     tempPlaceholders[index] = match;
                                     return `__HTML_ENTITY_${index}__`;
                                 });
 
                                 // Теперь экранируем оставшиеся & перед ; (возможные невалидные entity)
-                                processedText = processedText.replace(/(&)([a-zA-Z0-9#]+;)/g, '&amp;$2');
+                                finalProcessedText = finalProcessedText.replace(/(&)([a-zA-Z0-9#]+;)/g, '&amp;$2');
 
                                 // Вернем валидные entity обратно
                                 for (let i = 0; i < tempPlaceholders.length; i++) {
-                                    processedText = processedText.replace(`__HTML_ENTITY_${i}__`, tempPlaceholders[i]);
+                                    finalProcessedText = finalProcessedText.replace(`__HTML_ENTITY_${i}__`, tempPlaceholders[i]);
                                 }
 
-                                addMessage(username, processedText, tags, processedText, roomId);
+                                addMessage(username, finalProcessedText, tags, finalProcessedText, roomId);
                             }
                         } else {
                             console.log('💬 Безопасное сообщение, добавляем');
-                            addMessage(username, text, tags, text, roomId);
+                            addMessage(username, processedText, tags, processedText, roomId);
                         }
                     } catch (error) {
                         console.error('❌ Ошибка обработки сообщения:', error);
