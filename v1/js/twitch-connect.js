@@ -224,12 +224,22 @@ function connectToChat() {
                             return;
                         }
 
-                        // Заменяем потенциально проблемные символы на безопасные
-                        // Заменяем <!- и -> на безопасные символы
+                        // Для безопасности экранируем все потенциально проблемные HTML символы
+                        // используя подход с временными плейсхолдерами
+
+                        // Заменяем специальные последовательности на временные плейсхолдеры
                         let processedText = text;
-                        processedText = processedText.replace(/<!-/g, '&lt;!-');
-                        processedText = processedText.replace(/->/g, '-&gt;');
-                        processedText = processedText.replace(/<!--/g, '&lt;!--');
+                        processedText = processedText.replace(/<!-/g, '__HIDDEN_START_PLCHDR__');
+                        processedText = processedText.replace(/->/g, '__HIDDEN_END_PLCHDR__');
+                        processedText = processedText.replace(/<!--/g, '__COMMENT_START_PLCHDR__');
+
+                        // Затем экранируем все скобки
+                        processedText = processedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+                        // Затем восстанавливаем специальные последовательности в безопасной, экранированной форме
+                        processedText = processedText.replace(/__HIDDEN_START_PLCHDR__/g, '&lt;!-');
+                        processedText = processedText.replace(/__HIDDEN_END_PLCHDR__/g, '-&gt;');
+                        processedText = processedText.replace(/__COMMENT_START_PLCHDR__/g, '&lt;!--');
 
                         // Проверка на HTML-комментарии и замена на безопасные символы
                         if (processedText.includes('&lt;!--')) {
