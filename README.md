@@ -1,4 +1,3 @@
-[Русский](READMERU.md) | **English**
 # IkuzaChat - chat created with love <3
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -6,7 +5,7 @@
 
 **IkuzaChat** is a Twitch chat overlay with a wide range of customization options to suit everyone.
 
-## ✨ What does the chat have?
+## What does the chat have?
 
 - Modern settings page design for easy and enjoyable creation of the overlay of your dreams
 - Fully customizable chat settings to suit your preferences
@@ -62,22 +61,27 @@ cd ikuzachat
 - **Bot blocker module**: Hide messages from bots (list loaded from GitHub)
 
 ---
-## 📖 Plans
+## Plans
+- [ ] Bug fixing
+- [ ] Small additionals
+- [ ] Fix bot blocker module
+- [ ] Add additional modules
+- [ ] New site generator
 - [X] OSU Module (Basic)
 - [X] Colored User Mentions
 - [X] User-Friendly Settings Page
 - [X] Proper emoji replacement (preventing text breakage like "((( ")
-- [ ] Twitch Emoji Support (through tags)
-- [ ] Presets
+- [X] Twitch Emoji Support (through tags)
 - [X] Message Reading Fix
 - [X] Message Sent Time Display Setting
-- [ ] User First Message Mark
-- [ ] Sound Effect Setting with Cooldown, etc.
+- [X] User First Message Mark
 - [X] Message Ignoring Setting
-- [ ] Commands
 - [X] Modules
-
-## 🤝 How to Contribute
+## Denied
+- Presets
+- Sound Effect Setting with Cooldown, etc.
+- Commands
+## How to Contribute
 
 We welcome any suggestions for improving the project! Here's how you can help:
 
@@ -86,14 +90,14 @@ We welcome any suggestions for improving the project! Here's how you can help:
 3. Create a fork
 4. Help with bug fixes
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ❤️ Support
+## Support
 If you liked the chat and want to see it grow into something bigger, you can help: [click](https://boosty.to/ikuza47)
 
-## 🙏 Thanks
+## Thanks
 
 Thanks for using IkuzaChat! If you like the project, don't forget to give it a ⭐ star on GitHub.
 
