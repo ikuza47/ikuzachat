@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IkuzaChat v2 - Generator</title>
+    <script>
+        if (location.pathname.endsWith('/v2')) {
+            location.replace(`${location.pathname}/${location.search}${location.hash}`);
+        }
+    </script>
     <link rel="icon" type="image/png" href="../logo.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
