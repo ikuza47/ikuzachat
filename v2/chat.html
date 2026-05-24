@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IkuzaChat v2</title>
+    <style>
+        :root {
+            --chat-font: 'Segoe UI', sans-serif;
+            --chat-size: 24px;
+            --badge-scale: 1.5;
+            --time-color: #c3c7d4;
+            --message-bg-rgb: 0, 0, 0;
+            --message-bg-opacity: 0.35;
+            --message-bg-radius: 12px;
+            --first-message-bg-rgb: 255, 107, 203;
+            --first-message-bg-opacity: 0.35;
+            --first-message-bg-radius: 12px;
+            --chat-padding: 12px;
+            --message-gap: 5px;
+            --message-padding: 5px;
+            --user-notice-color: #9f8cff;
+            --user-notice-rgb: 159, 140, 255;
+            --user-notice-opacity: 0.16;
+            --system-message-color: #c3c7d4;
+            --shadow-color: #000000;
+            --shadow-blur: 3px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: transparent;
+            color: white;
+            font-family: var(--chat-font);
+        }
+
+        #chat-container {
+            position: absolute;
+            inset: auto 0 0 0;
+            width: 100%;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--chat-padding);
+            scrollbar-width: none;
+        }
+
+        #chat-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .msg {
+            position: relative;
+            width: fit-content;
+            max-width: 100%;
+            margin-top: var(--message-gap);
+            margin-left: -0.04em;
+            padding: 0.08em 0.04em;
+            color: white;
+            font-family: var(--chat-font);
+            font-size: var(--chat-size);
+            line-height: 1.28;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            text-shadow: 0 0 var(--shadow-blur) var(--shadow-color);
+        }
+
+        .msg.with-bg {
+            padding: var(--message-padding) calc(var(--message-padding) + 3px);
+            border-radius: var(--message-bg-radius);
+            background: rgba(var(--message-bg-rgb), var(--message-bg-opacity));
+        }
+
+        .msg.first-message-bg {
+            padding: var(--message-padding) calc(var(--message-padding) + 3px);
+            border-radius: var(--first-message-bg-radius);
+            background: rgba(var(--first-message-bg-rgb), var(--first-message-bg-opacity));
+        }
+
+        .msg.user-notice,
+        .msg.system-message,
+        .msg.action-message {
+            padding: var(--message-padding) calc(var(--message-padding) + 3px);
+            border-radius: var(--message-bg-radius);
+        }
+
+        .msg.user-notice {
+            color: var(--user-notice-color);
+            border: 1px solid var(--user-notice-color);
+            background: rgba(var(--user-notice-rgb), var(--user-notice-opacity));
+        }
+
+        .msg.system-message {
+            color: var(--system-message-color);
+            border: 1px solid var(--system-message-color);
+            background: rgba(0, 0, 0, 0.24);
+        }
+
+        .msg.action-message.italic-action .message {
+            font-style: italic;
+        }
+
+        .user,
+        .message,
+        .nick,
+        .time,
+        .mention {
+            font-family: var(--chat-font);
+            font-size: var(--chat-size);
+            line-height: 1.28;
+            overflow: visible;
+        }
+
+        .time {
+            display: inline;
+            color: var(--time-color);
+            font-family: var(--chat-font);
+            font-weight: 600;
+        }
+
+        .user {
+            display: inline;
+            font-weight: 800;
+        }
+
+        .nick {
+            display: inline;
+            font-weight: 800;
+        }
+
+        .message {
+            font-weight: 500;
+        }
+
+        .mention {
+            font-weight: 800;
+        }
+
+        .badges {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+            line-height: 1.28;
+            vertical-align: middle;
+        }
+
+        .inline-meta-before,
+        .inline-meta-after {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            line-height: 1.28;
+            vertical-align: middle;
+            overflow: visible;
+        }
+
+        .inline-meta-before {
+            margin-right: 5px;
+        }
+
+        .inline-meta-after {
+            margin-left: 5px;
+        }
+
+        .corner-meta {
+            position: absolute;
+            top: 3px;
+            right: 6px;
+            display: inline-flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            gap: 5px;
+            pointer-events: none;
+        }
+
+        .msg.has-corner-meta {
+            padding-top: max(5px, calc(var(--chat-size) * 0.75));
+        }
+
+        .badge {
+            height: calc(var(--chat-size) * 0.62 * var(--badge-scale));
+            min-width: calc(var(--chat-size) * 0.62 * var(--badge-scale));
+            border-radius: 2px;
+            vertical-align: middle;
+        }
+
+        .emote {
+            height: calc(var(--chat-size) * 1.22);
+            max-width: calc(var(--chat-size) * 5);
+            margin: 0 2px;
+            border-radius: 3px;
+            vertical-align: -0.26em;
+        }
+
+        .IkuzaUsername,
+        .HellCakeUsername,
+        .YatagarasuUsername {
+            display: inline-block;
+            color: transparent;
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-weight: 900;
+            line-height: 1.28;
+            padding-inline: 0.04em;
+            margin-inline: -0.04em;
+            overflow: visible;
+            animation: gradient-flow 5s ease-in-out infinite;
+        }
+
+        .IkuzaUsername {
+            background-image: linear-gradient(90deg, #ffd875, #ffae5d, #f4e8a4, #ffd875);
+            text-shadow: 0 0 8px rgba(255, 216, 117, 0.55);
+        }
+
+        .HellCakeUsername {
+            background-image: linear-gradient(90deg, #41c978, #186a36, #8df0ac, #41c978);
+            text-shadow: 0 0 8px rgba(65, 201, 120, 0.5);
+        }
+
+        .YatagarasuUsername {
+            background-image: linear-gradient(90deg, #ff69b4, #ff1493, #ffc1db, #ff69b4);
+            text-shadow: 0 0 8px rgba(255, 105, 180, 0.55);
+        }
+
+        .osu-info {
+            font-weight: 800;
+        }
+
+        .osu-map {
+            color: #ff79bd;
+        }
+
+        .osu-user {
+            color: #65c8ff;
+        }
+
+        .osu-score {
+            color: #ffd86b;
+        }
+
+        .animation-in-fade {
+            animation: fade-in 260ms ease-out both;
+        }
+
+        .animation-in-slide-up {
+            animation: slide-up 320ms ease-out both;
+        }
+
+        .animation-in-pop {
+            animation: pop-in 260ms cubic-bezier(0.2, 1.25, 0.35, 1) both;
+        }
+
+        .removing.animation-out-fade {
+            animation: fade-out 300ms ease-in both;
+        }
+
+        .removing.animation-out-slide-down {
+            animation: slide-down 320ms ease-in both;
+        }
+
+        .removing.animation-out-pop {
+            animation: pop-out 260ms ease-in both;
+        }
+
+        #loading-indicator,
+        #error-indicator {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            pointer-events: none;
+        }
+
+        #loading-indicator {
+            color: rgba(255, 255, 255, 0.92);
+            background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.22), transparent 22rem);
+            transition: opacity 320ms ease;
+        }
+
+        .loading-emote {
+            width: min(156px, 42vw);
+            height: auto;
+            image-rendering: auto;
+            filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.42));
+        }
+
+        .loading-title {
+            position: relative;
+            z-index: 1;
+            margin-top: 14px;
+            font-size: clamp(1.55rem, 6vw, 3rem);
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            background: linear-gradient(90deg, #f8c7a5, #777fe4, #f8c7a5);
+            background-size: 240% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient-flow 3.5s ease-in-out infinite;
+        }
+
+        .loading-status {
+            position: relative;
+            z-index: 1;
+            margin-top: 10px;
+            color: #b7bac7;
+            font-size: 1rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        #error-indicator {
+            display: none;
+            background: rgba(12, 0, 4, 0.78);
+            color: #fff;
+            pointer-events: auto;
+        }
+
+        #error-indicator strong {
+            color: #ff7b95;
+            font-size: 1.25rem;
+        }
+
+        #error-indicator pre {
+            width: min(720px, 100%);
+            max-height: 260px;
+            overflow: auto;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.44);
+            color: #ffd4dc;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pop-in {
+            from { opacity: 0; transform: scale(0.86); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes slide-down {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(18px); }
+        }
+
+        @keyframes pop-out {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.86); }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-indicator">
+        <img class="loading-emote" id="loading-emote" src="https://cdn.7tv.app/emote/01F6NMMEER00015NVG2J8ZH77N/4x.webp" alt="Loading" aria-hidden="true">
+        <div class="loading-title">IkuzaChat v2</div>
+        <div class="loading-status" id="loading-status">Starting chat...</div>
+    </div>
+    <div id="error-indicator" role="alert"></div>
+    <div id="chat-container" aria-live="polite"></div>
+
+    <script src="preload/manifest.js"></script>
+    <script>
+        window.IkuzaChatV2 = window.IkuzaChatV2 || {};
+        (function () {
+            var fallback = 'https://cdn.7tv.app/emote/01F6NMMEER00015NVG2J8ZH77N/4x.webp';
+            var list = Array.isArray(window.IkuzaChatV2Preload) ? window.IkuzaChatV2Preload : [];
+            var files = list.filter(function (item) {
+                return typeof item === 'string' && /\.webp(?:\?.*)?$/i.test(item);
+            });
+            var image = document.getElementById('loading-emote');
+            if (!image || files.length === 0) return;
+
+            var selected = files[Math.floor(Math.random() * files.length)];
+            image.src = /^https?:\/\//i.test(selected) ? selected : 'preload/' + selected.replace(/^\.\//, '');
+            image.onerror = function () {
+                image.src = fallback;
+            };
+        }());
+        window.IkuzaChatV2.setLoadingStatus = function (message) {
+            var status = document.getElementById('loading-status');
+            if (status) status.textContent = message;
+        };
+        window.IkuzaChatV2.hideLoading = function () {
+            var loading = document.getElementById('loading-indicator');
+            if (!loading) return;
+            loading.style.opacity = '0';
+            window.setTimeout(function () {
+                loading.style.display = 'none';
+            }, 240);
+        };
+        window.IkuzaChatV2.showError = function (message, details) {
+            var loading = document.getElementById('loading-indicator');
+            var error = document.getElementById('error-indicator');
+            if (loading) loading.style.display = 'none';
+            if (!error) return;
+            error.style.display = 'flex';
+            error.innerHTML = '<strong>' + (message || 'Chat error') + '</strong>' +
+                (details ? '<pre></pre>' : '');
+            if (details) {
+                error.querySelector('pre').textContent = String(details);
+            }
+        };
+    </script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/badges.js"></script>
+    <script src="js/emotes.js"></script>
+    <script src="js/osu.js"></script>
+    <script src="js/bots.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/twitch.js"></script>
+    <script src="js/test-mode.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
