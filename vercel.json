@@ -1,6 +1,7 @@
 {
   "redirects": [
-    { "source": "/v2", "destination": "/v2/", "permanent": true }
+    { "source": "/v2", "destination": "/", "permanent": true },
+    { "source": "/v2/", "destination": "/", "permanent": true }
   ],
   "rewrites": [
     { "source": "/", "destination": "/index.html" }

@@ -12,6 +12,7 @@
 
         root.setLoadingStatus('Loading emotes...');
         root.channelId = await root.emotes.init(config.channel, badgeChannelId);
+        root.emotes.startSevenTvRefresh(root.channelId);
 
         if (config.blockBots) {
             root.setLoadingStatus('Loading bot list...');

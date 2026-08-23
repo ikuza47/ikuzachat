@@ -60,6 +60,12 @@
                 return;
             }
 
+            if (message.includes(' CLEARMSG #')) {
+                const parsed = utils.parseClearMessage(message);
+                if (parsed.id && root.renderer.deleteMessage) root.renderer.deleteMessage(parsed.id);
+                return;
+            }
+
             if (message.includes(' USERNOTICE #')) {
                 const parsed = utils.parseUserNotice(message);
                 await root.renderer.addUserNotice(parsed);

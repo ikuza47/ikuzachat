@@ -1,6 +1,6 @@
 (function () {
     const ids = [
-        'channel', 'fontFamily', 'customFont', 'fontSize', 'showUserBadges',
+        'channel', 'chatType', 'fontFamily', 'customFont', 'fontSize', 'showUserBadges',
         'showChannelBadges', 'showAchievementBadges', 'badgePosition', 'badgeScale',
         'showTime', 'timePosition', 'timeZone', 'timeColor',
         'showBackground', 'backgroundColor', 'backgroundOpacity', 'backgroundRadius',
@@ -10,9 +10,11 @@
         'clearOnCommand', 'colonEnabled', 'autoRemove', 'removeTimeout',
         'showUserNotices', 'userNoticeColor', 'userNoticeOpacity',
         'meStyleEnabled', 'meItalic',
-        'showSystemMessages', 'systemMessageColor',
+        'showSystemMessages', 'systemMessageColor', 'hcfBoxColor', 'hcfBoxOpacity',
+        'hcfBoxRadius', 'hcfBoxPadding', 'hcfBadgeRadius', 'hcfTopColor', 'hcfReplyColor',
+        'hcfTextColor', 'hcfWidthMode', 'hcfMessageSide', 'hcfMessageWidth',
         'testMode', 'debugMode', 'osuEnabled', 'osuApiKey', 'osuMap', 'osuUser',
-        'osuScore', 'osuHighlight', 'blockBots'
+        'osuScore', 'osuHighlight', 'osuCompactInfo', 'blockBots'
     ];
 
     const el = {};
@@ -23,7 +25,11 @@
         backgroundColor: '#000000',
         firstMessageColor: '#ff6bcb',
         userNoticeColor: '#9f8cff',
-        systemMessageColor: '#c3c7d4'
+        systemMessageColor: '#c3c7d4',
+        hcfBoxColor: '#121218',
+        hcfTopColor: '#ffffff',
+        hcfReplyColor: '#b7bac7',
+        hcfTextColor: '#ffffff'
     };
     const rangeFormats = {
         badgeScale: { suffix: 'x', decimals: 2 },
@@ -34,10 +40,16 @@
         chatPadding: { suffix: 'px', decimals: 0 },
         messageGap: { suffix: 'px', decimals: 0 },
         messagePadding: { suffix: 'px', decimals: 0 },
-        userNoticeOpacity: { suffix: '', decimals: 2 }
+        userNoticeOpacity: { suffix: '', decimals: 2 },
+        hcfBoxOpacity: { suffix: '', decimals: 2 },
+        hcfBoxRadius: { suffix: 'px', decimals: 0 },
+        hcfBoxPadding: { suffix: 'px', decimals: 0 },
+        hcfBadgeRadius: { suffix: 'px', decimals: 0 },
+        hcfMessageWidth: { suffix: 'px', decimals: 0 }
     };
     const defaultValues = {
         channel: 'ikuza47',
+        chatType: 'classic',
         fontFamily: "'Segoe UI', sans-serif",
         customFont: '',
         fontSize: '24',
@@ -74,6 +86,17 @@
         meItalic: true,
         showSystemMessages: true,
         systemMessageColor: '#c3c7d4',
+        hcfBoxColor: '#121218',
+        hcfBoxOpacity: '0.72',
+        hcfBoxRadius: '18',
+        hcfBoxPadding: '12',
+        hcfBadgeRadius: '5',
+        hcfTopColor: '#ffffff',
+        hcfReplyColor: '#b7bac7',
+        hcfTextColor: '#ffffff',
+        hcfWidthMode: 'full',
+        hcfMessageSide: 'left',
+        hcfMessageWidth: '680',
         testMode: false,
         debugMode: false,
         osuEnabled: false,
@@ -82,6 +105,7 @@
         osuUser: true,
         osuScore: false,
         osuHighlight: false,
+        osuCompactInfo: false,
         blockBots: false
     };
     let currentLang = localStorage.getItem('ikuzachat-v2-lang') || 'en';
@@ -100,6 +124,9 @@
             'basic.desc': 'Only the channel is required. The generated URL can be used directly in OBS.',
             'fields.channel': 'Twitch channel',
             'hints.channel': 'Use the channel login without @.',
+            'fields.chatType': 'Chat type',
+            'options.classic': 'Classic',
+            'options.hellcakefication': 'HellCakeFication',
             'fields.font': 'Font',
             'fields.fontSize': 'Font size',
             'fields.customFont': 'Custom font family',
@@ -145,6 +172,23 @@
             'fields.firstMessageRadius': 'First message background radius',
             'fields.animationIn': 'Animation in',
             'fields.animationOut': 'Animation out',
+            'hellcake.title': 'HellCakeFication message box',
+            'hellcake.desc': 'Customize the separated message structure: nickname row, reply preview and message text.',
+            'fields.hcfBoxColor': 'Message box color',
+            'fields.hcfBoxOpacity': 'Message box opacity',
+            'fields.hcfBoxRadius': 'Message box radius',
+            'fields.hcfBoxPadding': 'Message box padding',
+            'fields.hcfBadgeRadius': 'Badge radius',
+            'fields.hcfTopColor': 'Nickname row color',
+            'fields.hcfReplyColor': 'Reply preview color',
+            'fields.hcfTextColor': 'Message text color',
+            'fields.hcfWidthMode': 'Message width mode',
+            'fields.hcfMessageSide': 'Compact message side',
+            'options.hcfSideLeft': 'Left',
+            'options.hcfSideRight': 'Right',
+            'options.hcfFullWidth': 'Full width',
+            'options.hcfCompactWidth': 'Compact',
+            'fields.hcfMessageWidth': 'Max message width',
             'behavior.title': 'Behavior',
             'behavior.desc': 'Set cleanup behavior and rendering helpers for busy chats.',
             'switch.clear': 'Clear on /clear',
@@ -170,7 +214,7 @@
             'switch.debug': 'Debug mode',
             'switch.debugHint': 'Keep extra messages and log more information to console.',
             'modules.title': 'Modules',
-            'modules.desc': 'Optional integrations. osu! uses the legacy API key passed in the URL.',
+            'modules.desc': 'Optional integrations. osu! metadata is loaded from mirror.hinamizawa.ai.',
             'switch.osu': 'osu! links',
             'switch.osuHint': 'Replace osu! map/user links with readable info.',
             'fields.osuKey': 'osu! API key',
@@ -183,6 +227,8 @@
             'switch.osuScoreHint': 'Experimental score page parsing.',
             'switch.osuHighlight': 'Highlight osu! info',
             'switch.osuHighlightHint': 'Color replaced osu! text by type.',
+            'switch.osuCompactInfo': 'Compact info',
+            'switch.osuCompactInfoHint': 'Show fewer fields in HellCakeFication osu! cards.',
             'switch.blockBots': 'Block known bots',
             'switch.blockBotsHint': 'Hide messages from a small bundled bot list.',
             'output.title': 'Overlay link',
@@ -206,6 +252,9 @@
             'basic.desc': 'Обязателен только канал. Готовую ссылку можно сразу вставить в OBS.',
             'fields.channel': 'Twitch-канал',
             'hints.channel': 'Укажите логин канала без @.',
+            'fields.chatType': 'Тип чата',
+            'options.classic': 'Классический',
+            'options.hellcakefication': 'HellCakeFication',
             'fields.font': 'Шрифт',
             'fields.fontSize': 'Размер шрифта',
             'fields.customFont': 'Свой шрифт',
@@ -251,6 +300,23 @@
             'fields.firstMessageRadius': 'Радиус фона первого сообщения',
             'fields.animationIn': 'Анимация появления',
             'fields.animationOut': 'Анимация исчезновения',
+            'hellcake.title': 'Блок сообщения HellCakeFication',
+            'hellcake.desc': 'Настройте отдельную структуру сообщения: строку ника, предпросмотр reply и текст сообщения.',
+            'fields.hcfBoxColor': 'Цвет блока сообщения',
+            'fields.hcfBoxOpacity': 'Прозрачность блока сообщения',
+            'fields.hcfBoxRadius': 'Радиус блока сообщения',
+            'fields.hcfBoxPadding': 'Внутренний отступ блока',
+            'fields.hcfBadgeRadius': 'Радиус бейджей',
+            'fields.hcfTopColor': 'Цвет строки ника',
+            'fields.hcfReplyColor': 'Цвет предпросмотра reply',
+            'fields.hcfTextColor': 'Цвет текста сообщения',
+            'fields.hcfWidthMode': 'Режим ширины сообщения',
+            'fields.hcfMessageSide': 'Сторона компактных сообщений',
+            'options.hcfSideLeft': 'Слева',
+            'options.hcfSideRight': 'Справа',
+            'options.hcfFullWidth': 'Во всю ширину',
+            'options.hcfCompactWidth': 'Компактно',
+            'fields.hcfMessageWidth': 'Максимальная ширина сообщения',
             'behavior.title': 'Поведение',
             'behavior.desc': 'Настройки очистки и вспомогательного рендера для активных чатов.',
             'switch.clear': 'Очищать по /clear',
@@ -276,7 +342,7 @@
             'switch.debug': 'Debug-режим',
             'switch.debugHint': 'Оставляет больше сообщений и пишет больше информации в консоль.',
             'modules.title': 'Модули',
-            'modules.desc': 'Дополнительные интеграции. osu! использует legacy API key из URL.',
+            'modules.desc': 'Дополнительные интеграции. osu! данные загружаются через mirror.hinamizawa.ai.',
             'switch.osu': 'osu! ссылки',
             'switch.osuHint': 'Заменяет ссылки на карты/пользователей osu! читаемой информацией.',
             'fields.osuKey': 'osu! API ключ',
@@ -289,6 +355,8 @@
             'switch.osuScoreHint': 'Экспериментальный парсинг страниц score.',
             'switch.osuHighlight': 'Подсветка osu! информации',
             'switch.osuHighlightHint': 'Окрашивает заменённый osu! текст по типу.',
+            'switch.osuCompactInfo': 'Краткая инфо',
+            'switch.osuCompactInfoHint': 'Показывает меньше полей в osu! карточках HellCakeFication.',
             'switch.blockBots': 'Блокировать известных ботов',
             'switch.blockBotsHint': 'Скрывает сообщения из небольшого встроенного списка ботов.',
             'output.title': 'Ссылка overlay',
@@ -551,15 +619,22 @@
     }
 
     function updateDependentControls() {
+        const isClassic = el.chatType.value === 'classic';
         byId('customFontWrap').classList.toggle('hidden', el.fontFamily.value !== 'custom');
-        byId('timeSettings').classList.toggle('hidden', !el.showTime.checked);
-        byId('backgroundSettings').classList.toggle('hidden', !el.showBackground.checked);
-        byId('firstMessageSettings').classList.toggle('hidden', !el.firstMessageEnabled.checked);
+        byId('hcfMessageWidthWrap').classList.toggle('hidden', el.chatType.value !== 'hellcakefication' || el.hcfWidthMode.value !== 'compact');
+        document.documentElement.dataset.chatType = el.chatType.value;
+        byId('timeSettings').classList.toggle('hidden', !isClassic || !el.showTime.checked);
+        byId('backgroundSettings').classList.toggle('hidden', !isClassic || !el.showBackground.checked);
+        byId('firstMessageSettings').classList.toggle('hidden', !isClassic || !el.firstMessageEnabled.checked);
         byId('removeSettings').classList.toggle('hidden', !el.autoRemove.checked);
         byId('userNoticeSettings').classList.toggle('hidden', !el.showUserNotices.checked);
         byId('meStyleSettings').classList.toggle('hidden', !el.meStyleEnabled.checked);
         byId('systemMessageSettings').classList.toggle('hidden', !el.showSystemMessages.checked);
         byId('osuSettings').classList.toggle('hidden', !el.osuEnabled.checked);
+        document.querySelectorAll('[data-chat-types]').forEach((node) => {
+            const types = node.dataset.chatTypes.split(/\s+/);
+            node.classList.toggle('hidden', !types.includes(el.chatType.value));
+        });
         document.querySelectorAll('[data-range-value]').forEach((node) => {
             node.textContent = formatRangeValue(node.dataset.rangeValue);
         });
@@ -569,6 +644,10 @@
         updateColorControl('timeColor');
         updateColorControl('userNoticeColor');
         updateColorControl('systemMessageColor');
+        updateColorControl('hcfBoxColor');
+        updateColorControl('hcfTopColor');
+        updateColorControl('hcfReplyColor');
+        updateColorControl('hcfTextColor');
         updateResetButtons();
     }
 
@@ -576,7 +655,8 @@
         updateDependentControls();
 
         const channel = el.channel.value.trim().replace(/^@+/, '').toLowerCase() || 'ikuza47';
-        const url = new URL('chat.html', window.location.href);
+        const overlayFile = el.chatType.value === 'hellcakefication' ? 'v2/hellcakefication.html' : 'v2/chat.html';
+        const url = new URL(overlayFile, window.location.href);
 
         url.searchParams.set('channel', channel);
         url.searchParams.set('font', getFont());
@@ -614,6 +694,17 @@
         url.searchParams.set('meItalic', getBool('meItalic'));
         url.searchParams.set('systemMessages', getBool('showSystemMessages'));
         url.searchParams.set('systemMessageColor', getColorValue('systemMessageColor'));
+        url.searchParams.set('hcfBoxColor', getColorValue('hcfBoxColor'));
+        url.searchParams.set('hcfBoxOpacity', el.hcfBoxOpacity.value);
+        url.searchParams.set('hcfBoxRadius', String(Math.round(getNumberValue('hcfBoxRadius', 18))));
+        url.searchParams.set('hcfBoxPadding', String(Math.round(getNumberValue('hcfBoxPadding', 12))));
+        url.searchParams.set('hcfBadgeRadius', String(Math.round(getNumberValue('hcfBadgeRadius', 5))));
+        url.searchParams.set('hcfTopColor', getColorValue('hcfTopColor'));
+        url.searchParams.set('hcfReplyColor', getColorValue('hcfReplyColor'));
+        url.searchParams.set('hcfTextColor', getColorValue('hcfTextColor'));
+        url.searchParams.set('hcfWidthMode', el.hcfWidthMode.value);
+        url.searchParams.set('hcfMessageSide', el.hcfMessageSide.value);
+        url.searchParams.set('hcfMessageWidth', String(Math.round(getNumberValue('hcfMessageWidth', 680))));
         url.searchParams.set('testMode', getBool('testMode'));
         url.searchParams.set('debug', getBool('debugMode'));
         url.searchParams.set('blockBots', getBool('blockBots'));
@@ -628,6 +719,7 @@
             url.searchParams.set('osuUser', getBool('osuUser'));
             url.searchParams.set('osuScore', getBool('osuScore'));
             url.searchParams.set('osuHighlight', getBool('osuHighlight'));
+            url.searchParams.set('osuCompactInfo', getBool('osuCompactInfo'));
         }
 
         byId('overlayUrl').value = url.toString();
@@ -804,6 +896,10 @@
         createColorControl('timeColor');
         createColorControl('userNoticeColor');
         createColorControl('systemMessageColor');
+        createColorControl('hcfBoxColor');
+        createColorControl('hcfTopColor');
+        createColorControl('hcfReplyColor');
+        createColorControl('hcfTextColor');
 
         ids.forEach((id) => {
             el[id] = el[id] || byId(id);

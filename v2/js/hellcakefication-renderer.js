@@ -2,8 +2,7 @@
     const root = window.IkuzaChatV2;
     const config = root.config;
     const utils = root.utils;
-    const container = document.getElementById('chat-container');
-    const firstMessageUsers = new Set();
+    const container = document.getElementById('message_container');
     const colorCache = new Map();
 
     const fallbackColors = [
@@ -33,26 +32,11 @@
 
     function createNickHtml(username, color) {
         const safeName = utils.escapeHtml(username);
-        const suffix = config.colonEnabled ? ':' : '';
         const specialClass = getSpecialUsernameClass(username);
         if (specialClass) {
-            return `<span class="nick ${specialClass}">${safeName}${suffix}</span>`;
+            return `<span class="nick ${specialClass}">${safeName}</span>`;
         }
-        return `<span class="nick" style="color: ${utils.escapeAttribute(color || getFallbackColor(username))}">${safeName}${suffix}</span>`;
-    }
-
-    function createActionMessageHtml(textHtml, username, color) {
-        const specialClass = getSpecialUsernameClass(username);
-        if (specialClass) {
-            return `<span class="message ${specialClass}">${textHtml}</span>`;
-        }
-
-        return `<span class="message" style="color: ${utils.escapeAttribute(color || getFallbackColor(username))}">${textHtml}</span>`;
-    }
-
-    function wrapMeta(items, className) {
-        const html = items.filter(Boolean).join('');
-        return html ? `<span class="${className}">${html}</span>` : '';
+        return `<span class="nick" style="color: ${utils.escapeAttribute(color || getFallbackColor(username))}">${safeName}</span>`;
     }
 
     function processMentions(html) {
@@ -60,13 +44,55 @@
             if (!part || part.startsWith('<')) return part;
 
             return part.replace(/(^|\s)@(\w+)/g, (match, prefix, username) => {
-                const specialClass = getSpecialUsernameClass(username);
-                if (specialClass) {
-                    return `${prefix}<span class="mention ${specialClass}">@${utils.escapeHtml(username)}</span>`;
-                }
                 return `${prefix}<span class="mention" style="color: ${utils.escapeAttribute(getFallbackColor(username))}">@${utils.escapeHtml(username)}</span>`;
             });
         }).join('');
+    }
+
+    function getReply(payload) {
+        const tags = payload.tags || '';
+        const parentUser = utils.extractTagValue(tags, 'reply-parent-display-name') || utils.extractTagValue(tags, 'reply-parent-user-login');
+        const parentMessage = utils.extractTagValue(tags, 'reply-parent-msg-body');
+        if (!parentUser && !parentMessage) return '';
+
+        const userName = utils.unescapeTagValue ? utils.unescapeTagValue(parentUser) : parentUser;
+        const text = utils.unescapeTagValue ? utils.unescapeTagValue(parentMessage) : parentMessage;
+        const user = userName ? `${utils.escapeHtml(userName)}:` : '';
+        const preview = text ? utils.escapeHtml(text) : '';
+        return `<div class="messagereplyto">${user}${user && preview ? ' ' : ''}<em>${preview}</em></div>`;
+    }
+
+    function getReplyTarget(payload) {
+        const tags = payload.tags || '';
+        const parentUser = utils.extractTagValue(tags, 'reply-parent-display-name') || utils.extractTagValue(tags, 'reply-parent-user-login');
+        return parentUser && utils.unescapeTagValue ? utils.unescapeTagValue(parentUser) : parentUser;
+    }
+
+    function removeReplyMention(text, replyTarget) {
+        if (!replyTarget) return text;
+        const escaped = utils.escapeRegExp(String(replyTarget).replace(/^@+/, ''));
+        return String(text || '').replace(new RegExp(`^@${escaped}[:,]?\\s*`, 'i'), '');
+    }
+
+    function formatSeconds(ms) {
+        return `${Math.max(0, Math.ceil(ms / 1000))}s`;
+    }
+
+    function startTimeLeft(message, node) {
+        if (!config.autoRemove || !node) return;
+
+        const endAt = Date.now() + config.removeTimeout;
+        let timer = null;
+        const tick = () => {
+            if (!message.parentNode) {
+                window.clearInterval(timer);
+                return;
+            }
+            node.textContent = formatSeconds(endAt - Date.now());
+        };
+
+        tick();
+        timer = window.setInterval(tick, 250);
     }
 
     function removeMessage(message) {
@@ -93,71 +119,6 @@
         }
     }
 
-    async function addMessage(payload) {
-        if (!payload || !payload.text) return;
-
-        const message = document.createElement('div');
-        message.className = 'msg';
-        if (payload.id) message.dataset.messageId = payload.id;
-        if (config.showBackground) message.classList.add('with-bg');
-        if (payload.isAction && config.meStyleEnabled) {
-            message.classList.add('action-message');
-            if (config.meItalic) message.classList.add('italic-action');
-        }
-
-        const animationIn = createAnimationClass('animation-in', config.animationIn);
-        if (animationIn) message.classList.add(animationIn);
-
-        const userKey = String(payload.username || '').toLowerCase();
-        const isFirstMessage = !firstMessageUsers.has(userKey);
-        firstMessageUsers.add(userKey);
-
-        if (isFirstMessage && config.firstMessageEnabled) {
-            message.classList.remove('with-bg');
-            message.classList.add('first-message-bg');
-        }
-
-        let textHtml = root.emotes.replace(payload.text, payload.tags || '', payload.roomId, config.channel);
-        textHtml = await root.osu.replace(textHtml);
-        textHtml = processMentions(textHtml);
-
-        const badges = root.badges.createHtml(root.badges.parse(payload.tags || ''), config);
-        const time = config.showTime ? `<span class="time">${utils.getTimeString(config.timeZone)}</span>` : '';
-        const nick = createNickHtml(payload.username, payload.color);
-        const beforeName = [];
-        const afterName = [];
-        const corner = [];
-
-        if (time) {
-            if (config.timePosition === 'after-name') afterName.push(time);
-            else if (config.timePosition === 'top-right') corner.push(time);
-            else beforeName.push(time);
-        }
-
-        if (badges) {
-            if (config.badgePosition === 'after-name') afterName.push(badges);
-            else if (config.badgePosition === 'top-right') corner.unshift(badges);
-            else beforeName.push(badges);
-        }
-
-        if (corner.length > 0) {
-            message.classList.add('has-corner-meta');
-        }
-
-        const bodyHtml = payload.isAction && config.meStyleEnabled
-            ? createActionMessageHtml(textHtml, payload.username, payload.color)
-            : `<span class="message">${textHtml}</span>`;
-        message.innerHTML = `${wrapMeta(corner, 'corner-meta')}${wrapMeta(beforeName, 'inline-meta-before')}<span class="user">${nick}</span>${wrapMeta(afterName, 'inline-meta-after')} ${bodyHtml}`;
-        container.appendChild(message);
-        container.scrollTop = container.scrollHeight;
-
-        if (config.autoRemove) {
-            window.setTimeout(() => removeMessage(message), config.removeTimeout);
-        }
-
-        trimMessages();
-    }
-
     function scheduleMessageRemoval(message) {
         if (config.autoRemove) {
             window.setTimeout(() => removeMessage(message), config.removeTimeout);
@@ -166,16 +127,56 @@
         trimMessages();
     }
 
-    function createSimpleMessage(text, className) {
-        if (!text) return Promise.resolve();
+    async function addMessage(payload) {
+        if (!payload || !payload.text) return;
 
         const message = document.createElement('div');
-        message.className = `msg ${className}`;
+        message.className = 'messagebox';
+        if (payload.id) message.dataset.messageId = payload.id;
+        if (config.hcfWidthMode === 'compact') {
+            message.classList.add('compact-width');
+            if (config.hcfMessageSide === 'right') message.classList.add('align-right');
+        }
+        if (payload.isAction && config.meStyleEnabled) {
+            message.classList.add('action-message');
+            if (config.meItalic) message.classList.add('italic-action');
+        }
 
         const animationIn = createAnimationClass('animation-in', config.animationIn);
         if (animationIn) message.classList.add(animationIn);
 
-        message.innerHTML = `<span class="message">${processMentions(utils.escapeHtml(text))}</span>`;
+        const replyTarget = getReplyTarget(payload);
+        const text = removeReplyMention(payload.text, replyTarget);
+        const osu = await root.osu.extractCards(text);
+        let textHtml = root.emotes.replace(osu.text, payload.tags || '', payload.roomId, config.channel);
+        textHtml = processMentions(textHtml);
+
+        const badges = root.badges.createHtml(root.badges.parse(payload.tags || ''), config);
+        const topParts = [createNickHtml(payload.username, payload.color), badges].filter(Boolean).join(' ');
+        const timeLeft = config.autoRemove ? '<div class="messagetimeleft"></div>' : '';
+        const messageText = textHtml ? `<div class="messagetext">${textHtml}</div>` : '';
+        message.innerHTML = `<div class="messagetop"><div class="messagetopmeta">${topParts}</div>${timeLeft}</div>${getReply(payload)}${osu.html}${messageText}`;
+        container.appendChild(message);
+        startTimeLeft(message, message.querySelector('.messagetimeleft'));
+        container.scrollTop = container.scrollHeight;
+        scheduleMessageRemoval(message);
+    }
+
+    function createSimpleMessage(text, className) {
+        if (!text) return null;
+
+        const message = document.createElement('div');
+        message.className = `messagebox ${className}`;
+        if (config.hcfWidthMode === 'compact') {
+            message.classList.add('compact-width');
+            if (config.hcfMessageSide === 'right') message.classList.add('align-right');
+        }
+
+        const animationIn = createAnimationClass('animation-in', config.animationIn);
+        if (animationIn) message.classList.add(animationIn);
+
+        const timeLeft = config.autoRemove ? '<div class="messagetimeleft"></div>' : '';
+        message.innerHTML = `<div class="messagetop"><div class="messagetopmeta">IkuzaChat</div>${timeLeft}</div><div class="messagetext">${processMentions(utils.escapeHtml(text))}</div>`;
         return message;
     }
 
@@ -184,6 +185,7 @@
         if (!message) return Promise.resolve();
 
         container.appendChild(message);
+        startTimeLeft(message, message.querySelector('.messagetimeleft'));
         container.scrollTop = container.scrollHeight;
         scheduleMessageRemoval(message);
         return Promise.resolve();
@@ -208,10 +210,6 @@
         container.innerHTML = '';
     }
 
-    function scheduleDeletedRemoval(message) {
-        window.setTimeout(() => removeMessage(message), 4000);
-    }
-
     function findMessageById(id) {
         return Array.from(container.children).find((item) => item.dataset.messageId === id) || null;
     }
@@ -222,13 +220,14 @@
 
         message.classList.add('deleted-message');
         message.querySelectorAll('.messageosu, .messageosumap, .messageosuprofile, .messageosuscore').forEach((node) => node.remove());
-        const body = message.querySelector('.message');
-        if (body) {
-            body.textContent = 'Сообщение было удалено';
-        } else {
-            message.textContent = 'Сообщение было удалено';
+        let text = message.querySelector('.messagetext');
+        if (!text) {
+            text = document.createElement('div');
+            text.className = 'messagetext';
+            message.appendChild(text);
         }
-        scheduleDeletedRemoval(message);
+        text.textContent = 'Сообщение было удалено';
+        window.setTimeout(() => removeMessage(message), 4000);
     }
 
     root.renderer = {

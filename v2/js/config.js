@@ -82,6 +82,17 @@
         meItalic: getBool('meItalic', true),
         showSystemMessages: getBool('systemMessages', true),
         systemMessageColor: getColor('systemMessageColor', '#c3c7d4'),
+        hcfBoxColor: getColor('hcfBoxColor', '#121218'),
+        hcfBoxOpacity: getNumber('hcfBoxOpacity', 0.72, 0, 1),
+        hcfBoxRadius: getNumber('hcfBoxRadius', 18, 0, 48),
+        hcfBoxPadding: getNumber('hcfBoxPadding', 12, 0, 40),
+        hcfBadgeRadius: getNumber('hcfBadgeRadius', 5, 0, 16),
+        hcfTopColor: getColor('hcfTopColor', '#ffffff'),
+        hcfReplyColor: getColor('hcfReplyColor', '#b7bac7'),
+        hcfTextColor: getColor('hcfTextColor', '#ffffff'),
+        hcfWidthMode: getString('hcfWidthMode', 'full'),
+        hcfMessageSide: getString('hcfMessageSide', 'left'),
+        hcfMessageWidth: getNumber('hcfMessageWidth', 680, 160, 1200),
         testMode: getBool('testMode', false),
         debug: getBool('debug', false),
         blockBots: getBool('blockBots', false),
@@ -91,7 +102,8 @@
             parseMap: getBool('osuMap', true),
             parseUser: getBool('osuUser', true),
             parseScore: getBool('osuScore', false),
-            highlight: getBool('osuHighlight', false)
+            highlight: getBool('osuHighlight', false),
+            compactInfo: getBool('osuCompactInfo', false)
         }
     };
 
@@ -112,6 +124,15 @@
     document.documentElement.style.setProperty('--user-notice-rgb', hexToRgb(config.userNoticeColor));
     document.documentElement.style.setProperty('--user-notice-opacity', String(config.userNoticeOpacity));
     document.documentElement.style.setProperty('--system-message-color', config.systemMessageColor);
+    document.documentElement.style.setProperty('--hcf-box-rgb', hexToRgb(config.hcfBoxColor));
+    document.documentElement.style.setProperty('--hcf-box-opacity', String(config.hcfBoxOpacity));
+    document.documentElement.style.setProperty('--hcf-box-radius', `${config.hcfBoxRadius}px`);
+    document.documentElement.style.setProperty('--hcf-box-padding', `${config.hcfBoxPadding}px`);
+    document.documentElement.style.setProperty('--hcf-badge-radius', `${config.hcfBadgeRadius}px`);
+    document.documentElement.style.setProperty('--hcf-top-color', config.hcfTopColor);
+    document.documentElement.style.setProperty('--hcf-reply-color', config.hcfReplyColor);
+    document.documentElement.style.setProperty('--hcf-text-color', config.hcfTextColor);
+    document.documentElement.style.setProperty('--hcf-message-width', `${config.hcfMessageWidth}px`);
 
     window.IkuzaChatV2 = window.IkuzaChatV2 || {};
     window.IkuzaChatV2.config = config;

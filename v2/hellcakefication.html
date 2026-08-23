@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IkuzaChat v2 - HellCakeFication</title>
+    <style>
+        :root {
+            --chat-font: 'Segoe UI', sans-serif;
+            --chat-size: 24px;
+            --badge-scale: 1.2;
+            --chat-padding: 12px;
+            --message-gap: 8px;
+            --hcf-box-rgb: 18, 18, 24;
+            --hcf-box-opacity: 0.72;
+            --hcf-box-radius: 18px;
+            --hcf-box-padding: 12px;
+            --hcf-badge-radius: 5px;
+            --hcf-top-color: #ffffff;
+            --hcf-reply-color: #b7bac7;
+            --hcf-text-color: #ffffff;
+            --hcf-message-width: 680px;
+            --user-notice-color: #9f8cff;
+            --user-notice-rgb: 159, 140, 255;
+            --user-notice-opacity: 0.16;
+            --system-message-color: #c3c7d4;
+            --shadow-color: #000000;
+            --shadow-blur: 3px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+            color: white;
+            font-family: var(--chat-font);
+        }
+
+        #message_container {
+            position: absolute;
+            inset: auto 0 0 0;
+            width: 100%;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--chat-padding);
+            background: transparent;
+            scrollbar-width: none;
+        }
+
+        #message_container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .messagebox {
+            display: grid;
+            gap: 5px;
+            width: 100%;
+            max-width: 100%;
+            margin-top: var(--message-gap);
+            padding: var(--hcf-box-padding);
+            border-radius: var(--hcf-box-radius);
+            background: rgba(var(--hcf-box-rgb), var(--hcf-box-opacity));
+            color: var(--hcf-text-color);
+            font-family: var(--chat-font);
+            font-size: var(--chat-size);
+            line-height: 1.28;
+            overflow-wrap: anywhere;
+            text-shadow: 0 0 var(--shadow-blur) var(--shadow-color);
+        }
+
+        .messagebox.compact-width {
+            width: fit-content;
+            max-width: min(100%, var(--hcf-message-width));
+        }
+
+        .messagebox.compact-width.align-right {
+            margin-left: auto;
+        }
+
+        .messagetop {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            color: var(--hcf-top-color);
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .messagetopmeta {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .messagetimeleft {
+            flex: 0 0 auto;
+            margin-left: auto;
+            color: var(--hcf-reply-color);
+            font-size: calc(var(--chat-size) * 0.68);
+            font-weight: 800;
+            line-height: 1;
+            opacity: 0.8;
+        }
+
+        .messagereplyto {
+            min-width: 0;
+            overflow: hidden;
+            color: var(--hcf-reply-color);
+            font-size: calc(var(--chat-size) * 0.78);
+            font-weight: 600;
+            line-height: 1.25;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            opacity: 0.86;
+        }
+
+        .messagetext {
+            color: var(--hcf-text-color);
+            font-weight: 600;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .messagebox.deleted-message,
+        .messagebox.deleted-message .messagetext,
+        .messagebox.deleted-message .messagetop,
+        .messagebox.deleted-message .nick,
+        .messagebox.deleted-message .mention {
+            color: #8f949f !important;
+        }
+
+        .messageosu {
+            position: relative;
+            display: grid;
+            grid-template-columns: clamp(82px, 19%, 126px) minmax(0, 1fr);
+            min-height: 124px;
+            border: 1px solid rgba(255, 255, 255, 0.105);
+            border-radius: 22px;
+            overflow: hidden;
+            isolation: isolate;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.025) 34%, rgba(0, 0, 0, 0.2)),
+                rgba(9, 10, 16, 0.84);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+                0 16px 38px rgba(0, 0, 0, 0.26);
+            animation: osu-card-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .messageosu::before {
+            content: "";
+            position: absolute;
+            inset: -18px;
+            z-index: 0;
+            background-image: var(--osu-bg);
+            background-position: center;
+            background-size: cover;
+            filter: blur(24px) saturate(1.28) brightness(0.78);
+            opacity: 0.46;
+            transform: scale(1.14);
+        }
+
+        .messageosu::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.12), transparent 26%),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(7, 8, 13, 0.66) 42%, rgba(7, 8, 13, 0.92));
+        }
+
+        .messageosuimage {
+            position: relative;
+            z-index: 1;
+            align-self: center;
+            width: calc(100% - 22px);
+            height: auto;
+            aspect-ratio: 1;
+            min-height: 0;
+            margin: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            border-radius: 22px;
+            object-fit: cover;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.26), 1px 0 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .messageosuprofile .messageosuimage {
+            border-radius: 22px;
+        }
+
+        .messageosuscoreimage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.92);
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.4), rgba(124, 106, 239, 0.35));
+            font-size: calc(var(--chat-size) * 1.45);
+            font-weight: 900;
+        }
+
+        .messageosubody {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-rows: minmax(0, 1fr) auto;
+            gap: 8px;
+            min-width: 0;
+            padding: 12px 14px 12px 2px;
+        }
+
+        .messageosutop {
+            position: absolute;
+            top: 13px;
+            right: 14px;
+            z-index: 2;
+        }
+
+        .messageosutop span {
+            display: inline-flex;
+            align-items: center;
+            height: 18px;
+            border: 1px solid rgba(141, 240, 172, 0.22);
+            border-radius: 999px;
+            padding: 0 7px;
+            color: rgba(141, 240, 172, 0.92);
+            background: rgba(65, 201, 120, 0.095);
+            font-size: calc(var(--chat-size) * 0.42);
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .messageosuheader {
+            display: grid;
+            gap: 3px;
+            min-width: 0;
+            align-content: center;
+            padding-right: 74px;
+        }
+
+        .messageosutitle {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #fff;
+            font-size: calc(var(--chat-size) * 0.86);
+            font-weight: 900;
+            line-height: 1.08;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .messageosusubtitle {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: calc(var(--chat-size) * 0.58);
+            font-weight: 700;
+            line-height: 1.15;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .messageosucreator {
+            color: rgba(255, 255, 255, 0.48);
+            font-size: calc(var(--chat-size) * 0.54);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .messageosucreator span {
+            color: #8df0ac;
+            font-weight: 900;
+        }
+
+        .messageosustats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+            gap: 4px;
+        }
+
+        .messageosustats span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px;
+            min-height: 20px;
+            border: 1px solid color-mix(in srgb, var(--chip-color) 34%, rgba(255, 255, 255, 0.07));
+            border-radius: 7px;
+            padding: 2px 6px;
+            color: rgba(255, 255, 255, 0.88);
+            background: color-mix(in srgb, var(--chip-color) 14%, rgba(255, 255, 255, 0.035));
+            font-size: calc(var(--chat-size) * 0.42);
+            font-weight: 800;
+            line-height: 1;
+            backdrop-filter: blur(8px);
+            min-width: 0;
+        }
+
+        .messageosustats b {
+            color: color-mix(in srgb, var(--chip-color) 78%, white);
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .osu-chip-gold { --chip-color: #ffd166; }
+        .osu-chip-pink { --chip-color: #ff73c8; }
+        .osu-chip-violet { --chip-color: #a78bfa; }
+        .osu-chip-cyan { --chip-color: #66e3ff; }
+        .osu-chip-blue { --chip-color: #63a8ff; }
+        .osu-chip-red { --chip-color: #ff7a7a; }
+        .osu-chip-green { --chip-color: #8df0ac; }
+        .osu-chip-gray { --chip-color: #b7bac7; }
+        .osu-chip-orange { --chip-color: #ffae5d; }
+        .osu-chip-mint { --chip-color: #4dd4ac; }
+
+        .messageosuflag {
+            width: calc(var(--chat-size) * 0.9);
+            height: calc(var(--chat-size) * 0.62);
+            border-radius: 3px;
+            object-fit: cover;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16);
+        }
+
+        .messageosutopscores {
+            display: grid;
+            gap: 3px;
+            margin-top: 1px;
+        }
+
+        .messageosutopscores div {
+            display: grid;
+            grid-template-columns: 18px minmax(0, 1fr) auto;
+            gap: 6px;
+            align-items: center;
+            min-height: 18px;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: calc(var(--chat-size) * 0.42);
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .messageosutopscores b {
+            color: #ffd166;
+            font-weight: 900;
+        }
+
+        .messageosutopscores span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .messageosutopscores strong {
+            color: #ff73c8;
+            font-weight: 900;
+        }
+
+        .nick,
+        .mention {
+            font-family: var(--chat-font);
+            font-weight: inherit;
+        }
+
+        .badges {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+            line-height: 1;
+            vertical-align: middle;
+        }
+
+        .badge {
+            height: calc(var(--chat-size) * 0.62 * var(--badge-scale));
+            min-width: calc(var(--chat-size) * 0.62 * var(--badge-scale));
+            border-radius: var(--hcf-badge-radius);
+            vertical-align: middle;
+        }
+
+        .emote {
+            height: calc(var(--chat-size) * 1.22);
+            max-width: calc(var(--chat-size) * 5);
+            margin: 0 2px;
+            border-radius: 3px;
+            vertical-align: -0.26em;
+        }
+
+        .IkuzaUsername,
+        .HellCakeUsername,
+        .YatagarasuUsername {
+            display: inline-block;
+            color: transparent;
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-weight: 900;
+            animation: gradient-flow 5s ease-in-out infinite;
+        }
+
+        .IkuzaUsername {
+            background-image: linear-gradient(90deg, #ffd875, #ffae5d, #f4e8a4, #ffd875);
+            text-shadow: 0 0 8px rgba(255, 216, 117, 0.55);
+        }
+
+        .HellCakeUsername {
+            background-image: linear-gradient(90deg, #41c978, #186a36, #8df0ac, #41c978);
+            text-shadow: 0 0 8px rgba(65, 201, 120, 0.5);
+        }
+
+        .YatagarasuUsername {
+            background-image: linear-gradient(90deg, #ff69b4, #ff1493, #ffc1db, #ff69b4);
+            text-shadow: 0 0 8px rgba(255, 105, 180, 0.55);
+        }
+
+        .user-notice {
+            color: var(--user-notice-color);
+            border: 1px solid var(--user-notice-color);
+            background: rgba(var(--user-notice-rgb), var(--user-notice-opacity));
+        }
+
+        .system-message {
+            color: var(--system-message-color);
+            border: 1px solid var(--system-message-color);
+            background: rgba(0, 0, 0, 0.24);
+        }
+
+        .action-message.italic-action .messagetext {
+            font-style: italic;
+        }
+
+        .animation-in-fade { animation: fade-in 260ms ease-out both; }
+        .animation-in-slide-up { animation: slide-up 320ms ease-out both; }
+        .animation-in-pop { animation: pop-in 260ms cubic-bezier(0.2, 1.25, 0.35, 1) both; }
+        .removing.animation-out-fade { animation: fade-out 300ms ease-in both; }
+        .removing.animation-out-slide-down { animation: slide-down 320ms ease-in both; }
+        .removing.animation-out-pop { animation: pop-out 260ms ease-in both; }
+
+        #loading-indicator,
+        #error-indicator {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            pointer-events: none;
+        }
+
+        #loading-indicator {
+            color: rgba(255, 255, 255, 0.92);
+            background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.22), transparent 22rem);
+            transition: opacity 320ms ease;
+        }
+
+        .loading-emote {
+            width: min(156px, 42vw);
+            height: auto;
+            filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.42));
+        }
+
+        .loading-title {
+            margin-top: 14px;
+            font-size: clamp(1.55rem, 6vw, 3rem);
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            background: linear-gradient(90deg, #41c978, #186a36, #8df0ac, #41c978);
+            background-size: 240% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient-flow 3.5s ease-in-out infinite;
+        }
+
+        .loading-status {
+            margin-top: 10px;
+            color: #b7bac7;
+            font-size: 1rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        #error-indicator {
+            display: none;
+            background: rgba(12, 0, 4, 0.78);
+            color: #fff;
+            pointer-events: auto;
+        }
+
+        #error-indicator strong {
+            color: #ff7b95;
+            font-size: 1.25rem;
+        }
+
+        #error-indicator pre {
+            width: min(720px, 100%);
+            max-height: 260px;
+            overflow: auto;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.44);
+            color: #ffd4dc;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pop-in {
+            from { opacity: 0; transform: scale(0.86); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes osu-card-in {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes slide-down {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(18px); }
+        }
+
+        @keyframes pop-out {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.86); }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-indicator">
+        <img class="loading-emote" id="loading-emote" src="https://cdn.7tv.app/emote/01F6NMMEER00015NVG2J8ZH77N/4x.webp" alt="Loading" aria-hidden="true">
+        <div class="loading-title">HellCakeFication</div>
+        <div class="loading-status" id="loading-status">Starting chat...</div>
+    </div>
+    <div id="error-indicator" role="alert"></div>
+    <div id="message_container" aria-live="polite"></div>
+
+    <script src="preload/manifest.js"></script>
+    <script>
+        window.IkuzaChatV2 = window.IkuzaChatV2 || {};
+        (function () {
+            var fallback = 'https://cdn.7tv.app/emote/01F6NMMEER00015NVG2J8ZH77N/4x.webp';
+            var list = Array.isArray(window.IkuzaChatV2Preload) ? window.IkuzaChatV2Preload : [];
+            var files = list.filter(function (item) {
+                return typeof item === 'string' && /\.webp(?:\?.*)?$/i.test(item);
+            });
+            var image = document.getElementById('loading-emote');
+            if (!image || files.length === 0) return;
+
+            var selected = files[Math.floor(Math.random() * files.length)];
+            image.src = /^https?:\/\//i.test(selected) ? selected : 'preload/' + selected.replace(/^\.\//, '');
+            image.onerror = function () {
+                image.src = fallback;
+            };
+        }());
+        window.IkuzaChatV2.setLoadingStatus = function (message) {
+            var status = document.getElementById('loading-status');
+            if (status) status.textContent = message;
+        };
+        window.IkuzaChatV2.hideLoading = function () {
+            var loading = document.getElementById('loading-indicator');
+            if (!loading) return;
+            loading.style.opacity = '0';
+            window.setTimeout(function () {
+                loading.style.display = 'none';
+            }, 240);
+        };
+        window.IkuzaChatV2.showError = function (message, details) {
+            var loading = document.getElementById('loading-indicator');
+            var error = document.getElementById('error-indicator');
+            if (loading) loading.style.display = 'none';
+            if (!error) return;
+            error.style.display = 'flex';
+            error.innerHTML = '<strong>' + (message || 'Chat error') + '</strong>' +
+                (details ? '<pre></pre>' : '');
+            if (details) {
+                error.querySelector('pre').textContent = String(details);
+            }
+        };
+    </script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/badges.js"></script>
+    <script src="js/emotes.js"></script>
+    <script src="js/osu.js"></script>
+    <script src="js/bots.js"></script>
+    <script src="js/hellcakefication-renderer.js"></script>
+    <script src="js/twitch.js"></script>
+    <script src="js/test-mode.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

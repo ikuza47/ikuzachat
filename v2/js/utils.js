@@ -95,6 +95,10 @@
         return /^#[0-9a-f]{6}$/i.test(color) ? color : null;
     }
 
+    function extractMessageId(tags) {
+        return extractTagValue(tags, 'id') || extractTagValue(tags, 'target-msg-id') || null;
+    }
+
     function getTimeString(timeZone) {
         const now = new Date();
         const utc = now.getTime() + now.getTimezoneOffset() * 60000;
@@ -111,9 +115,20 @@
             tags,
             username: extractUsername(message),
             text: action.text,
+            id: extractMessageId(tags),
             isAction: action.isAction,
             roomId: extractRoomId(tags),
             color: extractColor(tags)
+        };
+    }
+
+    function parseClearMessage(message) {
+        const tags = extractTags(message);
+        return {
+            raw: message,
+            tags,
+            id: extractMessageId(tags),
+            text: extractCommandText(message, 'CLEARMSG')
         };
     }
 
@@ -167,8 +182,11 @@
         extractCommandText,
         extractRoomId,
         extractColor,
+        extractMessageId,
+        unescapeTagValue,
         getTimeString,
         parseIrcMessage,
+        parseClearMessage,
         parseUserNotice,
         parseNotice
     };

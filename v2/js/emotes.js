@@ -127,9 +127,9 @@
         return emotes;
     }
 
-    async function loadSevenTv(channelId) {
+    async function loadSevenTv(channelId, force) {
         if (!channelId) return {};
-        if (cache.sevenTv[channelId]) return cache.sevenTv[channelId];
+        if (!force && cache.sevenTv[channelId]) return cache.sevenTv[channelId];
         const emotes = {};
 
         try {
@@ -163,6 +163,13 @@
             loadSevenTv(channelId)
         ]);
         return channelId;
+    }
+
+    function startSevenTvRefresh(channelId) {
+        if (!channelId || startSevenTvRefresh.timer) return;
+        startSevenTvRefresh.timer = window.setInterval(() => {
+            loadSevenTv(channelId, true).catch((error) => utils.log('Unable to refresh 7TV emotes', error));
+        }, 60000);
     }
 
     function replaceTwitchTagEmotes(text, tags) {
@@ -230,6 +237,7 @@
     window.IkuzaChatV2.emotes = {
         cache,
         init,
+        startSevenTvRefresh,
         replace,
         getTwitchUserId
     };
