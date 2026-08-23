@@ -117,7 +117,8 @@
             message.classList.add('first-message-bg');
         }
 
-        let textHtml = root.emotes.replace(payload.text, payload.tags || '', payload.roomId, config.channel);
+        const media = await root.media.extractCards(payload.text, payload);
+        let textHtml = root.emotes.replace(media.text, payload.tags || '', payload.roomId, config.channel);
         textHtml = await root.osu.replace(textHtml);
         textHtml = processMentions(textHtml);
 
@@ -147,7 +148,7 @@
         const bodyHtml = payload.isAction && config.meStyleEnabled
             ? createActionMessageHtml(textHtml, payload.username, payload.color)
             : `<span class="message">${textHtml}</span>`;
-        message.innerHTML = `${wrapMeta(corner, 'corner-meta')}${wrapMeta(beforeName, 'inline-meta-before')}<span class="user">${nick}</span>${wrapMeta(afterName, 'inline-meta-after')} ${bodyHtml}`;
+        message.innerHTML = `${wrapMeta(corner, 'corner-meta')}${wrapMeta(beforeName, 'inline-meta-before')}<span class="user">${nick}</span>${wrapMeta(afterName, 'inline-meta-after')} ${media.html}${bodyHtml}`;
         container.appendChild(message);
         container.scrollTop = container.scrollHeight;
 
@@ -221,7 +222,7 @@
         if (!message || message.classList.contains('deleted-message')) return;
 
         message.classList.add('deleted-message');
-        message.querySelectorAll('.messageosu, .messageosumap, .messageosuprofile, .messageosuscore').forEach((node) => node.remove());
+        message.querySelectorAll('.messageosu, .messageosumap, .messageosuprofile, .messageosuscore, .messagemedia').forEach((node) => node.remove());
         const body = message.querySelector('.message');
         if (body) {
             body.textContent = 'Сообщение было удалено';

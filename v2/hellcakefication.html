@@ -142,8 +142,8 @@
         .messageosu {
             position: relative;
             display: grid;
-            grid-template-columns: clamp(82px, 19%, 126px) minmax(0, 1fr);
-            min-height: 124px;
+            grid-template-columns: clamp(104px, 24%, 154px) minmax(0, 1fr);
+            min-height: 146px;
             border: 1px solid rgba(255, 255, 255, 0.105);
             border-radius: 22px;
             overflow: hidden;
@@ -220,35 +220,34 @@
             padding: 12px 14px 12px 2px;
         }
 
-        .messageosutop {
-            position: absolute;
-            top: 13px;
-            right: 14px;
-            z-index: 2;
-        }
-
-        .messageosutop span {
-            display: inline-flex;
-            align-items: center;
-            height: 18px;
-            border: 1px solid rgba(141, 240, 172, 0.22);
-            border-radius: 999px;
-            padding: 0 7px;
-            color: rgba(141, 240, 172, 0.92);
-            background: rgba(65, 201, 120, 0.095);
-            font-size: calc(var(--chat-size) * 0.42);
-            font-weight: 900;
-            letter-spacing: 0.08em;
-            line-height: 1;
-            text-transform: uppercase;
-        }
-
         .messageosuheader {
             display: grid;
             gap: 3px;
             min-width: 0;
             align-content: center;
             padding-right: 74px;
+        }
+
+        .messageosumarquee {
+            --marquee-space: 100%;
+            display: block;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .messageosumarquee span {
+            display: inline-block;
+            min-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: top;
+        }
+
+        .messageosumarquee.scrolling span {
+            overflow: visible;
+            text-overflow: clip;
+            animation: osu-marquee 6.2s linear infinite;
         }
 
         .messageosutitle {
@@ -287,45 +286,58 @@
         }
 
         .messageosustats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+            display: flex;
             gap: 4px;
+            flex-wrap: wrap;
+            align-items: start;
         }
 
-        .messageosustats span {
+        .messageosustats-compact-map {
+            display: grid;
+            grid-template-columns: repeat(2, max-content);
+            width: max-content;
+            max-width: 100%;
+        }
+
+        .messageosustats-profile,
+        .messageosustats-compact-profile {
+            width: max-content;
+            max-width: 100%;
+        }
+
+        .messageosuchip {
             display: inline-flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 5px;
-            min-height: 20px;
+            width: max-content;
+            max-width: 100%;
+            min-height: 22px;
             border: 1px solid color-mix(in srgb, var(--chip-color) 34%, rgba(255, 255, 255, 0.07));
             border-radius: 7px;
-            padding: 2px 6px;
+            padding: 3px 7px;
             color: rgba(255, 255, 255, 0.88);
             background: color-mix(in srgb, var(--chip-color) 14%, rgba(255, 255, 255, 0.035));
-            font-size: calc(var(--chat-size) * 0.42);
+            font-size: calc(var(--chat-size) * 0.44);
             font-weight: 800;
             line-height: 1;
             backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+
+        .messageosuchip-profile {
             min-width: 0;
         }
 
-        .messageosustats b {
+        .messageosuchip-stars {
+            min-width: min(180px, 100%);
+        }
+
+        .messageosuchip b {
             color: color-mix(in srgb, var(--chip-color) 78%, white);
             font-weight: 900;
             text-transform: uppercase;
         }
-
-        .osu-chip-gold { --chip-color: #ffd166; }
-        .osu-chip-pink { --chip-color: #ff73c8; }
-        .osu-chip-violet { --chip-color: #a78bfa; }
-        .osu-chip-cyan { --chip-color: #66e3ff; }
-        .osu-chip-blue { --chip-color: #63a8ff; }
-        .osu-chip-red { --chip-color: #ff7a7a; }
-        .osu-chip-green { --chip-color: #8df0ac; }
-        .osu-chip-gray { --chip-color: #b7bac7; }
-        .osu-chip-orange { --chip-color: #ffae5d; }
-        .osu-chip-mint { --chip-color: #4dd4ac; }
 
         .messageosuflag {
             width: calc(var(--chat-size) * 0.9);
@@ -337,19 +349,23 @@
 
         .messageosutopscores {
             display: grid;
-            gap: 3px;
-            margin-top: 1px;
+            gap: 4px;
+            margin-top: 2px;
+            max-width: min(360px, 100%);
         }
 
         .messageosutopscores div {
             display: grid;
-            grid-template-columns: 18px minmax(0, 1fr) auto;
-            gap: 6px;
+            grid-template-columns: 20px minmax(0, 1fr) auto;
+            gap: 7px;
             align-items: center;
-            min-height: 18px;
+            min-height: 22px;
+            border-radius: 7px;
+            padding: 2px 6px;
             color: rgba(255, 255, 255, 0.72);
-            font-size: calc(var(--chat-size) * 0.42);
-            font-weight: 700;
+            background: rgba(255, 255, 255, 0.04);
+            font-size: calc(var(--chat-size) * 0.52);
+            font-weight: 800;
             line-height: 1;
         }
 
@@ -358,15 +374,40 @@
             font-weight: 900;
         }
 
-        .messageosutopscores span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .messageosutopscores .messageosumarquee {
+            min-width: 0;
         }
 
         .messageosutopscores strong {
             color: #ff73c8;
             font-weight: 900;
+        }
+
+        .messagemedia {
+            position: relative;
+            display: block;
+            width: min(100%, 620px);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(7, 8, 13, 0.72);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 34px rgba(0, 0, 0, 0.24);
+            animation: osu-card-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .messagebox:not(.compact-width) .messagemedia {
+            width: 100%;
+        }
+
+        .messagemediaelement {
+            display: block;
+            width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+        }
+
+        .messagemedia-video .messagemediaelement {
+            background: #05060a;
         }
 
         .nick,
@@ -544,6 +585,11 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        @keyframes osu-marquee {
+            0%, 12% { transform: translateX(0); }
+            88%, 100% { transform: translateX(var(--marquee-distance)); }
+        }
+
         @keyframes fade-out {
             from { opacity: 1; }
             to { opacity: 0; }
@@ -617,6 +663,7 @@
     <script src="js/badges.js"></script>
     <script src="js/emotes.js"></script>
     <script src="js/osu.js"></script>
+    <script src="js/media.js"></script>
     <script src="js/bots.js"></script>
     <script src="js/hellcakefication-renderer.js"></script>
     <script src="js/twitch.js"></script>

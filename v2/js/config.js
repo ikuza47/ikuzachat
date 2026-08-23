@@ -96,6 +96,9 @@
         testMode: getBool('testMode', false),
         debug: getBool('debug', false),
         blockBots: getBool('blockBots', false),
+        media: {
+            enabled: getBool('media', true)
+        },
         osu: {
             enabled: getBool('osu', false),
             apiKey: getString('osuKey', ''),

@@ -95,6 +95,18 @@
         timer = window.setInterval(tick, 250);
     }
 
+    function setupMarquees(message) {
+        window.requestAnimationFrame(() => {
+            message.querySelectorAll('.messageosumarquee').forEach((node) => {
+                const inner = node.firstElementChild;
+                if (!inner) return;
+                const distance = node.clientWidth - inner.scrollWidth;
+                node.classList.toggle('scrolling', distance < -4);
+                node.style.setProperty('--marquee-distance', `${distance}px`);
+            });
+        });
+    }
+
     function removeMessage(message) {
         if (!message || !message.parentNode) return;
         const animation = createAnimationClass('animation-out', config.animationOut);
@@ -147,7 +159,8 @@
 
         const replyTarget = getReplyTarget(payload);
         const text = removeReplyMention(payload.text, replyTarget);
-        const osu = await root.osu.extractCards(text);
+        const media = await root.media.extractCards(text, payload);
+        const osu = await root.osu.extractCards(media.text);
         let textHtml = root.emotes.replace(osu.text, payload.tags || '', payload.roomId, config.channel);
         textHtml = processMentions(textHtml);
 
@@ -155,8 +168,9 @@
         const topParts = [createNickHtml(payload.username, payload.color), badges].filter(Boolean).join(' ');
         const timeLeft = config.autoRemove ? '<div class="messagetimeleft"></div>' : '';
         const messageText = textHtml ? `<div class="messagetext">${textHtml}</div>` : '';
-        message.innerHTML = `<div class="messagetop"><div class="messagetopmeta">${topParts}</div>${timeLeft}</div>${getReply(payload)}${osu.html}${messageText}`;
+        message.innerHTML = `<div class="messagetop"><div class="messagetopmeta">${topParts}</div>${timeLeft}</div>${getReply(payload)}${media.html}${osu.html}${messageText}`;
         container.appendChild(message);
+        setupMarquees(message);
         startTimeLeft(message, message.querySelector('.messagetimeleft'));
         container.scrollTop = container.scrollHeight;
         scheduleMessageRemoval(message);
@@ -219,7 +233,7 @@
         if (!message || message.classList.contains('deleted-message')) return;
 
         message.classList.add('deleted-message');
-        message.querySelectorAll('.messageosu, .messageosumap, .messageosuprofile, .messageosuscore').forEach((node) => node.remove());
+        message.querySelectorAll('.messageosu, .messageosumap, .messageosuprofile, .messageosuscore, .messagemedia').forEach((node) => node.remove());
         let text = message.querySelector('.messagetext');
         if (!text) {
             text = document.createElement('div');

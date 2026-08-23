@@ -14,7 +14,7 @@
         'hcfBoxRadius', 'hcfBoxPadding', 'hcfBadgeRadius', 'hcfTopColor', 'hcfReplyColor',
         'hcfTextColor', 'hcfWidthMode', 'hcfMessageSide', 'hcfMessageWidth',
         'testMode', 'debugMode', 'osuEnabled', 'osuApiKey', 'osuMap', 'osuUser',
-        'osuScore', 'osuHighlight', 'osuCompactInfo', 'blockBots'
+        'osuScore', 'osuHighlight', 'osuCompactInfo', 'mediaEnabled', 'blockBots'
     ];
 
     const el = {};
@@ -106,6 +106,7 @@
         osuScore: false,
         osuHighlight: false,
         osuCompactInfo: false,
+        mediaEnabled: true,
         blockBots: false
     };
     let currentLang = localStorage.getItem('ikuzachat-v2-lang') || 'en';
@@ -229,6 +230,8 @@
             'switch.osuHighlightHint': 'Color replaced osu! text by type.',
             'switch.osuCompactInfo': 'Compact info',
             'switch.osuCompactInfoHint': 'Show fewer fields in HellCakeFication osu! cards.',
+            'switch.media': 'Images and videos',
+            'switch.mediaHint': 'Show media links from broadcaster, moderators and trusted users.',
             'switch.blockBots': 'Block known bots',
             'switch.blockBotsHint': 'Hide messages from a small bundled bot list.',
             'output.title': 'Overlay link',
@@ -357,6 +360,8 @@
             'switch.osuHighlightHint': 'Окрашивает заменённый osu! текст по типу.',
             'switch.osuCompactInfo': 'Краткая инфо',
             'switch.osuCompactInfoHint': 'Показывает меньше полей в osu! карточках HellCakeFication.',
+            'switch.media': 'Изображения и видео',
+            'switch.mediaHint': 'Показывает медиа-ссылки от стримера, модераторов и доверенных пользователей.',
             'switch.blockBots': 'Блокировать известных ботов',
             'switch.blockBotsHint': 'Скрывает сообщения из небольшого встроенного списка ботов.',
             'output.title': 'Ссылка overlay',
@@ -708,6 +713,7 @@
         url.searchParams.set('testMode', getBool('testMode'));
         url.searchParams.set('debug', getBool('debugMode'));
         url.searchParams.set('blockBots', getBool('blockBots'));
+        url.searchParams.set('media', getBool('mediaEnabled'));
 
         if (el.osuEnabled.checked) {
             url.searchParams.set('osu', '1');

@@ -209,6 +209,24 @@
             vertical-align: -0.26em;
         }
 
+        .messagemedia {
+            display: block;
+            width: min(520px, 100%);
+            margin: 7px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.28);
+            animation: fade-in 260ms ease-out both;
+        }
+
+        .messagemediaelement {
+            display: block;
+            width: 100%;
+            max-height: 340px;
+            object-fit: contain;
+        }
+
         .IkuzaUsername,
         .HellCakeUsername,
         .YatagarasuUsername {
@@ -449,6 +467,7 @@
     <script src="js/badges.js"></script>
     <script src="js/emotes.js"></script>
     <script src="js/osu.js"></script>
+    <script src="js/media.js"></script>
     <script src="js/bots.js"></script>
     <script src="js/renderer.js"></script>
     <script src="js/twitch.js"></script>
