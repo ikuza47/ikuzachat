@@ -172,7 +172,7 @@
         }, 60000);
     }
 
-    function replaceTwitchTagEmotes(text, tags) {
+    function replaceTwitchTagEmotes(text, tags, channelId) {
         const emotesTag = utils.extractTagValue(tags, 'emotes');
         if (!text) return '';
         if (!emotesTag) return utils.escapeHtml(text);
@@ -195,7 +195,11 @@
         let cursor = 0;
         for (const item of replacements) {
             result += utils.escapeHtml(text.slice(cursor, item.start));
-            result += `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v2/${utils.escapeAttribute(item.id)}/default/dark/3.0" alt="${utils.escapeAttribute(item.code)}" loading="lazy">`;
+            if (cache.sevenTv[channelId] && cache.sevenTv[channelId][item.code]) {
+                result += utils.escapeHtml(item.code);
+            } else {
+                result += `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v2/${utils.escapeAttribute(item.id)}/default/dark/3.0" alt="${utils.escapeAttribute(item.code)}" loading="lazy">`;
+            }
             cursor = item.end + 1;
         }
         result += utils.escapeHtml(text.slice(cursor));
@@ -204,9 +208,9 @@
 
     function replaceThirdPartyEmotes(html, channelId, channel) {
         const all = {
-            ...(cache.twitch[channelId] || {}),
             ...(cache.bttv[channelId] || cache.bttv[channel] || {}),
             ...(cache.ffz[channel] || {}),
+            ...(cache.twitch[channelId] || {}),
             ...(cache.sevenTv[channelId] || {})
         };
 
@@ -230,7 +234,7 @@
     }
 
     function replace(text, tags, channelId, channel) {
-        const withTwitch = replaceTwitchTagEmotes(text, tags);
+        const withTwitch = replaceTwitchTagEmotes(text, tags, channelId);
         return replaceThirdPartyEmotes(withTwitch, channelId, channel);
     }
 

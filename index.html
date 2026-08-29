@@ -465,6 +465,33 @@
             gap: 9px;
         }
 
+        .compact-switch-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px;
+        }
+
+        .compact-switch-grid .switch,
+        .compact-switch-grid .field {
+            padding: 8px 10px;
+        }
+
+        .compact-switch-grid .label {
+            font-size: 11px;
+        }
+
+        .compact-options {
+            padding: 10px;
+        }
+
+        .compact-options .section-head {
+            margin-bottom: 8px;
+        }
+
+        .nested.full {
+            grid-column: 1 / -1;
+        }
+
         .field {
             position: relative;
             display: grid;
@@ -934,6 +961,7 @@
             .top-actions,
             .tabs,
             .grid,
+            .compact-switch-grid,
             .actions {
                 grid-template-columns: 1fr;
             }
@@ -1088,6 +1116,14 @@
                                 <input id="showTime" type="checkbox">
                                 <span><span class="label" data-i18n="switch.showTime">Show time</span><span class="hint" data-i18n="switch.showTimeHint">Display HH:MM before the nickname.</span></span>
                             </label>
+                            <div class="field full" data-chat-types="hellcakefication">
+                                <label for="hcfTimeMode" data-i18n="fields.hcfTimeMode">HellCakeFication time display</label>
+                                <select id="hcfTimeMode">
+                                    <option value="none" data-i18n="options.timeNone">Nothing</option>
+                                    <option value="sent" data-i18n="options.timeSent">Sent time</option>
+                                    <option value="remaining" data-i18n="options.timeRemaining">Removal countdown</option>
+                                </select>
+                            </div>
                             <div class="nested hidden" id="timeSettings">
                                 <div class="grid">
                                     <div class="field">
@@ -1206,6 +1242,10 @@
                                     <label for="hcfMessageWidth"><span data-i18n="fields.hcfMessageWidth">Max message width</span>: <span class="range-value" data-range-value="hcfMessageWidth">680px</span></label>
                                     <input id="hcfMessageWidth" type="range" min="160" max="1200" step="10" value="680">
                                 </div>
+                                <label class="switch full">
+                                    <input id="hcfSpecialBackgrounds" type="checkbox">
+                                    <span><span class="label" data-i18n="switch.hcfSpecialBackgrounds">Background styling</span><span class="hint" data-i18n="switch.hcfSpecialBackgroundsHint">Use osu! profile covers as message backgrounds for special users.</span></span>
+                                </label>
                                 <div class="field full">
                                     <label for="hcfTopColor" data-i18n="fields.hcfTopColor">Nickname row color</label>
                                     <div class="color-control" data-color-control="hcfTopColor"></div>
@@ -1342,17 +1382,47 @@
                                         <span><span class="label" data-i18n="switch.osuUser">Parse users</span><span class="hint" data-i18n="switch.osuUserHint">osu! user profile links.</span></span>
                                     </label>
                                     <label class="switch">
-                                        <input id="osuScore" type="checkbox">
-                                        <span><span class="label" data-i18n="switch.osuScore">Parse scores</span><span class="hint" data-i18n="switch.osuScoreHint">Experimental score page parsing.</span></span>
-                                    </label>
-                                    <label class="switch">
                                         <input id="osuHighlight" type="checkbox">
                                         <span><span class="label" data-i18n="switch.osuHighlight">Highlight osu! info</span><span class="hint" data-i18n="switch.osuHighlightHint">Color replaced osu! text by type.</span></span>
                                     </label>
-                                    <label class="switch" data-chat-types="hellcakefication">
-                                        <input id="osuCompactInfo" type="checkbox">
-                                        <span><span class="label" data-i18n="switch.osuCompactInfo">Compact info</span><span class="hint" data-i18n="switch.osuCompactInfoHint">Show fewer fields in HellCakeFication osu! cards.</span></span>
-                                    </label>
+                                    <div class="nested full compact-options" id="osuMapCardSettings" data-chat-types="hellcakefication">
+                                        <div class="section-head"><h2 data-i18n="osu.mapCard">Map card fields</h2></div>
+                                        <div class="compact-switch-grid">
+                                            <label class="switch"><input id="osuMapShowCover" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowCover">Map cover</span></span></label>
+                                            <label class="switch"><input id="osuMapShowTitle" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowTitle">Map title</span></span></label>
+                                            <label class="switch"><input id="osuMapShowArtist" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowArtist">Artist</span></span></label>
+                                            <label class="switch"><input id="osuMapShowCreator" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowCreator">Mapper</span></span></label>
+                                            <label class="switch"><input id="osuMapShowStatus" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowStatus">Status</span></span></label>
+                                            <label class="switch"><input id="osuMapShowVersion" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowVersion">Difficulty name</span></span></label>
+                                            <label class="switch"><input id="osuMapShowStars" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowStars">Stars</span></span></label>
+                                            <label class="switch"><input id="osuMapShowBpm" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowBpm">BPM</span></span></label>
+                                            <label class="switch"><input id="osuMapShowAr" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowAr">AR</span></span></label>
+                                            <label class="switch"><input id="osuMapShowCs" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowCs">CS</span></span></label>
+                                            <label class="switch"><input id="osuMapShowHp" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowHp">HP</span></span></label>
+                                            <label class="switch"><input id="osuMapShowOd" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowOd">OD</span></span></label>
+                                            <label class="switch"><input id="osuMapShowLength" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowLength">Length</span></span></label>
+                                            <label class="switch"><input id="osuMapShowCombo" type="checkbox" checked><span><span class="label" data-i18n="switch.osuMapShowCombo">Max combo</span></span></label>
+                                            <label class="switch"><input id="osuMapShowPlayCount" type="checkbox"><span><span class="label" data-i18n="switch.osuMapShowPlayCount">Play count</span></span></label>
+                                            <label class="switch"><input id="osuMapShowFavourites" type="checkbox"><span><span class="label" data-i18n="switch.osuMapShowFavourites">Favourites</span></span></label>
+                                        </div>
+                                    </div>
+                                    <div class="nested full compact-options" id="osuProfileCardSettings" data-chat-types="hellcakefication">
+                                        <div class="section-head"><h2 data-i18n="osu.profileCard">Profile card fields</h2></div>
+                                        <div class="compact-switch-grid">
+                                            <label class="switch"><input id="osuProfileShowAvatar" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowAvatar">Avatar</span></span></label>
+                                            <label class="switch"><input id="osuProfileShowUsername" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowUsername">Username</span></span></label>
+                                            <label class="switch"><input id="osuProfileShowFlag" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowFlag">Country flag</span></span></label>
+                                            <label class="switch"><input id="osuProfileShowRank" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowRank">Global rank</span></span></label>
+                                            <label class="switch"><input id="osuProfileShowCountryRank" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowCountryRank">Country rank</span></span></label>
+                                            <label class="switch"><input id="osuProfileShowAccuracy" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowAccuracy">Accuracy</span></span></label>
+                                            <label class="switch"><input id="osuProfileShowPp" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowPp">PP</span></span></label>
+                                            <label class="switch"><input id="osuProfileShowPlayCount" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowPlayCount">Play count</span></span></label>
+                                            <div class="field">
+                                                <label for="osuProfileTopScoresCount"><span data-i18n="fields.osuProfileTopScoresCount">Top scores count</span>: <span class="range-value" data-range-value="osuProfileTopScoresCount">3</span></label>
+                                                <input id="osuProfileTopScoresCount" type="range" min="0" max="5" step="1" value="3">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <label class="switch">
@@ -1363,6 +1433,19 @@
                                 <input id="mediaEnabled" type="checkbox" checked>
                                 <span><span class="label" data-i18n="switch.media">Images and videos</span><span class="hint" data-i18n="switch.mediaHint">Show media links from broadcaster, moderators and trusted users.</span></span>
                             </label>
+                            <div class="nested" id="mediaSettings" data-chat-types="hellcakefication">
+                                <div class="section-head"><h2 data-i18n="media.card">Media card</h2></div>
+                                <div class="grid">
+                                    <div class="field">
+                                        <label for="mediaRadius"><span data-i18n="fields.mediaRadius">Media radius</span>: <span class="range-value" data-range-value="mediaRadius">20px</span></label>
+                                        <input id="mediaRadius" type="range" min="0" max="64" step="1" value="20">
+                                    </div>
+                                    <div class="field">
+                                        <label for="mediaOpacity"><span data-i18n="fields.mediaOpacity">Media opacity</span>: <span class="range-value" data-range-value="mediaOpacity">1.00</span></label>
+                                        <input id="mediaOpacity" type="range" min="0" max="1" step="0.05" value="1">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -24,11 +24,6 @@
         return match ? match[1] : null;
     }
 
-    function extractScoreId(url) {
-        const match = url.match(/https?:\/\/osu\.ppy\.sh\/scores\/(?:[a-z]+\/)?(\d+)/i);
-        return match ? match[1] : null;
-    }
-
     function decodeEntities(text) {
         const textarea = document.createElement('textarea');
         textarea.innerHTML = text;
@@ -143,24 +138,6 @@
         }));
     }
 
-    async function getScoreInfo(scoreId) {
-        const response = await fetch(`https://osu.ppy.sh/scores/${encodeURIComponent(scoreId)}`);
-        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-        const html = await response.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const text = (selector, fallback) => doc.querySelector(selector)?.textContent.trim() || fallback;
-
-        return {
-            playerName: text('.score-player strong:nth-child(2)', 'Unknown'),
-            mapName: text('.score-beatmap h1 a', 'Unknown'),
-            difficulty: text('.beatmap-list-item__col--main a', 'Unknown'),
-            accuracy: text('.score-stats__group--stats > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)', '0%'),
-            missCount: text('.score-stats__group--stats > div:nth-child(2) > div:nth-child(4) > div:nth-child(2)', '0'),
-            ppValue: text('.score-stats__group--stats > div:nth-child(1) > div:nth-child(3) span', '0').replace(/pp/gi, '').trim(),
-            coverUrl: doc.querySelector('.score-beatmap__cover, .beatmapset-cover, .beatmapset-cover__cover')?.getAttribute('src') || ''
-        };
-    }
-
     function number(value, decimals) {
         return Number.isFinite(value) ? value.toFixed(decimals) : '?';
     }
@@ -186,10 +163,6 @@
     function formatUser(user) {
         const accuracy = Number.isFinite(user.accuracy) && user.accuracy <= 1 ? user.accuracy * 100 : user.accuracy;
         return `${user.username} - Rank: #${integer(user.rank)} (Country: #${integer(user.countryRank)}), Accuracy: ${number(accuracy, 2)}%, PP: ${integer(user.pp)}`;
-    }
-
-    function formatScore(score) {
-        return `[Replay by ${score.playerName}] ${score.mapName} (${score.difficulty}) ${score.accuracy}; ${score.missCount} miss; ${score.ppValue}pp;`;
     }
 
     function wrap(text, type, highlight) {
@@ -265,88 +238,83 @@
         return `<span class="messageosuchip${className}" style="--chip-color: ${utils.escapeAttribute(color)}"><b>${utils.escapeHtml(label)}</b>${utils.escapeHtml(value)}</span>`;
     }
 
+    function getVisibleChips(items) {
+        return items
+            .filter((item) => item.show)
+            .map((item) => chip(item.label, item.value, item.color, item.className || ''))
+            .join('');
+    }
+
     function mapCover(setId) {
         return `https://assets.ppy.sh/beatmaps/${encodeURIComponent(setId)}/covers/cover.jpg`;
     }
 
     function mapCard(map, index) {
         const cover = mapCover(map.setId);
-        const compact = root.config.osu.compactInfo;
+        const options = root.config.osu;
         const starsColor = getOsuLazerColor(map.stars);
         const statusLabel = getStatusLabel(map.status);
         const statusColor = getStatusColor(map.status);
-        const chips = compact ? [
-            ['len', time(map.totalLength), '#b7bac7', 'messageosuchip-len'],
-            ['status', statusLabel, statusColor, 'messageosuchip-status'],
-            ['bpm', number(map.bpm, 1), '#ff73c8', 'messageosuchip-bpm'],
-            [map.version || 'diff', `(${number(map.stars, 2)})`, starsColor, 'messageosuchip-stars']
-        ] : [
-            ['diff', map.version || 'Unknown', '#a78bfa', ''],
-            ['stars', number(map.stars, 2), starsColor, ''],
-            ['bpm', number(map.bpm, 1), '#ff73c8', ''],
-            ['ar', number(map.ar, 1), '#66e3ff', ''],
-            ['cs', number(map.cs, 1), '#63a8ff', ''],
-            ['hp', number(map.hp, 1), '#ff7a7a', ''],
-            ['od', number(map.od, 1), '#8df0ac', ''],
-            ['len', time(map.totalLength), '#b7bac7', ''],
-            ['combo', integer(map.maxCombo), '#ffae5d', ''],
-            ['status', statusLabel, statusColor, '']
-        ];
+        const chips = getVisibleChips([
+            { show: options.mapShowVersion, label: 'diff', value: map.version || 'Unknown', color: '#a78bfa' },
+            { show: options.mapShowStars, label: 'stars', value: number(map.stars, 2), color: starsColor, className: 'messageosuchip-stars' },
+            { show: options.mapShowBpm, label: 'bpm', value: number(map.bpm, 1), color: '#ff73c8' },
+            { show: options.mapShowAr, label: 'ar', value: number(map.ar, 1), color: '#66e3ff' },
+            { show: options.mapShowCs, label: 'cs', value: number(map.cs, 1), color: '#63a8ff' },
+            { show: options.mapShowHp, label: 'hp', value: number(map.hp, 1), color: '#ff7a7a' },
+            { show: options.mapShowOd, label: 'od', value: number(map.od, 1), color: '#8df0ac' },
+            { show: options.mapShowLength, label: 'len', value: time(map.totalLength), color: '#b7bac7' },
+            { show: options.mapShowCombo, label: 'combo', value: integer(map.maxCombo), color: '#ffae5d' },
+            { show: options.mapShowStatus, label: 'status', value: statusLabel, color: statusColor },
+            { show: options.mapShowPlayCount, label: 'plays', value: integer(map.playCount), color: '#7dd3fc' },
+            { show: options.mapShowFavourites, label: 'fav', value: integer(map.favouriteCount), color: '#f9a8d4' }
+        ]);
+        const image = options.mapShowCover
+            ? `<img class="messageosuimage" src="${utils.sanitizeUrl(cover)}" alt="${utils.escapeAttribute(map.title)}" loading="lazy">`
+            : '';
+        const title = options.mapShowTitle ? `<div class="messageosutitle">${marquee(map.title)}</div>` : '';
+        const artist = options.mapShowArtist ? `<div class="messageosusubtitle">${marquee(map.artist)}</div>` : '';
+        const creator = options.mapShowCreator ? `<div class="messageosucreator">made by <span>${utils.escapeHtml(map.creator)}</span></div>` : '';
+        const stats = chips ? `<div class="messageosustats">${chips}</div>` : '';
 
-        return `<div class="messageosu messageosumap${compact ? ' messageosucompact' : ''}" style="--osu-bg: url('${utils.sanitizeUrl(cover)}'); animation-delay: ${index * 90}ms">` +
-            `<img class="messageosuimage" src="${utils.sanitizeUrl(cover)}" alt="${utils.escapeAttribute(map.title)}" loading="lazy">` +
+        return `<div class="messageosu messageosumap${image ? '' : ' messageosu-no-image'}" style="--osu-bg: url('${utils.sanitizeUrl(cover)}'); animation-delay: ${index * 90}ms">` +
+            image +
             '<div class="messageosubody">' +
-            `<div class="messageosuheader"><div class="messageosutitle">${marquee(map.title)}</div><div class="messageosusubtitle">${marquee(map.artist)}</div><div class="messageosucreator">made by <span>${utils.escapeHtml(map.creator)}</span></div></div>` +
-            `<div class="messageosustats${compact ? ' messageosustats-compact-map' : ''}">${chips.map(([label, value, color, className]) => chip(label, value, color, className)).join('')}</div>` +
+            `<div class="messageosuheader">${title}${artist}${creator}</div>${stats}` +
             '</div></div>';
     }
 
     function profileCard(user, index) {
         const cover = user.coverUrl || user.avatarUrl;
-        const compact = root.config.osu.compactInfo;
+        const options = root.config.osu;
         const accuracy = Number.isFinite(user.accuracy) && user.accuracy <= 1 ? user.accuracy * 100 : user.accuracy;
-        const stats = compact ? [
-            ['pp', integer(user.pp), '#ff73c8', 'messageosuchip-profile'],
-            ['rank', `#${integer(user.rank)} (#${integer(user.countryRank)})`, '#ffd166', 'messageosuchip-profile']
-        ] : [
-            ['rank', `#${integer(user.rank)}`, '#ffd166', ''],
-            ['country', user.countryRank ? `#${integer(user.countryRank)}` : '?', '#63a8ff', ''],
-            ['acc', `${number(accuracy, 2)}%`, '#8df0ac', ''],
-            ['pp', integer(user.pp), '#ff73c8', ''],
-            ['plays', integer(user.playCount), '#a78bfa', '']
-        ];
-        const topScoresList = compact ? user.topScores.slice(0, 3) : user.topScores;
-        const topScores = topScoresList.length > 0
+        const stats = getVisibleChips([
+            { show: options.profileShowRank, label: 'rank', value: `#${integer(user.rank)}`, color: '#ffd166' },
+            { show: options.profileShowCountryRank, label: 'country', value: user.countryRank ? `#${integer(user.countryRank)}` : '?', color: '#63a8ff' },
+            { show: options.profileShowAccuracy, label: 'acc', value: `${number(accuracy, 2)}%`, color: '#8df0ac' },
+            { show: options.profileShowPp, label: 'pp', value: integer(user.pp), color: '#ff73c8' },
+            { show: options.profileShowPlayCount, label: 'plays', value: integer(user.playCount), color: '#a78bfa' }
+        ]);
+        const topScoresList = user.topScores.slice(0, options.profileTopScoresCount);
+        const topScores = options.profileTopScoresCount > 0 && topScoresList.length > 0
             ? `<div class="messageosutopscores">${topScoresList.map((score, scoreIndex) => `<div><b>${scoreIndex + 1}</b>${marquee(score.title)}<strong>${number(score.pp, 0)}pp</strong></div>`).join('')}</div>`
             : '';
-        const flag = user.flagUrl ? `<img class="messageosuflag" src="${utils.sanitizeUrl(user.flagUrl)}" alt="${utils.escapeAttribute(user.countryCode)}" loading="lazy">` : '';
+        const flag = options.profileShowFlag && user.flagUrl ? `<img class="messageosuflag" src="${utils.sanitizeUrl(user.flagUrl)}" alt="${utils.escapeAttribute(user.countryCode)}" loading="lazy">` : '';
+        const image = options.profileShowAvatar
+            ? `<img class="messageosuimage" src="${utils.sanitizeUrl(user.avatarUrl)}" alt="${utils.escapeAttribute(user.username)}" loading="lazy">`
+            : '';
+        const title = options.profileShowUsername ? `<div class="messageosutitle messageosutitlewithflag">${marquee(user.username)}${flag}</div>` : '';
+        const statsHtml = stats ? `<div class="messageosustats messageosustats-profile">${stats}</div>` : '';
 
-        return `<div class="messageosu messageosuprofile${compact ? ' messageosucompact' : ''}" style="--osu-bg: url('${utils.sanitizeUrl(cover)}'); animation-delay: ${index * 90}ms">` +
-            `<img class="messageosuimage" src="${utils.sanitizeUrl(user.avatarUrl)}" alt="${utils.escapeAttribute(user.username)}" loading="lazy">` +
+        return `<div class="messageosu messageosuprofile${image ? '' : ' messageosu-no-image'}" style="--osu-bg: url('${utils.sanitizeUrl(cover)}'); animation-delay: ${index * 90}ms">` +
+            image +
             '<div class="messageosubody">' +
-            `<div class="messageosuheader"><div class="messageosutitle messageosutitlewithflag">${marquee(user.username)}${flag}</div><div class="messageosucreator">osu! player profile</div></div>` +
-            `<div class="messageosustats messageosustats-profile${compact ? ' messageosustats-compact-profile' : ''}">${stats.map(([label, value, color, className]) => chip(label, value, color, className)).join('')}</div>${topScores}` +
-            '</div></div>';
-    }
-
-    function scoreCard(score, index) {
-        const cover = score.coverUrl || '';
-        const chips = [
-            ['acc', score.accuracy, '#8df0ac', ''],
-            ['miss', score.missCount, '#ff7a7a', ''],
-            ['pp', `${score.ppValue}pp`, '#ff73c8', '']
-        ];
-
-        return `<div class="messageosu messageosuscore" style="--osu-bg: url('${utils.sanitizeUrl(cover)}'); animation-delay: ${index * 90}ms">` +
-            `<div class="messageosuimage messageosuscoreimage">${utils.escapeHtml(score.playerName.slice(0, 1).toUpperCase())}</div>` +
-            '<div class="messageosubody">' +
-            `<div class="messageosuheader"><div class="messageosutitle">${marquee(score.mapName)}</div><div class="messageosusubtitle">${marquee(score.difficulty)}</div><div class="messageosucreator">played by <span>${utils.escapeHtml(score.playerName)}</span></div></div>` +
-            `<div class="messageosustats">${chips.map(([label, value, color, className]) => chip(label, value, color, className)).join('')}</div>` +
+            `<div class="messageosuheader">${title}<div class="messageosucreator">osu! player profile</div></div>${statsHtml}${topScores}` +
             '</div></div>';
     }
 
     function findUrls(text) {
-        const regex = /(https?:\/\/osu\.ppy\.sh\/(?:beatmapsets|beatmaps|users|scores)\/[^\s<]+)/gi;
+        const regex = /(https?:\/\/osu\.ppy\.sh\/(?:beatmapsets|beatmaps|users)\/[^\s<]+)/gi;
         const decodedText = decodeEntities(text);
         return [...decodedText.matchAll(regex)].map((match) => match[0]);
     }
@@ -372,13 +340,6 @@
                     const user = await getUserInfo(userId);
                     if (user) {
                         result = result.replace(escapedUrl, wrap(formatUser(user), 'user', config.highlight));
-                    }
-                } else if (url.includes('/scores/') && config.parseScore) {
-                    const scoreId = extractScoreId(url);
-                    if (!scoreId) continue;
-                    const score = await getScoreInfo(scoreId);
-                    if (score) {
-                        result = result.replace(escapedUrl, wrap(formatScore(score), 'score', config.highlight));
                     }
                 }
             } catch (error) {
@@ -409,13 +370,6 @@
                     const user = userId ? await getUserInfo(userId) : null;
                     if (user) {
                         cards.push(profileCard(user, cards.length));
-                        cleanText = cleanText.replace(url, '').replace(utils.escapeHtml(url), '');
-                    }
-                } else if (url.includes('/scores/') && config.parseScore) {
-                    const scoreId = extractScoreId(url);
-                    const score = scoreId ? await getScoreInfo(scoreId) : null;
-                    if (score) {
-                        cards.push(scoreCard(score, cards.length));
                         cleanText = cleanText.replace(url, '').replace(utils.escapeHtml(url), '');
                     }
                 }

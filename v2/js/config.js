@@ -28,6 +28,11 @@
         return ['before-name', 'after-name', 'top-right'].includes(value) ? value : fallback;
     }
 
+    function getChoice(name, fallback, choices) {
+        const value = params.get(name);
+        return choices.includes(value) ? value : fallback;
+    }
+
     function hexToRgb(hex) {
         const clean = hex.replace('#', '');
         return [
@@ -93,20 +98,47 @@
         hcfWidthMode: getString('hcfWidthMode', 'full'),
         hcfMessageSide: getString('hcfMessageSide', 'left'),
         hcfMessageWidth: getNumber('hcfMessageWidth', 680, 160, 1200),
+        hcfTimeMode: getChoice('hcfTimeMode', 'none', ['none', 'sent', 'remaining']),
+        hcfSpecialBackgrounds: getBool('hcfSpecialBackgrounds', false),
         testMode: getBool('testMode', false),
         debug: getBool('debug', false),
         blockBots: getBool('blockBots', false),
         media: {
-            enabled: getBool('media', true)
+            enabled: getBool('media', true),
+            radius: getNumber('mediaRadius', 20, 0, 64),
+            opacity: getNumber('mediaOpacity', 1, 0, 1)
         },
         osu: {
             enabled: getBool('osu', false),
             apiKey: getString('osuKey', ''),
             parseMap: getBool('osuMap', true),
             parseUser: getBool('osuUser', true),
-            parseScore: getBool('osuScore', false),
             highlight: getBool('osuHighlight', false),
-            compactInfo: getBool('osuCompactInfo', false)
+            mapShowCover: getBool('osuMapShowCover', true),
+            mapShowTitle: getBool('osuMapShowTitle', true),
+            mapShowArtist: getBool('osuMapShowArtist', true),
+            mapShowCreator: getBool('osuMapShowCreator', true),
+            mapShowStatus: getBool('osuMapShowStatus', true),
+            mapShowVersion: getBool('osuMapShowVersion', true),
+            mapShowStars: getBool('osuMapShowStars', true),
+            mapShowBpm: getBool('osuMapShowBpm', true),
+            mapShowAr: getBool('osuMapShowAr', true),
+            mapShowCs: getBool('osuMapShowCs', true),
+            mapShowHp: getBool('osuMapShowHp', true),
+            mapShowOd: getBool('osuMapShowOd', true),
+            mapShowLength: getBool('osuMapShowLength', true),
+            mapShowCombo: getBool('osuMapShowCombo', true),
+            mapShowPlayCount: getBool('osuMapShowPlayCount', false),
+            mapShowFavourites: getBool('osuMapShowFavourites', false),
+            profileShowAvatar: getBool('osuProfileShowAvatar', true),
+            profileShowUsername: getBool('osuProfileShowUsername', true),
+            profileShowFlag: getBool('osuProfileShowFlag', true),
+            profileShowRank: getBool('osuProfileShowRank', true),
+            profileShowCountryRank: getBool('osuProfileShowCountryRank', true),
+            profileShowAccuracy: getBool('osuProfileShowAccuracy', true),
+            profileShowPp: getBool('osuProfileShowPp', true),
+            profileShowPlayCount: getBool('osuProfileShowPlayCount', true),
+            profileTopScoresCount: getNumber('osuProfileTopScoresCount', 3, 0, 5)
         }
     };
 
@@ -136,6 +168,8 @@
     document.documentElement.style.setProperty('--hcf-reply-color', config.hcfReplyColor);
     document.documentElement.style.setProperty('--hcf-text-color', config.hcfTextColor);
     document.documentElement.style.setProperty('--hcf-message-width', `${config.hcfMessageWidth}px`);
+    document.documentElement.style.setProperty('--media-radius', `${config.media.radius}px`);
+    document.documentElement.style.setProperty('--media-opacity', String(config.media.opacity));
 
     window.IkuzaChatV2 = window.IkuzaChatV2 || {};
     window.IkuzaChatV2.config = config;

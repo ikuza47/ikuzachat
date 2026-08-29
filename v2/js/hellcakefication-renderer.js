@@ -26,6 +26,15 @@
         return '';
     }
 
+    function getSpecialBackgroundClass(username) {
+        if (!config.hcfSpecialBackgrounds) return '';
+        const value = String(username || '').toLowerCase();
+        if (value === 'ikuza47') return 'special-bg-ikuza';
+        if (value === 'hellcake47') return 'special-bg-hellcake';
+        if (value === 'yatagarasu_gg') return 'special-bg-yatagarasu';
+        return '';
+    }
+
     function createAnimationClass(prefix, name) {
         return name && name !== 'none' ? `${prefix}-${name}` : '';
     }
@@ -44,6 +53,10 @@
             if (!part || part.startsWith('<')) return part;
 
             return part.replace(/(^|\s)@(\w+)/g, (match, prefix, username) => {
+                const specialClass = getSpecialUsernameClass(username);
+                if (specialClass) {
+                    return `${prefix}<span class="mention mention-special ${specialClass}">@${utils.escapeHtml(username)}</span>`;
+                }
                 return `${prefix}<span class="mention" style="color: ${utils.escapeAttribute(getFallbackColor(username))}">@${utils.escapeHtml(username)}</span>`;
             });
         }).join('');
@@ -79,7 +92,7 @@
     }
 
     function startTimeLeft(message, node) {
-        if (!config.autoRemove || !node) return;
+        if (!config.autoRemove || config.hcfTimeMode !== 'remaining' || !node) return;
 
         const endAt = Date.now() + config.removeTimeout;
         let timer = null;
@@ -93,6 +106,18 @@
 
         tick();
         timer = window.setInterval(tick, 250);
+    }
+
+    function getTopTimeHtml() {
+        if (config.hcfTimeMode === 'sent') {
+            return `<div class="messagetimeleft">${utils.getTimeString(config.timeZone)}</div>`;
+        }
+
+        if (config.hcfTimeMode === 'remaining' && config.autoRemove) {
+            return '<div class="messagetimeleft"></div>';
+        }
+
+        return '';
     }
 
     function setupMarquees(message) {
@@ -144,6 +169,8 @@
 
         const message = document.createElement('div');
         message.className = 'messagebox';
+        const specialBackgroundClass = getSpecialBackgroundClass(payload.username);
+        if (specialBackgroundClass) message.classList.add('special-bg', specialBackgroundClass);
         if (payload.id) message.dataset.messageId = payload.id;
         if (config.hcfWidthMode === 'compact') {
             message.classList.add('compact-width');
@@ -166,7 +193,7 @@
 
         const badges = root.badges.createHtml(root.badges.parse(payload.tags || ''), config);
         const topParts = [createNickHtml(payload.username, payload.color), badges].filter(Boolean).join(' ');
-        const timeLeft = config.autoRemove ? '<div class="messagetimeleft"></div>' : '';
+        const timeLeft = getTopTimeHtml();
         const messageText = textHtml ? `<div class="messagetext">${textHtml}</div>` : '';
         message.innerHTML = `<div class="messagetop"><div class="messagetopmeta">${topParts}</div>${timeLeft}</div>${getReply(payload)}${media.html}${osu.html}${messageText}`;
         container.appendChild(message);
@@ -189,7 +216,7 @@
         const animationIn = createAnimationClass('animation-in', config.animationIn);
         if (animationIn) message.classList.add(animationIn);
 
-        const timeLeft = config.autoRemove ? '<div class="messagetimeleft"></div>' : '';
+        const timeLeft = getTopTimeHtml();
         message.innerHTML = `<div class="messagetop"><div class="messagetopmeta">IkuzaChat</div>${timeLeft}</div><div class="messagetext">${processMentions(utils.escapeHtml(text))}</div>`;
         return message;
     }

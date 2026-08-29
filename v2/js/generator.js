@@ -2,7 +2,7 @@
     const ids = [
         'channel', 'chatType', 'fontFamily', 'customFont', 'fontSize', 'showUserBadges',
         'showChannelBadges', 'showAchievementBadges', 'badgePosition', 'badgeScale',
-        'showTime', 'timePosition', 'timeZone', 'timeColor',
+        'showTime', 'timePosition', 'timeZone', 'timeColor', 'hcfTimeMode',
         'showBackground', 'backgroundColor', 'backgroundOpacity', 'backgroundRadius',
         'chatPadding', 'messageGap', 'messagePadding',
         'animationIn', 'animationOut', 'firstMessageEnabled', 'firstMessageColor',
@@ -12,9 +12,16 @@
         'meStyleEnabled', 'meItalic',
         'showSystemMessages', 'systemMessageColor', 'hcfBoxColor', 'hcfBoxOpacity',
         'hcfBoxRadius', 'hcfBoxPadding', 'hcfBadgeRadius', 'hcfTopColor', 'hcfReplyColor',
-        'hcfTextColor', 'hcfWidthMode', 'hcfMessageSide', 'hcfMessageWidth',
+        'hcfTextColor', 'hcfWidthMode', 'hcfMessageSide', 'hcfMessageWidth', 'hcfSpecialBackgrounds',
         'testMode', 'debugMode', 'osuEnabled', 'osuApiKey', 'osuMap', 'osuUser',
-        'osuScore', 'osuHighlight', 'osuCompactInfo', 'mediaEnabled', 'blockBots'
+        'osuHighlight', 'osuMapShowCover', 'osuMapShowTitle', 'osuMapShowArtist',
+        'osuMapShowCreator', 'osuMapShowStatus', 'osuMapShowVersion', 'osuMapShowStars',
+        'osuMapShowBpm', 'osuMapShowAr', 'osuMapShowCs', 'osuMapShowHp', 'osuMapShowOd',
+        'osuMapShowLength', 'osuMapShowCombo', 'osuMapShowPlayCount', 'osuMapShowFavourites',
+        'osuProfileShowAvatar', 'osuProfileShowUsername', 'osuProfileShowFlag', 'osuProfileShowRank',
+        'osuProfileShowCountryRank', 'osuProfileShowAccuracy', 'osuProfileShowPp',
+        'osuProfileShowPlayCount', 'osuProfileTopScoresCount',
+        'mediaEnabled', 'mediaRadius', 'mediaOpacity', 'blockBots'
     ];
 
     const el = {};
@@ -45,7 +52,10 @@
         hcfBoxRadius: { suffix: 'px', decimals: 0 },
         hcfBoxPadding: { suffix: 'px', decimals: 0 },
         hcfBadgeRadius: { suffix: 'px', decimals: 0 },
-        hcfMessageWidth: { suffix: 'px', decimals: 0 }
+        hcfMessageWidth: { suffix: 'px', decimals: 0 },
+        osuProfileTopScoresCount: { suffix: '', decimals: 0 },
+        mediaRadius: { suffix: 'px', decimals: 0 },
+        mediaOpacity: { suffix: '', decimals: 2 }
     };
     const defaultValues = {
         channel: 'ikuza47',
@@ -59,6 +69,7 @@
         badgePosition: 'before-name',
         badgeScale: '1.5',
         showTime: false,
+        hcfTimeMode: 'none',
         timePosition: 'before-name',
         timeZone: '0',
         timeColor: '#c3c7d4',
@@ -97,16 +108,42 @@
         hcfWidthMode: 'full',
         hcfMessageSide: 'left',
         hcfMessageWidth: '680',
+        hcfSpecialBackgrounds: false,
         testMode: false,
         debugMode: false,
         osuEnabled: false,
         osuApiKey: '',
         osuMap: true,
         osuUser: true,
-        osuScore: false,
         osuHighlight: false,
-        osuCompactInfo: false,
+        osuMapShowCover: true,
+        osuMapShowTitle: true,
+        osuMapShowArtist: true,
+        osuMapShowCreator: true,
+        osuMapShowStatus: true,
+        osuMapShowVersion: true,
+        osuMapShowStars: true,
+        osuMapShowBpm: true,
+        osuMapShowAr: true,
+        osuMapShowCs: true,
+        osuMapShowHp: true,
+        osuMapShowOd: true,
+        osuMapShowLength: true,
+        osuMapShowCombo: true,
+        osuMapShowPlayCount: false,
+        osuMapShowFavourites: false,
+        osuProfileShowAvatar: true,
+        osuProfileShowUsername: true,
+        osuProfileShowFlag: true,
+        osuProfileShowRank: true,
+        osuProfileShowCountryRank: true,
+        osuProfileShowAccuracy: true,
+        osuProfileShowPp: true,
+        osuProfileShowPlayCount: true,
+        osuProfileTopScoresCount: '3',
         mediaEnabled: true,
+        mediaRadius: '20',
+        mediaOpacity: '1',
         blockBots: false
     };
     let currentLang = localStorage.getItem('ikuzachat-v2-lang') || 'en';
@@ -155,6 +192,10 @@
             'fields.timePosition': 'Time position',
             'fields.timeZone': 'Time zone',
             'fields.timeColor': 'Time text color',
+            'fields.hcfTimeMode': 'HellCakeFication time display',
+            'options.timeNone': 'Nothing',
+            'options.timeSent': 'Sent time',
+            'options.timeRemaining': 'Removal countdown',
             'position.beforeName': 'Before name',
             'position.afterName': 'After name',
             'position.topRight': 'Top right corner',
@@ -190,6 +231,8 @@
             'options.hcfFullWidth': 'Full width',
             'options.hcfCompactWidth': 'Compact',
             'fields.hcfMessageWidth': 'Max message width',
+            'switch.hcfSpecialBackgrounds': 'Background styling',
+            'switch.hcfSpecialBackgroundsHint': 'Use osu! profile covers as message backgrounds for special users.',
             'behavior.title': 'Behavior',
             'behavior.desc': 'Set cleanup behavior and rendering helpers for busy chats.',
             'switch.clear': 'Clear on /clear',
@@ -224,14 +267,40 @@
             'switch.osuMapHint': 'beatmapsets and beatmaps.',
             'switch.osuUser': 'Parse users',
             'switch.osuUserHint': 'osu! user profile links.',
-            'switch.osuScore': 'Parse scores',
-            'switch.osuScoreHint': 'Experimental score page parsing.',
             'switch.osuHighlight': 'Highlight osu! info',
             'switch.osuHighlightHint': 'Color replaced osu! text by type.',
-            'switch.osuCompactInfo': 'Compact info',
-            'switch.osuCompactInfoHint': 'Show fewer fields in HellCakeFication osu! cards.',
+            'osu.mapCard': 'Map card fields',
+            'osu.profileCard': 'Profile card fields',
+            'switch.osuMapShowCover': 'Map cover',
+            'switch.osuMapShowTitle': 'Map title',
+            'switch.osuMapShowArtist': 'Artist',
+            'switch.osuMapShowCreator': 'Mapper',
+            'switch.osuMapShowStatus': 'Status',
+            'switch.osuMapShowVersion': 'Difficulty name',
+            'switch.osuMapShowStars': 'Stars',
+            'switch.osuMapShowBpm': 'BPM',
+            'switch.osuMapShowAr': 'AR',
+            'switch.osuMapShowCs': 'CS',
+            'switch.osuMapShowHp': 'HP',
+            'switch.osuMapShowOd': 'OD',
+            'switch.osuMapShowLength': 'Length',
+            'switch.osuMapShowCombo': 'Max combo',
+            'switch.osuMapShowPlayCount': 'Play count',
+            'switch.osuMapShowFavourites': 'Favourites',
+            'switch.osuProfileShowAvatar': 'Avatar',
+            'switch.osuProfileShowUsername': 'Username',
+            'switch.osuProfileShowFlag': 'Country flag',
+            'switch.osuProfileShowRank': 'Global rank',
+            'switch.osuProfileShowCountryRank': 'Country rank',
+            'switch.osuProfileShowAccuracy': 'Accuracy',
+            'switch.osuProfileShowPp': 'PP',
+            'switch.osuProfileShowPlayCount': 'Play count',
+            'fields.osuProfileTopScoresCount': 'Top scores count',
             'switch.media': 'Images and videos',
             'switch.mediaHint': 'Show media links from broadcaster, moderators and trusted users.',
+            'media.card': 'Media card',
+            'fields.mediaRadius': 'Media radius',
+            'fields.mediaOpacity': 'Media opacity',
             'switch.blockBots': 'Block known bots',
             'switch.blockBotsHint': 'Hide messages from a small bundled bot list.',
             'output.title': 'Overlay link',
@@ -285,6 +354,10 @@
             'fields.timePosition': 'Позиция времени',
             'fields.timeZone': 'Часовой пояс',
             'fields.timeColor': 'Цвет текста времени',
+            'fields.hcfTimeMode': 'Время в HellCakeFication',
+            'options.timeNone': 'Ничего',
+            'options.timeSent': 'Время отправки',
+            'options.timeRemaining': 'Осталось до удаления',
             'position.beforeName': 'Перед ником',
             'position.afterName': 'После ника',
             'position.topRight': 'Правый верхний угол',
@@ -320,6 +393,8 @@
             'options.hcfFullWidth': 'Во всю ширину',
             'options.hcfCompactWidth': 'Компактно',
             'fields.hcfMessageWidth': 'Максимальная ширина сообщения',
+            'switch.hcfSpecialBackgrounds': 'Стилизация фона',
+            'switch.hcfSpecialBackgroundsHint': 'Использует обложки osu! профилей как фон сообщений спец-пользователей.',
             'behavior.title': 'Поведение',
             'behavior.desc': 'Настройки очистки и вспомогательного рендера для активных чатов.',
             'switch.clear': 'Очищать по /clear',
@@ -354,14 +429,40 @@
             'switch.osuMapHint': 'beatmapsets и beatmaps.',
             'switch.osuUser': 'Парсить пользователей',
             'switch.osuUserHint': 'Ссылки на профили osu!.',
-            'switch.osuScore': 'Парсить скоры',
-            'switch.osuScoreHint': 'Экспериментальный парсинг страниц score.',
             'switch.osuHighlight': 'Подсветка osu! информации',
             'switch.osuHighlightHint': 'Окрашивает заменённый osu! текст по типу.',
-            'switch.osuCompactInfo': 'Краткая инфо',
-            'switch.osuCompactInfoHint': 'Показывает меньше полей в osu! карточках HellCakeFication.',
+            'osu.mapCard': 'Поля карточки карты',
+            'osu.profileCard': 'Поля карточки профиля',
+            'switch.osuMapShowCover': 'Обложка карты',
+            'switch.osuMapShowTitle': 'Название карты',
+            'switch.osuMapShowArtist': 'Артист',
+            'switch.osuMapShowCreator': 'Маппер',
+            'switch.osuMapShowStatus': 'Статус',
+            'switch.osuMapShowVersion': 'Название сложности',
+            'switch.osuMapShowStars': 'Звёзды',
+            'switch.osuMapShowBpm': 'BPM',
+            'switch.osuMapShowAr': 'AR',
+            'switch.osuMapShowCs': 'CS',
+            'switch.osuMapShowHp': 'HP',
+            'switch.osuMapShowOd': 'OD',
+            'switch.osuMapShowLength': 'Длина',
+            'switch.osuMapShowCombo': 'Макс. комбо',
+            'switch.osuMapShowPlayCount': 'Кол-во игр',
+            'switch.osuMapShowFavourites': 'Избранное',
+            'switch.osuProfileShowAvatar': 'Аватар',
+            'switch.osuProfileShowUsername': 'Ник',
+            'switch.osuProfileShowFlag': 'Флаг страны',
+            'switch.osuProfileShowRank': 'Глобальный ранг',
+            'switch.osuProfileShowCountryRank': 'Локальный ранг',
+            'switch.osuProfileShowAccuracy': 'Точность',
+            'switch.osuProfileShowPp': 'PP',
+            'switch.osuProfileShowPlayCount': 'Кол-во плеев',
+            'fields.osuProfileTopScoresCount': 'Кол-во топ скоров',
             'switch.media': 'Изображения и видео',
             'switch.mediaHint': 'Показывает медиа-ссылки от стримера, модераторов и доверенных пользователей.',
+            'media.card': 'Карточка медиа',
+            'fields.mediaRadius': 'Округление медиа',
+            'fields.mediaOpacity': 'Прозрачность медиа',
             'switch.blockBots': 'Блокировать известных ботов',
             'switch.blockBotsHint': 'Скрывает сообщения из небольшого встроенного списка ботов.',
             'output.title': 'Ссылка overlay',
@@ -640,6 +741,9 @@
             const types = node.dataset.chatTypes.split(/\s+/);
             node.classList.toggle('hidden', !types.includes(el.chatType.value));
         });
+        byId('mediaSettings').classList.toggle('hidden', el.chatType.value !== 'hellcakefication' || !el.mediaEnabled.checked);
+        byId('osuMapCardSettings').classList.toggle('hidden', el.chatType.value !== 'hellcakefication' || !el.osuEnabled.checked || !el.osuMap.checked);
+        byId('osuProfileCardSettings').classList.toggle('hidden', el.chatType.value !== 'hellcakefication' || !el.osuEnabled.checked || !el.osuUser.checked);
         document.querySelectorAll('[data-range-value]').forEach((node) => {
             node.textContent = formatRangeValue(node.dataset.rangeValue);
         });
@@ -710,6 +814,8 @@
         url.searchParams.set('hcfWidthMode', el.hcfWidthMode.value);
         url.searchParams.set('hcfMessageSide', el.hcfMessageSide.value);
         url.searchParams.set('hcfMessageWidth', String(Math.round(getNumberValue('hcfMessageWidth', 680))));
+        url.searchParams.set('hcfTimeMode', el.hcfTimeMode.value);
+        url.searchParams.set('hcfSpecialBackgrounds', getBool('hcfSpecialBackgrounds'));
         url.searchParams.set('testMode', getBool('testMode'));
         url.searchParams.set('debug', getBool('debugMode'));
         url.searchParams.set('blockBots', getBool('blockBots'));
@@ -723,10 +829,36 @@
             }
             url.searchParams.set('osuMap', getBool('osuMap'));
             url.searchParams.set('osuUser', getBool('osuUser'));
-            url.searchParams.set('osuScore', getBool('osuScore'));
             url.searchParams.set('osuHighlight', getBool('osuHighlight'));
-            url.searchParams.set('osuCompactInfo', getBool('osuCompactInfo'));
+            url.searchParams.set('osuMapShowCover', getBool('osuMapShowCover'));
+            url.searchParams.set('osuMapShowTitle', getBool('osuMapShowTitle'));
+            url.searchParams.set('osuMapShowArtist', getBool('osuMapShowArtist'));
+            url.searchParams.set('osuMapShowCreator', getBool('osuMapShowCreator'));
+            url.searchParams.set('osuMapShowStatus', getBool('osuMapShowStatus'));
+            url.searchParams.set('osuMapShowVersion', getBool('osuMapShowVersion'));
+            url.searchParams.set('osuMapShowStars', getBool('osuMapShowStars'));
+            url.searchParams.set('osuMapShowBpm', getBool('osuMapShowBpm'));
+            url.searchParams.set('osuMapShowAr', getBool('osuMapShowAr'));
+            url.searchParams.set('osuMapShowCs', getBool('osuMapShowCs'));
+            url.searchParams.set('osuMapShowHp', getBool('osuMapShowHp'));
+            url.searchParams.set('osuMapShowOd', getBool('osuMapShowOd'));
+            url.searchParams.set('osuMapShowLength', getBool('osuMapShowLength'));
+            url.searchParams.set('osuMapShowCombo', getBool('osuMapShowCombo'));
+            url.searchParams.set('osuMapShowPlayCount', getBool('osuMapShowPlayCount'));
+            url.searchParams.set('osuMapShowFavourites', getBool('osuMapShowFavourites'));
+            url.searchParams.set('osuProfileShowAvatar', getBool('osuProfileShowAvatar'));
+            url.searchParams.set('osuProfileShowUsername', getBool('osuProfileShowUsername'));
+            url.searchParams.set('osuProfileShowFlag', getBool('osuProfileShowFlag'));
+            url.searchParams.set('osuProfileShowRank', getBool('osuProfileShowRank'));
+            url.searchParams.set('osuProfileShowCountryRank', getBool('osuProfileShowCountryRank'));
+            url.searchParams.set('osuProfileShowAccuracy', getBool('osuProfileShowAccuracy'));
+            url.searchParams.set('osuProfileShowPp', getBool('osuProfileShowPp'));
+            url.searchParams.set('osuProfileShowPlayCount', getBool('osuProfileShowPlayCount'));
+            url.searchParams.set('osuProfileTopScoresCount', String(Math.round(getNumberValue('osuProfileTopScoresCount', 3))));
         }
+
+        url.searchParams.set('mediaRadius', String(Math.round(getNumberValue('mediaRadius', 20))));
+        url.searchParams.set('mediaOpacity', getNumberValue('mediaOpacity', 1).toFixed(2));
 
         byId('overlayUrl').value = url.toString();
         byId('openPreview').href = url.toString();

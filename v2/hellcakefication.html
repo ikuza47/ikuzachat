@@ -20,6 +20,8 @@
             --hcf-reply-color: #b7bac7;
             --hcf-text-color: #ffffff;
             --hcf-message-width: 680px;
+            --media-radius: 20px;
+            --media-opacity: 1;
             --user-notice-color: #9f8cff;
             --user-notice-rgb: 159, 140, 255;
             --user-notice-opacity: 0.16;
@@ -61,6 +63,7 @@
 
         .messagebox {
             display: grid;
+            position: relative;
             gap: 5px;
             width: 100%;
             max-width: 100%;
@@ -74,6 +77,48 @@
             line-height: 1.28;
             overflow-wrap: anywhere;
             text-shadow: 0 0 var(--shadow-blur) var(--shadow-color);
+        }
+
+        .messagebox.special-bg {
+            overflow: hidden;
+            isolation: isolate;
+            background: rgba(var(--hcf-box-rgb), var(--hcf-box-opacity));
+        }
+
+        .messagebox.special-bg::before {
+            content: "";
+            position: absolute;
+            inset: -18px;
+            z-index: -2;
+            background-image: var(--special-bg-image);
+            background-position: center;
+            background-size: cover;
+            filter: blur(24px) saturate(1.28) brightness(0.78);
+            opacity: var(--hcf-box-opacity);
+            transform: scale(1.14);
+        }
+
+        .messagebox.special-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.12), transparent 26%),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(7, 8, 13, 0.66) 42%, rgba(7, 8, 13, 0.92));
+            opacity: var(--hcf-box-opacity);
+        }
+
+        .special-bg-ikuza {
+            --special-bg-image: url('https://assets.ppy.sh/user-profile-covers/14781860/baf7aad09e69f6f8097254670fce15b02033e2a200109b3a8f1157ce74d44804.jpeg');
+        }
+
+        .special-bg-hellcake {
+            --special-bg-image: url('https://assets.ppy.sh/user-profile-covers/7404253/a01b5194620b825553e859d0562a9c3295777f426b821fb42fe0e0dd14b43ea5.jpeg');
+        }
+
+        .special-bg-yatagarasu {
+            --special-bg-image: url('https://assets.ppy.sh/user-profile-covers/11394374/bf994fc27434d3cb0c739ae9eea086c7ff8e43b3c7d2513674a7ab3fc6f39cdf.jpeg');
         }
 
         .messagebox.compact-width {
@@ -156,6 +201,15 @@
                 inset 0 -1px 0 rgba(0, 0, 0, 0.22),
                 0 16px 38px rgba(0, 0, 0, 0.26);
             animation: osu-card-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .messageosu-no-image {
+            grid-template-columns: minmax(0, 1fr);
+            min-height: 0;
+        }
+
+        .messageosu-no-image .messageosubody {
+            padding: 14px;
         }
 
         .messageosu::before {
@@ -387,11 +441,11 @@
             position: relative;
             display: block;
             width: min(100%, 620px);
-            border: 1px solid rgba(255, 255, 255, 0.11);
-            border-radius: 20px;
+            border: 0;
+            border-radius: var(--media-radius);
             overflow: hidden;
-            background: rgba(7, 8, 13, 0.72);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 34px rgba(0, 0, 0, 0.24);
+            background: transparent;
+            opacity: var(--media-opacity);
             animation: osu-card-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
@@ -404,6 +458,7 @@
             width: 100%;
             max-height: 380px;
             object-fit: contain;
+            border-radius: inherit;
         }
 
         .messagemedia-video .messagemediaelement {
@@ -447,8 +502,15 @@
             background-size: 400% 400%;
             -webkit-background-clip: text;
             background-clip: text;
-            font-weight: 900;
+            font: inherit;
             animation: gradient-flow 5s ease-in-out infinite;
+        }
+
+        .mention-special {
+            display: inline;
+            font-size: 1em;
+            font: inherit;
+            text-shadow: none;
         }
 
         .IkuzaUsername {
@@ -608,31 +670,15 @@
 </head>
 <body>
     <div id="loading-indicator">
-        <img class="loading-emote" id="loading-emote" src="https://cdn.7tv.app/emote/01F6NMMEER00015NVG2J8ZH77N/4x.webp" alt="Loading" aria-hidden="true">
+        <img class="loading-emote" id="loading-emote" src="preload/loading2.webp" alt="Loading" aria-hidden="true">
         <div class="loading-title">HellCakeFication</div>
         <div class="loading-status" id="loading-status">Starting chat...</div>
     </div>
     <div id="error-indicator" role="alert"></div>
     <div id="message_container" aria-live="polite"></div>
 
-    <script src="preload/manifest.js"></script>
     <script>
         window.IkuzaChatV2 = window.IkuzaChatV2 || {};
-        (function () {
-            var fallback = 'https://cdn.7tv.app/emote/01F6NMMEER00015NVG2J8ZH77N/4x.webp';
-            var list = Array.isArray(window.IkuzaChatV2Preload) ? window.IkuzaChatV2Preload : [];
-            var files = list.filter(function (item) {
-                return typeof item === 'string' && /\.webp(?:\?.*)?$/i.test(item);
-            });
-            var image = document.getElementById('loading-emote');
-            if (!image || files.length === 0) return;
-
-            var selected = files[Math.floor(Math.random() * files.length)];
-            image.src = /^https?:\/\//i.test(selected) ? selected : 'preload/' + selected.replace(/^\.\//, '');
-            image.onerror = function () {
-                image.src = fallback;
-            };
-        }());
         window.IkuzaChatV2.setLoadingStatus = function (message) {
             var status = document.getElementById('loading-status');
             if (status) status.textContent = message;
