@@ -173,4 +173,53 @@
 
     window.IkuzaChatV2 = window.IkuzaChatV2 || {};
     window.IkuzaChatV2.config = config;
+
+    const previewTheme = urlParams.get('previewTheme');
+    if (previewTheme) {
+        const themeColor = previewTheme === 'light' ? '#f1f3f7' : '#0c0c12';
+        document.documentElement.style.setProperty('--preview-bg', themeColor);
+        document.documentElement.style.backgroundColor = themeColor;
+        if (document.body) document.body.style.backgroundColor = themeColor;
+    }
+
+    window.addEventListener('message', (event) => {
+        if (!event.data || event.data.type !== 'ikuzachat-sync') return;
+        const { cssVars, config: newConfig, themeBg } = event.data;
+
+        if (themeBg) {
+            document.documentElement.style.setProperty('--preview-bg', themeBg);
+            document.documentElement.style.backgroundColor = themeBg;
+            if (document.body) document.body.style.backgroundColor = themeBg;
+        }
+
+        if (cssVars) {
+            Object.keys(cssVars).forEach((prop) => {
+                document.documentElement.style.setProperty(prop, cssVars[prop]);
+            });
+        }
+
+        if (newConfig && window.IkuzaChatV2 && window.IkuzaChatV2.config) {
+            const currentConfig = window.IkuzaChatV2.config;
+            Object.keys(newConfig).forEach((key) => {
+                if (key === 'removeTimeout') {
+                    const sec = Number(newConfig[key]) || 12;
+                    currentConfig[key] = sec < 1000 ? sec * 1000 : sec;
+                } else if (key === 'osu' && typeof newConfig.osu === 'object') {
+                    Object.assign(currentConfig.osu, newConfig.osu);
+                } else if (key === 'media' && typeof newConfig.media === 'object') {
+                    Object.assign(currentConfig.media, newConfig.media);
+                } else {
+                    currentConfig[key] = newConfig[key];
+                }
+            });
+
+            if (typeof newConfig.background !== 'undefined') {
+                document.querySelectorAll('.msg').forEach((msg) => {
+                    if (!msg.classList.contains('first-message-bg') && !msg.classList.contains('user-notice') && !msg.classList.contains('system-message')) {
+                        msg.classList.toggle('with-bg', Boolean(newConfig.background));
+                    }
+                });
+            }
+        }
+    });
 }());

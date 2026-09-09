@@ -102,7 +102,7 @@
         .page {
             position: relative;
             z-index: 1;
-            max-width: 1040px;
+            max-width: 1480px;
             margin: 0 auto;
             padding: 44px 24px 64px;
         }
@@ -283,6 +283,8 @@
 
         .section-title {
             margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid var(--active-accent);
             color: var(--text-dim);
             font-size: 11px;
             font-weight: 600;
@@ -330,8 +332,8 @@
 
         .section-head h2 {
             color: var(--text);
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             line-height: 1.35;
         }
 
@@ -379,6 +381,10 @@
         .tab {
             --tab-color: var(--accent);
             --tab-soft: var(--accent-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             min-height: 40px;
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -389,6 +395,13 @@
             font-size: 12px;
             font-weight: 500;
             transition: border-color 0.3s, color 0.3s, background 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            stroke-width: 2;
         }
 
         .tab:hover {
@@ -471,9 +484,18 @@
             gap: 6px;
         }
 
-        .compact-switch-grid .switch,
-        .compact-switch-grid .field {
+        .compact-switch-grid .switch {
             padding: 8px 10px;
+        }
+
+        .compact-slider-field {
+            margin-top: 6px;
+            padding: 8px 10px;
+            gap: 4px;
+        }
+
+        .compact-slider-field label {
+            font-size: 11px;
         }
 
         .compact-switch-grid .label {
@@ -771,7 +793,7 @@
             grid-template-columns: minmax(0, 1fr);
             gap: 0;
             align-items: start;
-            padding: 12px;
+            padding: 12px 56px 12px 12px;
             cursor: pointer;
             overflow: hidden;
             transition: border-color 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
@@ -785,7 +807,7 @@
 
         .switch:has(input:checked) {
             border-color: color-mix(in srgb, var(--panel-accent) 30%, var(--border));
-            background: var(--surface);
+            background: color-mix(in srgb, var(--panel-accent) 5%, var(--surface));
             box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14), 0 0 0 1px color-mix(in srgb, var(--panel-accent) 7%, transparent);
         }
 
@@ -953,17 +975,279 @@
             opacity: 0.25;
         }
 
+        /* ── Toggle switch indicator ── */
+        .switch::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: background 0.3s, border-color 0.3s;
+            z-index: 2;
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            right: 30px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
+            z-index: 3;
+        }
+
+        .switch:has(input:checked)::before {
+            background: color-mix(in srgb, var(--panel-accent) 55%, transparent);
+            border-color: color-mix(in srgb, var(--panel-accent) 25%, transparent);
+        }
+
+        .switch:has(input:checked)::after {
+            transform: translateX(16px);
+            background: #fff;
+        }
+
+        .switch:hover::before {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .switch:has(input:checked):hover::before {
+            background: color-mix(in srgb, var(--panel-accent) 65%, transparent);
+        }
+
+        /* ── Unchecked state: dimmed text ── */
+        .switch:not(:has(input:checked)) .label {
+            color: var(--text-dim);
+            transition: color 0.3s;
+        }
+
+        .switch:not(:has(input:checked)):hover .label {
+            color: var(--text);
+        }
+
+        /* ── Compact switches: no toggle, simpler indicator ── */
+        .compact-switch-grid .switch {
+            padding: 8px 10px;
+        }
+
+        .compact-switch-grid .switch::before,
+        .compact-switch-grid .switch::after {
+            display: none;
+        }
+
+        .compact-switch-grid .switch:has(input:checked) {
+            border-color: color-mix(in srgb, var(--panel-accent) 40%, var(--border));
+            background: color-mix(in srgb, var(--panel-accent) 12%, var(--surface));
+        }
+
+        .compact-switch-grid .switch:not(:has(input:checked)) {
+            opacity: 0.55;
+        }
+
+        .compact-switch-grid .switch:not(:has(input:checked)):hover {
+            opacity: 0.85;
+        }
+
+        /* ── Enhanced tab active state ── */
+        .tab.active {
+            background: var(--tab-soft);
+            box-shadow: 0 0 16px color-mix(in srgb, var(--tab-color) 12%, transparent);
+        }
+
+        /* ── Main Layout & Centering ── */
+        .top-container {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr minmax(auto, 820px) 1fr;
+            gap: 28px;
+            align-items: start;
+            width: 100%;
+        }
+
+        .layout-spacer {
+            min-width: 0;
+        }
+
+        .main-column {
+            width: 100%;
+            max-width: 820px;
+            min-width: 0;
+        }
+
+        .sidebar-column {
+            position: sticky;
+            top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 380px;
+            max-width: 100%;
+            justify-self: start;
+            min-width: 0;
+        }
+
+        .sidebar-column .section {
+            margin-top: 0;
+        }
+
+        .sidebar-column .output-card {
+            height: auto;
+        }
+
+        .preview-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.3s;
+        }
+
+        .preview-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .preview-bg-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .preview-bg-label {
+            font-size: 11px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .preview-bg-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preview-bg-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface-2);
+            color: var(--text-dim);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s, background 0.2s, border-color 0.2s;
+        }
+
+        .preview-bg-btn:hover {
+            color: var(--text);
+            border-color: var(--border-hover);
+        }
+
+        .preview-bg-btn.active {
+            background: var(--accent-soft);
+            color: var(--text);
+            border-color: color-mix(in srgb, var(--panel-accent) 40%, var(--border));
+        }
+
+        .preview-bg-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .preview-bg-dot.dark {
+            background: #0c0c12;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .preview-bg-dot.light {
+            background: #f1f3f7;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+        }
+
+        .preview-viewport {
+            position: relative;
+            height: 420px;
+            overflow: hidden;
+            background-color: #0c0c12;
+            transition: background-color 0.25s ease;
+        }
+
+        .preview-viewport.theme-dark {
+            background-color: #0c0c12 !important;
+        }
+
+        .preview-viewport.theme-light {
+            background-color: #f1f3f7 !important;
+        }
+
+        .preview-viewport iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: transparent;
+        }
+
+        @media (max-width: 1380px) {
+            .main-layout {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .layout-spacer {
+                display: none;
+            }
+
+            .main-column,
+            .sidebar-column {
+                width: 100%;
+                max-width: 820px;
+            }
+
+            .sidebar-column {
+                position: static;
+                margin-top: 24px;
+            }
+
+            .preview-viewport {
+                height: 400px;
+            }
+        }
+
         @media (max-width: 680px) {
             .page {
                 padding: 36px 16px 56px;
             }
 
             .top-actions,
-            .tabs,
             .grid,
             .compact-switch-grid,
             .actions {
                 grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .topbar {
@@ -982,53 +1266,58 @@
             }
         }
     </style>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
     <main class="page">
-        <header class="topbar reveal reveal-d1">
-            <div class="brand">
-                <div class="avatar-wrap">
-                    <div class="avatar-glow"></div>
-                    <div class="avatar">
-                        <img src="logo.png" alt="IkuzaChat logo">
+        <div class="top-container">
+            <header class="topbar reveal reveal-d1">
+                <div class="brand">
+                    <div class="avatar-wrap">
+                        <div class="avatar-glow"></div>
+                        <div class="avatar">
+                            <img src="logo.png" alt="IkuzaChat logo">
+                        </div>
+                    </div>
+                    <div class="header-text">
+                        <h1 class="name">IkuzaChat v2</h1>
+                        <a class="handle" href="https://twitch.tv/ikuza47" target="_blank" rel="noopener noreferrer">ikuza47</a>
+                        <div class="aka-row">
+                            <span>chat</span>
+                            <span>twitch</span>
+                            <span>irc</span>
+                            <span>overlay</span>
+                            <span>obs</span>
+                            <span>browser-source</span>
+                            <span>7tv</span>
+                        </div>
                     </div>
                 </div>
-                <div class="header-text">
-                    <h1 class="name">IkuzaChat v2</h1>
-                    <a class="handle" href="https://twitch.tv/ikuza47" target="_blank" rel="noopener noreferrer">ikuza47</a>
-                    <div class="aka-row">
-                        <span>chat</span>
-                        <span>twitch</span>
-                        <span>irc</span>
-                        <span>overlay</span>
-                        <span>obs</span>
-                        <span>browser-source</span>
-                        <span>7tv</span>
-                    </div>
+            </header>
+
+            <p class="bio reveal reveal-d2" data-i18n="hero.subtitle">Generate a browser-source link for a clean Twitch chat overlay.</p>
+
+            <div class="top-actions reveal reveal-d3">
+                <div class="lang-switch" aria-label="Language">
+                    <button class="lang-btn active" type="button" data-lang="en">EN</button>
+                    <button class="lang-btn" type="button" data-lang="ru">RU</button>
                 </div>
+                <a class="btn secondary" href="https://github.com/ikuza47/ikuzachat" target="_blank" rel="noopener noreferrer">GitHub</a>
             </div>
-        </header>
-
-        <p class="bio reveal reveal-d2" data-i18n="hero.subtitle">Generate a browser-source link for a clean Twitch chat overlay.</p>
-
-        <div class="top-actions reveal reveal-d3">
-            <div class="lang-switch" aria-label="Language">
-                <button class="lang-btn active" type="button" data-lang="en">EN</button>
-                <button class="lang-btn" type="button" data-lang="ru">RU</button>
-            </div>
-            <a class="btn secondary" href="https://github.com/ikuza47/ikuzachat" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
 
-        <div class="workspace">
-            <section class="section reveal reveal-d4">
+        <div class="main-layout">
+            <div class="layout-spacer" aria-hidden="true"></div>
+            <div class="main-column">
+                <section class="section reveal reveal-d4">
                 <div class="section-title" data-i18n="nav.title">Settings</div>
                     <div class="settings" aria-label="Settings">
                         <aside class="side-nav" aria-label="Generator sections">
                         <nav class="tabs">
-                            <button class="tab active" type="button" data-tab="basic" data-i18n="tabs.basic">Basic</button>
-                            <button class="tab" type="button" data-tab="appearance" data-i18n="tabs.appearance">Appearance</button>
-                            <button class="tab" type="button" data-tab="behavior" data-i18n="tabs.behavior">Behavior</button>
-                            <button class="tab" type="button" data-tab="modules" data-i18n="tabs.modules">Modules</button>
+                            <button class="tab active" type="button" data-tab="basic" title="Basic settings"><i data-lucide="sliders-horizontal"></i><span data-i18n="tabs.basic">Basic</span></button>
+                            <button class="tab" type="button" data-tab="appearance" title="Appearance"><i data-lucide="palette"></i><span data-i18n="tabs.appearance">Appearance</span></button>
+                            <button class="tab" type="button" data-tab="behavior" title="Behavior"><i data-lucide="activity"></i><span data-i18n="tabs.behavior">Behavior</span></button>
+                            <button class="tab" type="button" data-tab="modules" title="Modules"><i data-lucide="puzzle"></i><span data-i18n="tabs.modules">Modules</span></button>
                         </nav>
                     </aside>
 
@@ -1417,10 +1706,10 @@
                                             <label class="switch"><input id="osuProfileShowAccuracy" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowAccuracy">Accuracy</span></span></label>
                                             <label class="switch"><input id="osuProfileShowPp" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowPp">PP</span></span></label>
                                             <label class="switch"><input id="osuProfileShowPlayCount" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowPlayCount">Play count</span></span></label>
-                                            <div class="field">
-                                                <label for="osuProfileTopScoresCount"><span data-i18n="fields.osuProfileTopScoresCount">Top scores count</span>: <span class="range-value" data-range-value="osuProfileTopScoresCount">3</span></label>
-                                                <input id="osuProfileTopScoresCount" type="range" min="0" max="5" step="1" value="3">
-                                            </div>
+                                        </div>
+                                        <div class="field compact-slider-field">
+                                            <label for="osuProfileTopScoresCount"><span data-i18n="fields.osuProfileTopScoresCount">Top scores count</span>: <span class="range-value" data-range-value="osuProfileTopScoresCount">3</span></label>
+                                            <input id="osuProfileTopScoresCount" type="range" min="0" max="5" step="1" value="3">
                                         </div>
                                     </div>
                                 </div>
@@ -1451,21 +1740,47 @@
                 </div>
             </section>
 
-            <section class="section reveal reveal-d5">
-                <div class="section-title" data-i18n="output.title">Overlay link</div>
-                <aside class="output-card" aria-label="Generated link">
-                    <div class="output-head">
-                        <p data-i18n="output.desc">Paste this URL into an OBS Browser Source.</p>
+            </div>
+
+            <aside class="sidebar-column reveal reveal-d4" aria-label="Preview and Overlay">
+                <section class="preview-section">
+                    <div class="section-title" data-i18n="preview.title">Chat preview</div>
+                    <div class="preview-card">
+                        <div class="preview-bg-bar">
+                            <span class="preview-bg-label" data-i18n="preview.bg">Background:</span>
+                            <div class="preview-bg-options">
+                                <button class="preview-bg-btn active" type="button" data-theme="dark" title="Dark" data-i18n-title="preview.dark">
+                                    <span class="preview-bg-dot dark"></span>
+                                    <span data-i18n="preview.dark">Dark</span>
+                                </button>
+                                <button class="preview-bg-btn" type="button" data-theme="light" title="Light" data-i18n-title="preview.light">
+                                    <span class="preview-bg-dot light"></span>
+                                    <span data-i18n="preview.light">Light</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="preview-viewport theme-dark" id="previewViewport">
+                            <iframe id="chatPreviewIframe" title="Chat preview" src="v2/chat.html?testMode=true" allowtransparency="true"></iframe>
+                        </div>
                     </div>
-                    <textarea id="overlayUrl" readonly spellcheck="false" rows="1" wrap="off"></textarea>
-                    <div class="actions">
-                        <button class="btn" type="button" id="copyUrl" data-i18n="actions.copy">Copy link</button>
-                        <button class="btn secondary" type="button" id="resetSettings" data-i18n="actions.reset">Reset</button>
-                    </div>
-                    <a class="btn purple" id="openPreview" href="v2/chat.html" target="_blank" rel="noopener noreferrer" data-i18n="actions.preview">Open preview</a>
-                    <div class="status" id="status" aria-live="polite"></div>
-                </aside>
-            </section>
+                </section>
+
+                <section class="section overlay-section">
+                    <div class="section-title" data-i18n="output.title">Overlay link</div>
+                    <aside class="output-card" aria-label="Generated link">
+                        <div class="output-head">
+                            <p data-i18n="output.desc">Paste this URL into an OBS Browser Source.</p>
+                        </div>
+                        <textarea id="overlayUrl" readonly spellcheck="false" rows="1" wrap="off"></textarea>
+                        <div class="actions">
+                            <button class="btn" type="button" id="copyUrl" data-i18n="actions.copy">Copy link</button>
+                            <button class="btn secondary" type="button" id="resetSettings" data-i18n="actions.reset">Reset</button>
+                        </div>
+                        <a class="btn purple" id="openPreview" href="v2/chat.html" target="_blank" rel="noopener noreferrer" data-i18n="actions.preview">Open preview</a>
+                        <div class="status" id="status" aria-live="polite"></div>
+                    </aside>
+                </section>
+            </aside>
         </div>
 
         <footer class="footer reveal reveal-d5">
@@ -1476,5 +1791,6 @@
     </main>
 
     <script src="v2/js/generator.js"></script>
+    <script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </body>
 </html>

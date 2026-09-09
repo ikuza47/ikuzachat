@@ -94,7 +94,8 @@
     function startTimeLeft(message, node) {
         if (!config.autoRemove || config.hcfTimeMode !== 'remaining' || !node) return;
 
-        const endAt = Date.now() + config.removeTimeout;
+        const timeoutMs = (Number(config.removeTimeout) || 12000) < 1000 ? (Number(config.removeTimeout) || 12) * 1000 : Number(config.removeTimeout);
+        const endAt = Date.now() + timeoutMs;
         let timer = null;
         const tick = () => {
             if (!message.parentNode) {
@@ -158,7 +159,8 @@
 
     function scheduleMessageRemoval(message) {
         if (config.autoRemove) {
-            window.setTimeout(() => removeMessage(message), config.removeTimeout);
+            const timeoutMs = (Number(config.removeTimeout) || 12000) < 1000 ? (Number(config.removeTimeout) || 12) * 1000 : Number(config.removeTimeout);
+            window.setTimeout(() => removeMessage(message), timeoutMs);
         }
 
         trimMessages();

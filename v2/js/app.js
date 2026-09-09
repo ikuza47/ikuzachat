@@ -4,6 +4,11 @@
     const utils = root.utils;
 
     try {
+        if (config.testMode && root.testMode) {
+            root.hideLoading();
+            root.testMode.start();
+        }
+
         let badgeChannelId = null;
         if (config.showUserBadges || config.showChannelBadges || config.showAchievementBadges) {
             root.setLoadingStatus('Loading badges...');
@@ -20,7 +25,6 @@
         }
 
         if (config.testMode) {
-            root.testMode.start();
             return;
         }
 

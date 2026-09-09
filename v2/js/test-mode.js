@@ -8,11 +8,12 @@
         'hello IkuzaChat v2',
         'this overlay looks clean',
         '@ikuza47 nice stream',
-        'ACTION waves at chat',
+        ' ACTION waves at chat ',
         'Kappa Keepo PogChamp',
         'BTTV and 7TV emotes should work if they are loaded',
         'testing <script>alert(1)</script> safety',
-        'osu link test https://osu.ppy.sh/beatmapsets/79498#osu/221777'
+        'osu link test https://osu.ppy.sh/beatmapsets/79498#osu/221777',
+        'user card https://osu.ppy.sh/users/124493'
     ];
     const badgeSamples = ['moderator/1', 'subscriber/1', 'premium/1', 'bits/1', 'vip/1'];
     const colors = ['#ff7a59', '#4dd4ac', '#63a8ff', '#ffd166', '#ff73c8', '#b3f56f'];
@@ -53,6 +54,7 @@
 
     root.testMode = {
         start,
-        stop
+        stop,
+        generate
     };
 }());

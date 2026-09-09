@@ -152,16 +152,13 @@
         container.appendChild(message);
         container.scrollTop = container.scrollHeight;
 
-        if (config.autoRemove) {
-            window.setTimeout(() => removeMessage(message), config.removeTimeout);
-        }
-
-        trimMessages();
+        scheduleMessageRemoval(message);
     }
 
     function scheduleMessageRemoval(message) {
         if (config.autoRemove) {
-            window.setTimeout(() => removeMessage(message), config.removeTimeout);
+            const timeoutMs = (Number(config.removeTimeout) || 12000) < 1000 ? (Number(config.removeTimeout) || 12) * 1000 : Number(config.removeTimeout);
+            window.setTimeout(() => removeMessage(message), timeoutMs);
         }
 
         trimMessages();

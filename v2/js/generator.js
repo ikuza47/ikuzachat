@@ -305,6 +305,10 @@
             'switch.blockBotsHint': 'Hide messages from a small bundled bot list.',
             'output.title': 'Overlay link',
             'output.desc': 'Paste this URL into an OBS Browser Source.',
+            'preview.title': 'Chat preview',
+            'preview.bg': 'Background:',
+            'preview.dark': 'Dark',
+            'preview.light': 'Light',
             'actions.copy': 'Copy link',
             'actions.reset': 'Reset',
             'actions.preview': 'Open preview',
@@ -467,6 +471,10 @@
             'switch.blockBotsHint': 'Скрывает сообщения из небольшого встроенного списка ботов.',
             'output.title': 'Ссылка overlay',
             'output.desc': 'Вставьте эту ссылку в OBS Browser Source.',
+            'preview.title': 'Предпросмотр чата',
+            'preview.bg': 'Фон:',
+            'preview.dark': 'Тёмный',
+            'preview.light': 'Светлый',
             'actions.copy': 'Скопировать',
             'actions.reset': 'Сбросить',
             'actions.preview': 'Открыть превью',
@@ -722,6 +730,10 @@
             button.title = translate('actions.reset');
             button.setAttribute('aria-label', translate('actions.reset'));
         });
+        document.querySelectorAll('[data-i18n-title]').forEach((node) => {
+            node.title = translate(node.dataset.i18nTitle);
+            node.setAttribute('aria-label', translate(node.dataset.i18nTitle));
+        });
     }
 
     function updateDependentControls() {
@@ -863,6 +875,268 @@
         byId('overlayUrl').value = url.toString();
         byId('openPreview').href = url.toString();
         saveSettings();
+        updateLivePreview(url);
+    }
+
+    function hexToRgb(hex) {
+        const clean = String(hex || '').replace('#', '');
+        return [
+            parseInt(clean.slice(0, 2), 16) || 0,
+            parseInt(clean.slice(2, 4), 16) || 0,
+            parseInt(clean.slice(4, 6), 16) || 0
+        ].join(', ');
+    }
+
+    let previewLoaded = false;
+    let currentPreviewTheme = localStorage.getItem('ikuzachat-v2-preview-theme') === 'light' ? 'light' : 'dark';
+
+    function getPreviewCssVars() {
+        const themeColor = currentPreviewTheme === 'light' ? '#f1f3f7' : '#0c0c12';
+        return {
+            '--preview-bg': themeColor,
+            '--chat-font': getFont(),
+            '--chat-size': `${getNumberValue('fontSize', 24)}px`,
+            '--badge-scale': String(getNumberValue('badgeScale', 1.5)),
+            '--time-color': getColorValue('timeColor'),
+            '--message-bg-rgb': hexToRgb(getColorValue('backgroundColor')),
+            '--message-bg-opacity': String(getNumberValue('backgroundOpacity', 0.35)),
+            '--message-bg-radius': `${Math.round(getNumberValue('backgroundRadius', 12))}px`,
+            '--chat-padding': `${Math.round(getNumberValue('chatPadding', 12))}px`,
+            '--message-gap': `${Math.round(getNumberValue('messageGap', 5))}px`,
+            '--message-padding': `${Math.round(getNumberValue('messagePadding', 5))}px`,
+            '--first-message-bg-rgb': hexToRgb(getColorValue('firstMessageColor')),
+            '--first-message-bg-opacity': String(getNumberValue('firstMessageOpacity', 0.35)),
+            '--first-message-bg-radius': `${Math.round(getNumberValue('firstMessageRadius', 12))}px`,
+            '--user-notice-color': getColorValue('userNoticeColor'),
+            '--user-notice-rgb': hexToRgb(getColorValue('userNoticeColor')),
+            '--user-notice-opacity': String(getNumberValue('userNoticeOpacity', 0.16)),
+            '--system-message-color': getColorValue('systemMessageColor'),
+            '--hcf-box-rgb': hexToRgb(getColorValue('hcfBoxColor')),
+            '--hcf-box-opacity': String(getNumberValue('hcfBoxOpacity', 0.72)),
+            '--hcf-box-radius': `${Math.round(getNumberValue('hcfBoxRadius', 18))}px`,
+            '--hcf-box-padding': `${Math.round(getNumberValue('hcfBoxPadding', 12))}px`,
+            '--hcf-badge-radius': `${Math.round(getNumberValue('hcfBadgeRadius', 5))}px`,
+            '--hcf-top-color': getColorValue('hcfTopColor'),
+            '--hcf-reply-color': getColorValue('hcfReplyColor'),
+            '--hcf-text-color': getColorValue('hcfTextColor'),
+            '--hcf-message-width': `${Math.round(getNumberValue('hcfMessageWidth', 680))}px`,
+            '--media-radius': `${Math.round(getNumberValue('mediaRadius', 20))}px`,
+            '--media-opacity': String(getNumberValue('mediaOpacity', 1))
+        };
+    }
+
+    function getPreviewConfig() {
+        return {
+            font: getFont(),
+            size: getNumberValue('fontSize', 24),
+            badgeScale: getNumberValue('badgeScale', 1.5),
+            showUserBadges: el.showUserBadges.checked,
+            showChannelBadges: el.showChannelBadges.checked,
+            showAchievementBadges: el.showAchievementBadges.checked,
+            badgePosition: el.badgePosition.value,
+            showTime: el.showTime.checked,
+            timePosition: el.timePosition.value,
+            timeZone: el.timeZone.value,
+            timeColor: getColorValue('timeColor'),
+            showBackground: el.showBackground.checked,
+            background: el.showBackground.checked,
+            backgroundColor: getColorValue('backgroundColor'),
+            backgroundOpacity: getNumberValue('backgroundOpacity', 0.35),
+            backgroundRadius: getNumberValue('backgroundRadius', 12),
+            firstMessage: el.firstMessageEnabled.checked,
+            firstMessageColor: getColorValue('firstMessageColor'),
+            firstMessageOpacity: getNumberValue('firstMessageOpacity', 0.35),
+            firstMessageRadius: getNumberValue('firstMessageRadius', 12),
+            animationIn: el.animationIn.value,
+            animationOut: el.animationOut.value,
+            colon: el.colonEnabled.checked,
+            autoRemove: el.autoRemove.checked,
+            removeTimeout: getNumberValue('removeTimeout', 12) * 1000,
+            userNotice: el.showUserNotices.checked,
+            userNoticeColor: getColorValue('userNoticeColor'),
+            userNoticeOpacity: getNumberValue('userNoticeOpacity', 0.16),
+            meStyle: el.meStyleEnabled.checked,
+            meItalic: el.meItalic.checked,
+            systemMessage: el.showSystemMessages.checked,
+            systemMessageColor: getColorValue('systemMessageColor'),
+            hcfBoxColor: getColorValue('hcfBoxColor'),
+            hcfBoxOpacity: getNumberValue('hcfBoxOpacity', 0.72),
+            hcfBoxRadius: getNumberValue('hcfBoxRadius', 18),
+            hcfBoxPadding: getNumberValue('hcfBoxPadding', 12),
+            hcfBadgeRadius: getNumberValue('hcfBadgeRadius', 5),
+            hcfTopColor: getColorValue('hcfTopColor'),
+            hcfReplyColor: getColorValue('hcfReplyColor'),
+            hcfTextColor: getColorValue('hcfTextColor'),
+            hcfWidthMode: el.hcfWidthMode.value,
+            hcfMessageSide: el.hcfMessageSide.value,
+            hcfMessageWidth: getNumberValue('hcfMessageWidth', 680),
+            hcfSpecialBackgrounds: el.hcfSpecialBackgrounds.checked,
+            osu: {
+                enabled: el.osuEnabled.checked,
+                parseMap: el.osuMap.checked,
+                parseUser: el.osuUser.checked,
+                highlight: el.osuHighlight.checked,
+                mapShowCover: el.osuMapShowCover.checked,
+                mapShowTitle: el.osuMapShowTitle.checked,
+                mapShowArtist: el.osuMapShowArtist.checked,
+                mapShowCreator: el.osuMapShowCreator.checked,
+                mapShowStatus: el.osuMapShowStatus.checked,
+                mapShowVersion: el.osuMapShowVersion.checked,
+                mapShowStars: el.osuMapShowStars.checked,
+                mapShowBpm: el.osuMapShowBpm.checked,
+                mapShowAr: el.osuMapShowAr.checked,
+                mapShowCs: el.osuMapShowCs.checked,
+                mapShowHp: el.osuMapShowHp.checked,
+                mapShowOd: el.osuMapShowOd.checked,
+                mapShowLength: el.osuMapShowLength.checked,
+                mapShowCombo: el.osuMapShowCombo.checked,
+                mapShowPlayCount: el.osuMapShowPlayCount.checked,
+                mapShowFavourites: el.osuMapShowFavourites.checked,
+                profileShowAvatar: el.osuProfileShowAvatar.checked,
+                profileShowUsername: el.osuProfileShowUsername.checked,
+                profileShowFlag: el.osuProfileShowFlag.checked,
+                profileShowRank: el.osuProfileShowRank.checked,
+                profileShowCountryRank: el.osuProfileShowCountryRank.checked,
+                profileShowAccuracy: el.osuProfileShowAccuracy.checked,
+                profileShowPp: el.osuProfileShowPp.checked,
+                profileShowPlayCount: el.osuProfileShowPlayCount.checked,
+                profileTopScoresCount: getNumberValue('osuProfileTopScoresCount', 3)
+            },
+            media: {
+                enabled: el.mediaEnabled.checked,
+                radius: getNumberValue('mediaRadius', 20),
+                opacity: getNumberValue('mediaOpacity', 1)
+            }
+        };
+    }
+
+    function syncPreviewStyles() {
+        const iframe = byId('chatPreviewIframe');
+        if (!iframe) return;
+
+        const cssVars = getPreviewCssVars();
+        const config = getPreviewConfig();
+        const themeColor = currentPreviewTheme === 'light' ? '#f1f3f7' : '#0c0c12';
+
+        // 1. PostMessage: guarantees real-time synchronization across frame boundaries and file:// protocols
+        try {
+            if (iframe.contentWindow) {
+                iframe.contentWindow.postMessage({
+                    type: 'ikuzachat-sync',
+                    cssVars,
+                    config,
+                    themeBg: themeColor
+                }, '*');
+            }
+        } catch (e) {}
+
+        // 2. Direct DOM manipulation fallback if permitted
+        try {
+            const doc = iframe.contentDocument;
+            if (doc && doc.documentElement) {
+                const root = doc.documentElement;
+                Object.entries(cssVars).forEach(([prop, val]) => {
+                    root.style.setProperty(prop, val);
+                });
+
+                root.style.backgroundColor = themeColor;
+                if (doc.body) doc.body.style.backgroundColor = themeColor;
+
+                const bgEnabled = el.showBackground ? el.showBackground.checked : true;
+                doc.querySelectorAll('.msg').forEach((msg) => {
+                    if (!msg.classList.contains('first-message-bg') && !msg.classList.contains('user-notice') && !msg.classList.contains('system-message')) {
+                        msg.classList.toggle('with-bg', bgEnabled);
+                    }
+                });
+
+                const win = iframe.contentWindow;
+                if (win && win.IkuzaChatV2 && win.IkuzaChatV2.config) {
+                    const cfg = win.IkuzaChatV2.config;
+                    Object.assign(cfg, config);
+                }
+            }
+        } catch (e) {}
+    }
+
+    function updateLivePreview(url) {
+        const iframe = byId('chatPreviewIframe');
+        if (!iframe) return;
+
+        const previewUrl = new URL(url.toString());
+        previewUrl.searchParams.set('testMode', 'true');
+        previewUrl.searchParams.set('previewTheme', currentPreviewTheme);
+
+        const newTarget = previewUrl.pathname;
+        const newChannel = previewUrl.searchParams.get('channel') || '';
+        const currentTarget = iframe.dataset.targetPage || '';
+        const currentChannel = iframe.dataset.targetChannel || '';
+
+        if (currentTarget !== newTarget || currentChannel !== newChannel || !previewLoaded) {
+            iframe.dataset.targetPage = newTarget;
+            iframe.dataset.targetChannel = newChannel;
+            previewLoaded = true;
+            iframe.src = previewUrl.toString();
+        } else {
+            syncPreviewStyles();
+        }
+    }
+
+    function setPreviewTheme(theme) {
+        const selected = theme === 'light' ? 'light' : 'dark';
+        currentPreviewTheme = selected;
+        const themeColor = selected === 'light' ? '#f1f3f7' : '#0c0c12';
+
+        const viewport = byId('previewViewport');
+        if (viewport) {
+            viewport.className = `preview-viewport theme-${selected}`;
+            viewport.style.backgroundColor = themeColor;
+        }
+
+        const iframe = byId('chatPreviewIframe');
+        if (iframe) {
+            try {
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({
+                        type: 'ikuzachat-sync',
+                        cssVars: { '--preview-bg': themeColor },
+                        themeBg: themeColor
+                    }, '*');
+                }
+            } catch (e) {}
+
+            try {
+                const doc = iframe.contentDocument;
+                if (doc && doc.documentElement) {
+                    doc.documentElement.style.setProperty('--preview-bg', themeColor);
+                    doc.documentElement.style.backgroundColor = themeColor;
+                    if (doc.body) doc.body.style.backgroundColor = themeColor;
+                }
+            } catch (e) {}
+        }
+
+        document.querySelectorAll('.preview-bg-btn').forEach((btn) => {
+            btn.classList.toggle('active', btn.dataset.theme === selected);
+        });
+        localStorage.setItem('ikuzachat-v2-preview-theme', selected);
+    }
+
+    function setupPreview() {
+        const iframe = byId('chatPreviewIframe');
+        if (!iframe) return;
+
+        iframe.addEventListener('load', () => {
+            previewLoaded = true;
+            syncPreviewStyles();
+        });
+
+        const savedTheme = localStorage.getItem('ikuzachat-v2-preview-theme') === 'light' ? 'light' : 'dark';
+        setPreviewTheme(savedTheme);
+
+        document.querySelectorAll('.preview-bg-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                setPreviewTheme(btn.dataset.theme);
+            });
+        });
     }
 
     function resetSettings() {
@@ -1061,8 +1335,10 @@
 
         byId('copyUrl').addEventListener('click', copyUrl);
         byId('resetSettings').addEventListener('click', resetSettings);
+        setupPreview();
         updateUrl();
         updateResetButtons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     document.addEventListener('DOMContentLoaded', init);
