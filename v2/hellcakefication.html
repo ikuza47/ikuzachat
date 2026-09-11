@@ -53,8 +53,21 @@
             max-height: 100%;
             overflow: hidden;
             padding: var(--chat-padding);
-            background: transparent;
             scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+            background: rgba(var(--general-bg-rgb, 0, 0, 0), var(--general-bg-opacity, 0));
+            border-radius: var(--general-bg-radius, 0);
+        }
+
+        :root[style*="--chat-align: center"] #message_container,
+        html[data-chat-align="center"] #message_container {
+            align-items: center;
+        }
+
+        :root[style*="--chat-align: right"] #message_container,
+        html[data-chat-align="right"] #message_container {
+            align-items: flex-end;
         }
 
         #message_container::-webkit-scrollbar {
@@ -486,6 +499,27 @@
             vertical-align: middle;
         }
 
+        .user-avatar {
+            display: inline-block;
+            height: calc(var(--chat-size) * 0.85 * var(--avatar-scale, 1));
+            width: calc(var(--chat-size) * 0.85 * var(--avatar-scale, 1));
+            object-fit: cover;
+            vertical-align: middle;
+            margin-right: 2px;
+        }
+
+        .user-avatar-circle {
+            border-radius: 50%;
+        }
+
+        .user-avatar-rounded {
+            border-radius: calc(var(--chat-size) * 0.22 * var(--avatar-scale, 1));
+        }
+
+        .user-avatar-square {
+            border-radius: 0;
+        }
+
         .emote {
             height: calc(var(--chat-size) * 1.22);
             max-width: calc(var(--chat-size) * 5);
@@ -666,6 +700,29 @@
             from { opacity: 1; transform: scale(1); }
             to { opacity: 0; transform: scale(0.86); }
         }
+
+        .watermark {
+            position: fixed;
+            right: 14px;
+            bottom: 10px;
+            z-index: 99999;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            color: rgba(255, 255, 255, 0.32);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0.8);
+            display: none;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        html[data-preview-theme="light"] .watermark {
+            color: rgba(0, 0, 0, 0.32);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
     </style>
 </head>
 <body>
@@ -676,6 +733,7 @@
     </div>
     <div id="error-indicator" role="alert"></div>
     <div id="message_container" aria-live="polite"></div>
+    <div id="watermark" class="watermark" aria-hidden="true">made by ikuza47.</div>
 
     <script>
         window.IkuzaChatV2 = window.IkuzaChatV2 || {};
@@ -711,6 +769,7 @@
     <script src="js/osu.js"></script>
     <script src="js/media.js"></script>
     <script src="js/bots.js"></script>
+    <script src="js/avatars.js"></script>
     <script src="js/hellcakefication-renderer.js"></script>
     <script src="js/twitch.js"></script>
     <script src="js/test-mode.js"></script>

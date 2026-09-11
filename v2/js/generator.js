@@ -1,7 +1,11 @@
 (function () {
     const ids = [
-        'channel', 'chatType', 'fontFamily', 'customFont', 'fontSize', 'showUserBadges',
+        'channel', 'chatType', 'showWatermark', 'fontFamily', 'customFont', 'fontSize', 'showUserBadges',
         'showChannelBadges', 'showAchievementBadges', 'badgePosition', 'badgeScale',
+        'showAvatar', 'avatarPosition', 'avatarShape', 'avatarScale',
+        'chatAlign', 'nameColorMode', 'definedNameColor', 'nameColorPalette',
+        'showGeneralBackground', 'generalBackgroundColor', 'generalBackgroundOpacity',
+        'generalBackgroundRadius', 'generalBackgroundPadding',
         'showTime', 'timePosition', 'timeZone', 'timeColor', 'hcfTimeMode',
         'showBackground', 'backgroundColor', 'backgroundOpacity', 'backgroundRadius',
         'chatPadding', 'messageGap', 'messagePadding',
@@ -30,6 +34,8 @@
     const colorDefaults = {
         timeColor: '#c3c7d4',
         backgroundColor: '#000000',
+        generalBackgroundColor: '#000000',
+        definedNameColor: '#a996ff',
         firstMessageColor: '#ff6bcb',
         userNoticeColor: '#9f8cff',
         systemMessageColor: '#c3c7d4',
@@ -40,8 +46,12 @@
     };
     const rangeFormats = {
         badgeScale: { suffix: 'x', decimals: 2 },
+        avatarScale: { suffix: 'x', decimals: 2 },
         backgroundOpacity: { suffix: '', decimals: 2 },
         backgroundRadius: { suffix: 'px', decimals: 0 },
+        generalBackgroundOpacity: { suffix: '', decimals: 2 },
+        generalBackgroundRadius: { suffix: 'px', decimals: 0 },
+        generalBackgroundPadding: { suffix: 'px', decimals: 0 },
         firstMessageOpacity: { suffix: '', decimals: 2 },
         firstMessageRadius: { suffix: 'px', decimals: 0 },
         chatPadding: { suffix: 'px', decimals: 0 },
@@ -60,6 +70,7 @@
     const defaultValues = {
         channel: 'ikuza47',
         chatType: 'classic',
+        showWatermark: false,
         fontFamily: "'Segoe UI', sans-serif",
         customFont: '',
         fontSize: '24',
@@ -68,6 +79,19 @@
         showAchievementBadges: true,
         badgePosition: 'before-name',
         badgeScale: '1.5',
+        showAvatar: false,
+        avatarPosition: 'before-badges',
+        avatarShape: 'circle',
+        avatarScale: '1.0',
+        chatAlign: 'left',
+        nameColorMode: 'twitch',
+        definedNameColor: '#a996ff',
+        nameColorPalette: 'vibrant',
+        showGeneralBackground: false,
+        generalBackgroundColor: '#000000',
+        generalBackgroundOpacity: '0.50',
+        generalBackgroundRadius: '16',
+        generalBackgroundPadding: '12',
         showTime: false,
         hcfTimeMode: 'none',
         timePosition: 'before-name',
@@ -165,6 +189,8 @@
             'fields.chatType': 'Chat type',
             'options.classic': 'Classic',
             'options.hellcakefication': 'HellCakeFication',
+            'switch.watermark': 'Watermark',
+            'switch.watermarkHint': 'Display "made by ikuza47." in the bottom right corner.',
             'fields.font': 'Font',
             'fields.fontSize': 'Font size',
             'fields.customFont': 'Custom font family',
@@ -179,6 +205,32 @@
             'options.pop': 'Pop',
             'appearance.title': 'Appearance',
             'appearance.desc': 'Control badges, timestamps, message background and simple animations.',
+            'fields.chatAlign': 'Chat alignment',
+            'options.alignLeft': 'Left',
+            'options.alignCenter': 'Center',
+            'options.alignRight': 'Right',
+            'fields.nameColorMode': 'Username colors',
+            'options.colorTwitch': 'Twitch user color',
+            'options.colorPalette': 'Preset palette',
+            'options.colorRandom': 'Random per user',
+            'options.colorDefined': 'Single custom color',
+            'fields.definedNameColor': 'Custom username color',
+            'fields.nameColorPalette': 'Color palette',
+            'options.paletteVibrant': 'Vibrant (Twitch)',
+            'options.palettePastel': 'Pastel',
+            'options.paletteNeon': 'Neon',
+            'options.paletteMonochrome': 'Monochrome',
+            'options.paletteSunset': 'Sunset',
+            'switch.userAvatar': 'User avatar',
+            'switch.userAvatarHint': 'Display Twitch profile picture before or after badges.',
+            'fields.avatarPosition': 'Avatar position',
+            'options.avatarBeforeBadges': 'Before badges',
+            'options.avatarAfterBadges': 'After badges',
+            'fields.avatarShape': 'Avatar shape',
+            'options.shapeCircle': 'Circle',
+            'options.shapeRounded': 'Rounded',
+            'options.shapeSquare': 'Square',
+            'fields.avatarScale': 'Avatar size multiplier',
             'switch.userBadges': 'User badges',
             'switch.userBadgesHint': 'Premium, turbo and similar global badges.',
             'switch.channelBadges': 'Channel badges',
@@ -204,6 +256,12 @@
             'fields.backgroundColor': 'Message background color',
             'fields.backgroundOpacity': 'Background opacity',
             'fields.backgroundRadius': 'Message background radius',
+            'switch.generalBackground': 'General overlay background',
+            'switch.generalBackgroundHint': 'Adds an overall background container for the whole chat.',
+            'fields.generalBackgroundColor': 'General background color',
+            'fields.generalBackgroundOpacity': 'General background opacity',
+            'fields.generalBackgroundRadius': 'General background corner radius',
+            'fields.generalBackgroundPadding': 'General background padding',
             'fields.chatPadding': 'Chat edge padding',
             'fields.messageGap': 'Message gap',
             'fields.messagePadding': 'Message inner padding',
@@ -314,7 +372,8 @@
             'actions.preview': 'Open preview',
             'placeholders.colorHex': '#RRGGBB',
             'status.copied': 'Link copied.',
-            'status.reset': 'Settings reset.'
+            'status.reset': 'Settings reset.',
+            'footer.resources': 'Used resources'
         },
         ru: {
             'hero.subtitle': 'Сгенерируйте ссылку для Browser Source в OBS.',
@@ -331,6 +390,8 @@
             'fields.chatType': 'Тип чата',
             'options.classic': 'Классический',
             'options.hellcakefication': 'HellCakeFication',
+            'switch.watermark': 'Водяной знак',
+            'switch.watermarkHint': 'Отображать «made by ikuza47.» в правом нижнем углу.',
             'fields.font': 'Шрифт',
             'fields.fontSize': 'Размер шрифта',
             'fields.customFont': 'Свой шрифт',
@@ -345,6 +406,32 @@
             'options.pop': 'Поп',
             'appearance.title': 'Внешний вид',
             'appearance.desc': 'Настройте бейджи, время, фон сообщений и простые анимации.',
+            'fields.chatAlign': 'Выравнивание чата',
+            'options.alignLeft': 'Слева',
+            'options.alignCenter': 'По центру',
+            'options.alignRight': 'Справа',
+            'fields.nameColorMode': 'Цвета ников',
+            'options.colorTwitch': 'Цвет пользователя из Twitch',
+            'options.colorPalette': 'Готовая палитра',
+            'options.colorRandom': 'Случайный для каждого',
+            'options.colorDefined': 'Один заданный цвет',
+            'fields.definedNameColor': 'Свой цвет ника',
+            'fields.nameColorPalette': 'Палитра цветов',
+            'options.paletteVibrant': 'Яркая (Twitch)',
+            'options.palettePastel': 'Пастельная',
+            'options.paletteNeon': 'Неоновая',
+            'options.paletteMonochrome': 'Монохромная',
+            'options.paletteSunset': 'Закат',
+            'switch.userAvatar': 'Аватар пользователя',
+            'switch.userAvatarHint': 'Отображает аватарку Twitch перед или после бейджей.',
+            'fields.avatarPosition': 'Позиция аватарки',
+            'options.avatarBeforeBadges': 'Перед бейджами',
+            'options.avatarAfterBadges': 'После бейджей',
+            'fields.avatarShape': 'Форма аватарки',
+            'options.shapeCircle': 'Круглая',
+            'options.shapeRounded': 'Скруглённая',
+            'options.shapeSquare': 'Квадратная',
+            'fields.avatarScale': 'Множитель размера аватарки',
             'switch.userBadges': 'Пользовательские бейджи',
             'switch.userBadgesHint': 'Premium, turbo и похожие глобальные бейджи.',
             'switch.channelBadges': 'Канальные бейджи',
@@ -370,6 +457,12 @@
             'fields.backgroundColor': 'Цвет фона сообщения',
             'fields.backgroundOpacity': 'Прозрачность фона',
             'fields.backgroundRadius': 'Радиус фона сообщения',
+            'switch.generalBackground': 'Общий фон overlay',
+            'switch.generalBackgroundHint': 'Добавляет фоновый контейнер для всего чата целиком.',
+            'fields.generalBackgroundColor': 'Цвет общего фона',
+            'fields.generalBackgroundOpacity': 'Прозрачность общего фона',
+            'fields.generalBackgroundRadius': 'Радиус общего фона',
+            'fields.generalBackgroundPadding': 'Отступ общего фона',
             'fields.chatPadding': 'Отступ от края чата',
             'fields.messageGap': 'Расстояние между сообщениями',
             'fields.messagePadding': 'Внутренний отступ сообщения',
@@ -480,7 +573,8 @@
             'actions.preview': 'Открыть превью',
             'placeholders.colorHex': '#RRGGBB',
             'status.copied': 'Ссылка скопирована.',
-            'status.reset': 'Настройки сброшены.'
+            'status.reset': 'Настройки сброшены.',
+            'footer.resources': 'Используемые ресурсы'
         }
     };
 
@@ -740,6 +834,10 @@
         const isClassic = el.chatType.value === 'classic';
         byId('customFontWrap').classList.toggle('hidden', el.fontFamily.value !== 'custom');
         byId('hcfMessageWidthWrap').classList.toggle('hidden', el.chatType.value !== 'hellcakefication' || el.hcfWidthMode.value !== 'compact');
+        byId('avatarSettings').classList.toggle('hidden', !el.showAvatar.checked);
+        byId('definedNameColorWrap').classList.toggle('hidden', el.nameColorMode.value !== 'defined');
+        byId('nameColorPaletteWrap').classList.toggle('hidden', el.nameColorMode.value !== 'palette');
+        byId('generalBackgroundSettings').classList.toggle('hidden', !el.showGeneralBackground.checked);
         document.documentElement.dataset.chatType = el.chatType.value;
         byId('timeSettings').classList.toggle('hidden', !isClassic || !el.showTime.checked);
         byId('backgroundSettings').classList.toggle('hidden', !isClassic || !el.showBackground.checked);
@@ -761,6 +859,8 @@
         });
         updateRangeControls();
         updateColorControl('backgroundColor');
+        updateColorControl('definedNameColor');
+        updateColorControl('generalBackgroundColor');
         updateColorControl('firstMessageColor');
         updateColorControl('timeColor');
         updateColorControl('userNoticeColor');
@@ -780,6 +880,7 @@
         const url = new URL(overlayFile, window.location.href);
 
         url.searchParams.set('channel', channel);
+        url.searchParams.set('watermark', getBool('showWatermark'));
         url.searchParams.set('font', getFont());
         url.searchParams.set('size', String(Number(el.fontSize.value) || 24));
         url.searchParams.set('userBadges', getBool('showUserBadges'));
@@ -787,6 +888,19 @@
         url.searchParams.set('achievementBadges', getBool('showAchievementBadges'));
         url.searchParams.set('badgePosition', el.badgePosition.value);
         url.searchParams.set('badgeScale', getNumberValue('badgeScale', 1.5).toFixed(2));
+        url.searchParams.set('showAvatar', getBool('showAvatar'));
+        url.searchParams.set('avatarPosition', el.avatarPosition.value);
+        url.searchParams.set('avatarShape', el.avatarShape.value);
+        url.searchParams.set('avatarScale', getNumberValue('avatarScale', 1.0).toFixed(2));
+        url.searchParams.set('chatAlign', el.chatAlign.value);
+        url.searchParams.set('nameColorMode', el.nameColorMode.value);
+        url.searchParams.set('definedNameColor', getColorValue('definedNameColor'));
+        url.searchParams.set('nameColorPalette', el.nameColorPalette.value);
+        url.searchParams.set('generalBackground', getBool('showGeneralBackground'));
+        url.searchParams.set('generalBackgroundColor', getColorValue('generalBackgroundColor'));
+        url.searchParams.set('generalBackgroundOpacity', el.generalBackgroundOpacity.value);
+        url.searchParams.set('generalBackgroundRadius', String(Math.round(getNumberValue('generalBackgroundRadius', 16))));
+        url.searchParams.set('generalBackgroundPadding', String(Math.round(getNumberValue('generalBackgroundPadding', 12))));
         url.searchParams.set('showTime', getBool('showTime'));
         url.searchParams.set('timePosition', el.timePosition.value);
         url.searchParams.set('timeZone', el.timeZone.value);
@@ -891,12 +1005,18 @@
     let currentPreviewTheme = localStorage.getItem('ikuzachat-v2-preview-theme') === 'light' ? 'light' : 'dark';
 
     function getPreviewCssVars() {
-        const themeColor = currentPreviewTheme === 'light' ? '#f1f3f7' : '#0c0c12';
+        const themeColor = currentPreviewTheme === 'light' ? '#f0f2f5' : '#08080a';
         return {
             '--preview-bg': themeColor,
             '--chat-font': getFont(),
             '--chat-size': `${getNumberValue('fontSize', 24)}px`,
             '--badge-scale': String(getNumberValue('badgeScale', 1.5)),
+            '--avatar-scale': String(getNumberValue('avatarScale', 1.0)),
+            '--chat-align': el.chatAlign.value,
+            '--general-bg-rgb': hexToRgb(getColorValue('generalBackgroundColor')),
+            '--general-bg-opacity': el.showGeneralBackground.checked ? String(getNumberValue('generalBackgroundOpacity', 0.5)) : '0',
+            '--general-bg-radius': `${Math.round(getNumberValue('generalBackgroundRadius', 16))}px`,
+            '--general-bg-padding': `${Math.round(getNumberValue('generalBackgroundPadding', 12))}px`,
             '--time-color': getColorValue('timeColor'),
             '--message-bg-rgb': hexToRgb(getColorValue('backgroundColor')),
             '--message-bg-opacity': String(getNumberValue('backgroundOpacity', 0.35)),
@@ -929,11 +1049,25 @@
         return {
             font: getFont(),
             size: getNumberValue('fontSize', 24),
+            showWatermark: el.showWatermark.checked,
             badgeScale: getNumberValue('badgeScale', 1.5),
             showUserBadges: el.showUserBadges.checked,
             showChannelBadges: el.showChannelBadges.checked,
             showAchievementBadges: el.showAchievementBadges.checked,
             badgePosition: el.badgePosition.value,
+            showAvatar: el.showAvatar.checked,
+            avatarPosition: el.avatarPosition.value,
+            avatarShape: el.avatarShape.value,
+            avatarScale: getNumberValue('avatarScale', 1.0),
+            chatAlign: el.chatAlign.value,
+            nameColorMode: el.nameColorMode.value,
+            definedNameColor: getColorValue('definedNameColor'),
+            nameColorPalette: el.nameColorPalette.value,
+            showGeneralBackground: el.showGeneralBackground.checked,
+            generalBackgroundColor: getColorValue('generalBackgroundColor'),
+            generalBackgroundOpacity: getNumberValue('generalBackgroundOpacity', 0.5),
+            generalBackgroundRadius: getNumberValue('generalBackgroundRadius', 16),
+            generalBackgroundPadding: getNumberValue('generalBackgroundPadding', 12),
             showTime: el.showTime.checked,
             timePosition: el.timePosition.value,
             timeZone: el.timeZone.value,
@@ -1016,7 +1150,7 @@
 
         const cssVars = getPreviewCssVars();
         const config = getPreviewConfig();
-        const themeColor = currentPreviewTheme === 'light' ? '#f1f3f7' : '#0c0c12';
+        const themeColor = currentPreviewTheme === 'light' ? '#f0f2f5' : '#08080a';
 
         // 1. PostMessage: guarantees real-time synchronization across frame boundaries and file:// protocols
         try {
@@ -1084,7 +1218,7 @@
     function setPreviewTheme(theme) {
         const selected = theme === 'light' ? 'light' : 'dark';
         currentPreviewTheme = selected;
-        const themeColor = selected === 'light' ? '#f1f3f7' : '#0c0c12';
+        const themeColor = selected === 'light' ? '#f0f2f5' : '#08080a';
 
         const viewport = byId('previewViewport');
         if (viewport) {
@@ -1304,6 +1438,8 @@
 
     function init() {
         createColorControl('backgroundColor');
+        createColorControl('definedNameColor');
+        createColorControl('generalBackgroundColor');
         createColorControl('firstMessageColor');
         createColorControl('timeColor');
         createColorControl('userNoticeColor');

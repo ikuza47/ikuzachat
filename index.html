@@ -975,6 +975,49 @@
             opacity: 0.25;
         }
 
+        .footer-resources {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-resources-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .footer-resources-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 6px 10px;
+            max-width: 600px;
+            padding: 0 16px;
+        }
+
+        .footer-resources-list a {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-resources-list a:hover {
+            color: var(--text);
+            text-decoration: underline;
+        }
+
+        .footer-sep {
+            font-size: 9px;
+            color: var(--text-muted);
+            user-select: none;
+        }
+
         /* ── Toggle switch indicator ── */
         .switch::before {
             content: '';
@@ -1084,6 +1127,10 @@
             min-width: 0;
         }
 
+        .main-column > .section:first-child {
+            margin-top: 0;
+        }
+
         .sidebar-column {
             position: sticky;
             top: 24px;
@@ -1096,7 +1143,8 @@
             min-width: 0;
         }
 
-        .sidebar-column .section {
+        .sidebar-column .section,
+        .sidebar-column .preview-section {
             margin-top: 0;
         }
 
@@ -1111,32 +1159,37 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .preview-card:hover {
-            border-color: var(--border-hover);
+            border-color: color-mix(in srgb, var(--panel-accent, var(--active-accent)) 30%, var(--border));
         }
 
         .preview-bg-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 9px 14px;
             border-bottom: 1px solid var(--border);
-            background: rgba(0, 0, 0, 0.25);
+            background: var(--surface-2);
         }
 
         .preview-bg-label {
             font-size: 11px;
             color: var(--text-dim);
             font-weight: 500;
+            letter-spacing: 0.02em;
         }
 
         .preview-bg-options {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 3px;
         }
 
         .preview-bg-btn {
@@ -1144,59 +1197,63 @@
             align-items: center;
             gap: 6px;
             padding: 4px 10px;
-            border: 1px solid var(--border);
+            border: 1px solid transparent;
             border-radius: 6px;
-            background: var(--surface-2);
+            background: transparent;
             color: var(--text-dim);
             font-size: 11px;
             font-weight: 500;
             cursor: pointer;
-            transition: color 0.2s, background 0.2s, border-color 0.2s;
+            transition: color 0.18s, background 0.18s, border-color 0.18s;
         }
 
         .preview-bg-btn:hover {
             color: var(--text);
-            border-color: var(--border-hover);
         }
 
         .preview-bg-btn.active {
-            background: var(--accent-soft);
+            background: color-mix(in srgb, var(--panel-accent, var(--active-accent)) 14%, var(--surface-2));
             color: var(--text);
-            border-color: color-mix(in srgb, var(--panel-accent) 40%, var(--border));
+            border-color: color-mix(in srgb, var(--panel-accent, var(--active-accent)) 35%, transparent);
         }
 
         .preview-bg-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             display: inline-block;
             flex-shrink: 0;
         }
 
         .preview-bg-dot.dark {
-            background: #0c0c12;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: #08080a;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .preview-bg-dot.light {
-            background: #f1f3f7;
-            border: 1px solid rgba(0, 0, 0, 0.25);
+            background: #f0f2f5;
+            border: 1px solid rgba(0, 0, 0, 0.3);
         }
 
         .preview-viewport {
             position: relative;
             height: 420px;
             overflow: hidden;
-            background-color: #0c0c12;
+            background-color: #08080a;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 16px 16px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.45);
             transition: background-color 0.25s ease;
         }
 
         .preview-viewport.theme-dark {
-            background-color: #0c0c12 !important;
+            background-color: #08080a !important;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
         }
 
         .preview-viewport.theme-light {
-            background-color: #f1f3f7 !important;
+            background-color: #f0f2f5 !important;
+            background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
         }
 
         .preview-viewport iframe {
@@ -1265,6 +1322,142 @@
                 font-size: 10px;
             }
         }
+
+        /* SVG setting icon badges & visual schematic cards */
+        .setting-title-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            vertical-align: middle;
+        }
+
+        .setting-icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: color-mix(in srgb, var(--panel-accent, var(--active-accent)) 85%, #fff);
+            flex-shrink: 0;
+            transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+        }
+
+        .setting-icon-badge svg,
+        .setting-icon-badge i {
+            width: 13px;
+            height: 13px;
+            stroke-width: 2.2px;
+        }
+
+        .field:hover .setting-icon-badge,
+        .switch:hover .setting-icon-badge {
+            border-color: color-mix(in srgb, var(--panel-accent, var(--active-accent)) 40%, var(--border));
+            background: color-mix(in srgb, var(--panel-accent, var(--active-accent)) 10%, var(--surface-2));
+            transform: scale(1.05);
+        }
+
+        .hidden-select {
+            display: none !important;
+        }
+
+        .visual-card-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+            gap: 8px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .visual-card-group.cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .visual-card-group.cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .visual-card-group.cols-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (max-width: 620px) {
+            .visual-card-group.cols-3,
+            .visual-card-group.cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .visual-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 8px 8px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: var(--surface-2);
+            color: var(--text-dim);
+            cursor: pointer;
+            user-select: none;
+            transition: border-color 0.25s, background 0.25s, color 0.25s, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s;
+            text-align: center;
+            min-height: 70px;
+        }
+
+        .visual-card:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+            background: var(--surface);
+            transform: translateY(-2px);
+        }
+
+        .visual-card.active {
+            border-color: var(--panel-accent, var(--active-accent));
+            background: color-mix(in srgb, var(--panel-accent, var(--active-accent)) 12%, var(--surface-2));
+            color: #ffffff;
+            box-shadow: 0 4px 16px color-mix(in srgb, var(--panel-accent, var(--active-accent)) 22%, transparent),
+                        0 0 0 1px color-mix(in srgb, var(--panel-accent, var(--active-accent)) 30%, transparent);
+        }
+
+        .visual-card-svg {
+            width: 100%;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            transition: color 0.2s;
+        }
+
+        .visual-card-svg svg {
+            width: 22px;
+            height: 22px;
+            stroke-width: 2;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .visual-card:hover .visual-card-svg {
+            color: var(--text);
+        }
+
+        .visual-card:hover .visual-card-svg svg {
+            transform: scale(1.12);
+        }
+
+        .visual-card.active .visual-card-svg {
+            color: var(--panel-accent, var(--active-accent));
+        }
+
+        .visual-card-label {
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
@@ -1328,17 +1521,53 @@
                         </div>
                         <div class="grid">
                             <div class="field full">
-                                <label for="channel" data-i18n="fields.channel">Twitch channel</label>
+                                <label for="channel">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="tv"></i></span>
+                                        <span data-i18n="fields.channel">Twitch channel</span>
+                                    </span>
+                                </label>
                                 <input id="channel" type="text" value="ikuza47" autocomplete="off" spellcheck="false">
                                 <div class="hint" data-i18n="hints.channel">Use the channel login without @.</div>
                             </div>
                             <div class="field full">
-                                <label for="chatType" data-i18n="fields.chatType">Chat type</label>
-                                <select id="chatType">
+                                <label for="chatType">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="layout-template"></i></span>
+                                        <span data-i18n="fields.chatType">Chat type</span>
+                                    </span>
+                                </label>
+                                <select id="chatType" class="hidden-select">
                                     <option value="classic" data-i18n="options.classic">Classic</option>
                                     <option value="hellcakefication" data-i18n="options.hellcakefication">HellCakeFication</option>
                                 </select>
+                                <div class="visual-card-group cols-2" data-visual-select="chatType" role="radiogroup" aria-label="Chat type">
+                                    <button type="button" class="visual-card active" data-value="classic" role="radio" aria-checked="true">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.classic">Classic</span>
+                                    </button>
+                                    <button type="button" class="visual-card" data-value="hellcakefication" role="radio" aria-checked="false">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-template"><rect width="18" height="7" x="3" y="3" rx="1" /><rect width="9" height="7" x="3" y="14" rx="1" /><rect width="5" height="7" x="16" y="14" rx="1" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.hellcakefication">HellCakeFication</span>
+                                    </button>
+                                </div>
                             </div>
+                        </div>
+                        <div class="switches">
+                            <label class="switch">
+                                <input id="showWatermark" type="checkbox">
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="sparkle"></i></span>
+                                        <span class="label" data-i18n="switch.watermark">Watermark</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.watermarkHint">Display "made by ikuza47." in the bottom right corner.</span>
+                                </span>
+                            </label>
                         </div>
                     </div>
 
@@ -1349,7 +1578,12 @@
                         </div>
                         <div class="grid">
                             <div class="field">
-                                <label for="fontFamily" data-i18n="fields.font">Font</label>
+                                <label for="fontFamily">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="type"></i></span>
+                                        <span data-i18n="fields.font">Font</span>
+                                    </span>
+                                </label>
                                 <select id="fontFamily">
                                     <option value="'Segoe UI', sans-serif">Segoe UI</option>
                                     <option value="Arial, sans-serif">Arial</option>
@@ -1363,50 +1597,298 @@
                                 </select>
                             </div>
                             <div class="field">
-                                <label for="fontSize" data-i18n="fields.fontSize">Font size</label>
+                                <label for="fontSize">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="scaling"></i></span>
+                                        <span data-i18n="fields.fontSize">Font size</span>
+                                    </span>
+                                </label>
                                 <input id="fontSize" type="number" min="12" max="48" value="24">
                             </div>
                             <div class="field full hidden" id="customFontWrap">
-                                <label for="customFont" data-i18n="fields.customFont">Custom font family</label>
+                                <label for="customFont">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="file-type"></i></span>
+                                        <span data-i18n="fields.customFont">Custom font family</span>
+                                    </span>
+                                </label>
                                 <input id="customFont" type="text" placeholder="Example: Manrope" data-i18n-placeholder="placeholders.customFont">
                                 <div class="hint" data-i18n="hints.customFont">The font must be available in the browser source environment.</div>
+                            </div>
+                            <div class="field full">
+                                <label for="chatAlign">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="align-left"></i></span>
+                                        <span data-i18n="fields.chatAlign">Chat alignment</span>
+                                    </span>
+                                </label>
+                                <select id="chatAlign" class="hidden-select">
+                                    <option value="left" data-i18n="options.alignLeft">Left</option>
+                                    <option value="center" data-i18n="options.alignCenter">Center</option>
+                                    <option value="right" data-i18n="options.alignRight">Right</option>
+                                </select>
+                                <div class="visual-card-group cols-3" data-visual-select="chatAlign" role="radiogroup" aria-label="Chat alignment">
+                                    <button type="button" class="visual-card active" data-value="left" role="radio" aria-checked="true">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-align-start"><path d="M21 5H3" /><path d="M15 12H3" /><path d="M17 19H3" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.alignLeft">Left</span>
+                                    </button>
+                                    <button type="button" class="visual-card" data-value="center" role="radio" aria-checked="false">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-align-center"><path d="M21 5H3" /><path d="M17 12H7" /><path d="M19 19H5" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.alignCenter">Center</span>
+                                    </button>
+                                    <button type="button" class="visual-card" data-value="right" role="radio" aria-checked="false">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-align-end"><path d="M21 5H3" /><path d="M21 12H9" /><path d="M21 19H7" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.alignRight">Right</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="field full">
+                                <label for="nameColorMode">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                        <span data-i18n="fields.nameColorMode">Username colors</span>
+                                    </span>
+                                </label>
+                                <select id="nameColorMode" class="hidden-select">
+                                    <option value="twitch" data-i18n="options.colorTwitch">Twitch user color</option>
+                                    <option value="palette" data-i18n="options.colorPalette">Preset palette</option>
+                                    <option value="random" data-i18n="options.colorRandom">Random per user</option>
+                                    <option value="defined" data-i18n="options.colorDefined">Single custom color</option>
+                                </select>
+                                <div class="visual-card-group cols-4" data-visual-select="nameColorMode" role="radiogroup" aria-label="Username colors">
+                                    <button type="button" class="visual-card active" data-value="twitch" role="radio" aria-checked="true">
+                                        <div class="visual-card-svg">
+                                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.colorTwitch">Twitch</span>
+                                    </button>
+                                    <button type="button" class="visual-card" data-value="palette" role="radio" aria-checked="false">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" /><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" /><circle cx="17.5" cy="10.5" r=".5" fill="currentColor" /><circle cx="6.5" cy="12.5" r=".5" fill="currentColor" /><circle cx="8.5" cy="7.5" r=".5" fill="currentColor" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.colorPalette">Palette</span>
+                                    </button>
+                                    <button type="button" class="visual-card" data-value="random" role="radio" aria-checked="false">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2" /><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" /><path d="M6 18h.01" /><path d="M10 14h.01" /><path d="M15 6h.01" /><path d="M18 9h.01" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.colorRandom">Random</span>
+                                    </button>
+                                    <button type="button" class="visual-card" data-value="defined" role="radio" aria-checked="false">
+                                        <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pipette"><path d="m12 9-8.414 8.414A2 2 0 0 0 3 18.828v1.344a2 2 0 0 1-.586 1.414A2 2 0 0 1 3.828 21h1.344a2 2 0 0 0 1.414-.586L15 12" /><path d="m18 9 .4.4a1 1 0 1 1-3 3l-3.8-3.8a1 1 0 1 1 3-3l.4.4 3.4-3.4a1 1 0 1 1 3 3z" /><path d="m2 22 .414-.414" /></svg>
+                                        </div>
+                                        <span class="visual-card-label" data-i18n="options.colorDefined">Custom</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="field hidden" id="definedNameColorWrap">
+                                <label for="definedNameColor">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="pipette"></i></span>
+                                        <span data-i18n="fields.definedNameColor">Custom username color</span>
+                                    </span>
+                                </label>
+                                <div class="color-control" data-color-control="definedNameColor"></div>
+                            </div>
+                            <div class="field hidden" id="nameColorPaletteWrap">
+                                <label for="nameColorPalette">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="swatch-book"></i></span>
+                                        <span data-i18n="fields.nameColorPalette">Color palette</span>
+                                    </span>
+                                </label>
+                                <select id="nameColorPalette">
+                                    <option value="vibrant" data-i18n="options.paletteVibrant">Vibrant (Twitch)</option>
+                                    <option value="pastel" data-i18n="options.palettePastel">Pastel</option>
+                                    <option value="neon" data-i18n="options.paletteNeon">Neon</option>
+                                    <option value="monochrome" data-i18n="options.paletteMonochrome">Monochrome</option>
+                                    <option value="sunset" data-i18n="options.paletteSunset">Sunset</option>
+                                </select>
                             </div>
                         </div>
                         <div class="switches">
                             <label class="switch">
+                                <input id="showAvatar" type="checkbox">
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="circle-user"></i></span>
+                                        <span class="label" data-i18n="switch.userAvatar">User avatar</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.userAvatarHint">Display Twitch profile picture before or after badges.</span>
+                                </span>
+                            </label>
+                            <div class="nested hidden" id="avatarSettings">
+                                <div class="grid">
+                                    <div class="field full">
+                                        <label for="avatarPosition">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="move-horizontal"></i></span>
+                                                <span data-i18n="fields.avatarPosition">Avatar position</span>
+                                            </span>
+                                        </label>
+                                        <select id="avatarPosition" class="hidden-select">
+                                            <option value="before-badges" data-i18n="options.avatarBeforeBadges">Before badges</option>
+                                            <option value="after-badges" data-i18n="options.avatarAfterBadges">After badges</option>
+                                        </select>
+                                        <div class="visual-card-group cols-2" data-visual-select="avatarPosition" role="radiogroup" aria-label="Avatar position">
+                                            <button type="button" class="visual-card active" data-value="before-badges" role="radio" aria-checked="true">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.avatarBeforeBadges">Before badges</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="after-badges" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.avatarAfterBadges">After badges</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="field full">
+                                        <label for="avatarShape">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="shapes"></i></span>
+                                                <span data-i18n="fields.avatarShape">Avatar shape</span>
+                                            </span>
+                                        </label>
+                                        <select id="avatarShape" class="hidden-select">
+                                            <option value="circle" data-i18n="options.shapeCircle">Circle</option>
+                                            <option value="rounded" data-i18n="options.shapeRounded">Rounded</option>
+                                            <option value="square" data-i18n="options.shapeSquare">Square</option>
+                                        </select>
+                                        <div class="visual-card-group cols-3" data-visual-select="avatarShape" role="radiogroup" aria-label="Avatar shape">
+                                            <button type="button" class="visual-card active" data-value="circle" role="radio" aria-checked="true">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle"><circle cx="12" cy="12" r="10" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.shapeCircle">Circle</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="rounded" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-squircle"><path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9-9 9-9-1.8-9-9 1.8-9 9-9" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.shapeRounded">Rounded</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="square" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square"><rect width="18" height="18" x="3" y="3" rx="2" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.shapeSquare">Square</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="field full">
+                                        <label for="avatarScale">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="maximize-2"></i></span>
+                                                <span><span data-i18n="fields.avatarScale">Avatar size multiplier</span>: <span id="avatarScaleValue" class="range-value" data-range-value="avatarScale">1.00x</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="avatarScale" type="range" min="0.5" max="2.5" step="0.05" value="1.0">
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="switch">
                                 <input id="showUserBadges" type="checkbox" checked>
-                                <span><span class="label" data-i18n="switch.userBadges">User badges</span><span class="hint" data-i18n="switch.userBadgesHint">Premium, turbo and similar global badges.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="globe"></i></span>
+                                        <span class="label" data-i18n="switch.userBadges">User badges</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.userBadgesHint">Premium, turbo and similar global badges.</span>
+                                </span>
                             </label>
                             <label class="switch">
                                 <input id="showChannelBadges" type="checkbox" checked>
-                                <span><span class="label" data-i18n="switch.channelBadges">Channel badges</span><span class="hint" data-i18n="switch.channelBadgesHint">Broadcaster, moderator, subscriber, VIP and similar badges.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="shield"></i></span>
+                                        <span class="label" data-i18n="switch.channelBadges">Channel badges</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.channelBadgesHint">Broadcaster, moderator, subscriber, VIP and similar badges.</span>
+                                </span>
                             </label>
                             <label class="switch">
                                 <input id="showAchievementBadges" type="checkbox" checked>
-                                <span><span class="label" data-i18n="switch.achievementBadges">Achievement badges</span><span class="hint" data-i18n="switch.achievementBadgesHint">Bits, hype train, first-time chatter and similar badges.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="award"></i></span>
+                                        <span class="label" data-i18n="switch.achievementBadges">Achievement badges</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.achievementBadgesHint">Bits, hype train, first-time chatter and similar badges.</span>
+                                </span>
                             </label>
                             <div class="nested" data-chat-types="classic">
                                 <div class="grid">
-                                    <div class="field">
-                                        <label for="badgePosition" data-i18n="fields.badgePosition">Badge position</label>
-                                        <select id="badgePosition">
+                                    <div class="field full">
+                                        <label for="badgePosition">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="layout-list"></i></span>
+                                                <span data-i18n="fields.badgePosition">Badge position</span>
+                                            </span>
+                                        </label>
+                                        <select id="badgePosition" class="hidden-select">
                                             <option value="before-name" data-i18n="position.beforeName">Before name</option>
                                             <option value="after-name" data-i18n="position.afterName">After name</option>
                                             <option value="top-right" data-i18n="position.topRight">Top right corner</option>
                                         </select>
+                                        <div class="visual-card-group cols-3" data-visual-select="badgePosition" role="radiogroup" aria-label="Badge position">
+                                            <button type="button" class="visual-card active" data-value="before-name" role="radio" aria-checked="true">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="position.beforeName">Before name</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="after-name" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="position.afterName">After name</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="top-right" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="position.topRight">Top right</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="field">
-                                        <label for="badgeScale"><span data-i18n="fields.badgeScale">Badge size multiplier</span>: <span id="badgeScaleValue" class="range-value" data-range-value="badgeScale">1.50x</span></label>
+                                    <div class="field full">
+                                        <label for="badgeScale">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="scale"></i></span>
+                                                <span><span data-i18n="fields.badgeScale">Badge size multiplier</span>: <span id="badgeScaleValue" class="range-value" data-range-value="badgeScale">1.50x</span></span>
+                                            </span>
+                                        </label>
                                         <input id="badgeScale" type="range" min="0.5" max="3" step="0.05" value="1.5">
                                     </div>
                                 </div>
                             </div>
                             <label class="switch" data-chat-types="classic">
                                 <input id="showTime" type="checkbox">
-                                <span><span class="label" data-i18n="switch.showTime">Show time</span><span class="hint" data-i18n="switch.showTimeHint">Display HH:MM before the nickname.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="clock"></i></span>
+                                        <span class="label" data-i18n="switch.showTime">Show time</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.showTimeHint">Display HH:MM before the nickname.</span>
+                                </span>
                             </label>
                             <div class="field full" data-chat-types="hellcakefication">
-                                <label for="hcfTimeMode" data-i18n="fields.hcfTimeMode">HellCakeFication time display</label>
+                                <label for="hcfTimeMode">
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="timer"></i></span>
+                                        <span data-i18n="fields.hcfTimeMode">HellCakeFication time display</span>
+                                    </span>
+                                </label>
                                 <select id="hcfTimeMode">
                                     <option value="none" data-i18n="options.timeNone">Nothing</option>
                                     <option value="sent" data-i18n="options.timeSent">Sent time</option>
@@ -1415,158 +1897,451 @@
                             </div>
                             <div class="nested hidden" id="timeSettings">
                                 <div class="grid">
-                                    <div class="field">
-                                        <label for="timePosition" data-i18n="fields.timePosition">Time position</label>
-                                        <select id="timePosition">
+                                    <div class="field full">
+                                        <label for="timePosition">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="map-pin"></i></span>
+                                                <span data-i18n="fields.timePosition">Time position</span>
+                                            </span>
+                                        </label>
+                                        <select id="timePosition" class="hidden-select">
                                             <option value="before-name" data-i18n="position.beforeName">Before name</option>
                                             <option value="after-name" data-i18n="position.afterName">After name</option>
                                             <option value="top-right" data-i18n="position.topRight">Top right corner</option>
                                         </select>
+                                        <div class="visual-card-group cols-3" data-visual-select="timePosition" role="radiogroup" aria-label="Time position">
+                                            <button type="button" class="visual-card active" data-value="before-name" role="radio" aria-checked="true">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="position.beforeName">Before name</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="after-name" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="position.afterName">After name</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="top-right" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="position.topRight">Top right</span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="field">
-                                        <label for="timeZone" data-i18n="fields.timeZone">Time zone</label>
+                                        <label for="timeZone">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="globe-2"></i></span>
+                                                <span data-i18n="fields.timeZone">Time zone</span>
+                                            </span>
+                                        </label>
                                         <select id="timeZone"></select>
                                     </div>
-                                    <div class="field full">
-                                        <label for="timeColor" data-i18n="fields.timeColor">Time text color</label>
+                                    <div class="field">
+                                        <label for="timeColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.timeColor">Time text color</span>
+                                            </span>
+                                        </label>
                                         <div class="color-control" data-color-control="timeColor"></div>
                                     </div>
                                 </div>
                             </div>
                             <label class="switch" data-chat-types="classic">
                                 <input id="showBackground" type="checkbox">
-                                <span><span class="label" data-i18n="switch.background">Message background</span><span class="hint" data-i18n="switch.backgroundHint">Adds a soft dark background behind each message.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="square"></i></span>
+                                        <span class="label" data-i18n="switch.background">Message background</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.backgroundHint">Adds a soft dark background behind each message.</span>
+                                </span>
                             </label>
                             <div class="nested hidden" id="backgroundSettings">
                                 <div class="grid">
                                     <div class="field full">
-                                        <label for="backgroundColor" data-i18n="fields.backgroundColor">Message background color</label>
+                                        <label for="backgroundColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.backgroundColor">Message background color</span>
+                                            </span>
+                                        </label>
                                         <div class="color-control" data-color-control="backgroundColor"></div>
                                     </div>
                                     <div class="field">
-                                        <label for="backgroundRadius"><span data-i18n="fields.backgroundRadius">Message background radius</span>: <span id="backgroundRadiusValue" class="range-value" data-range-value="backgroundRadius">12px</span></label>
+                                        <label for="backgroundRadius">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="box-select"></i></span>
+                                                <span><span data-i18n="fields.backgroundRadius">Message background radius</span>: <span id="backgroundRadiusValue" class="range-value" data-range-value="backgroundRadius">12px</span></span>
+                                            </span>
+                                        </label>
                                         <input id="backgroundRadius" type="range" min="0" max="32" step="1" value="12">
                                     </div>
                                     <div class="field full">
-                                        <label for="backgroundOpacity"><span data-i18n="fields.backgroundOpacity">Background opacity</span>: <span id="backgroundOpacityValue" class="range-value" data-range-value="backgroundOpacity">0.35</span></label>
+                                        <label for="backgroundOpacity">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="sun-medium"></i></span>
+                                                <span><span data-i18n="fields.backgroundOpacity">Background opacity</span>: <span id="backgroundOpacityValue" class="range-value" data-range-value="backgroundOpacity">0.35</span></span>
+                                            </span>
+                                        </label>
                                         <input id="backgroundOpacity" type="range" min="0" max="1" step="0.05" value="0.35">
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input id="showGeneralBackground" type="checkbox">
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="layers"></i></span>
+                                        <span class="label" data-i18n="switch.generalBackground">General overlay background</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.generalBackgroundHint">Adds an overall background container for the whole chat.</span>
+                                </span>
+                            </label>
+                            <div class="nested hidden" id="generalBackgroundSettings">
+                                <div class="grid">
+                                    <div class="field full">
+                                        <label for="generalBackgroundColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.generalBackgroundColor">General background color</span>
+                                            </span>
+                                        </label>
+                                        <div class="color-control" data-color-control="generalBackgroundColor"></div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="generalBackgroundRadius">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="box-select"></i></span>
+                                                <span><span data-i18n="fields.generalBackgroundRadius">Corner radius</span>: <span id="generalBackgroundRadiusValue" class="range-value" data-range-value="generalBackgroundRadius">16px</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="generalBackgroundRadius" type="range" min="0" max="48" step="1" value="16">
+                                    </div>
+                                    <div class="field">
+                                        <label for="generalBackgroundPadding">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="minimize-2"></i></span>
+                                                <span><span data-i18n="fields.generalBackgroundPadding">Padding</span>: <span id="generalBackgroundPaddingValue" class="range-value" data-range-value="generalBackgroundPadding">12px</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="generalBackgroundPadding" type="range" min="0" max="64" step="1" value="12">
+                                    </div>
+                                    <div class="field full">
+                                        <label for="generalBackgroundOpacity">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="sun-medium"></i></span>
+                                                <span><span data-i18n="fields.generalBackgroundOpacity">General opacity</span>: <span id="generalBackgroundOpacityValue" class="range-value" data-range-value="generalBackgroundOpacity">0.50</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="generalBackgroundOpacity" type="range" min="0" max="1" step="0.05" value="0.50">
                                     </div>
                                 </div>
                             </div>
                             <label class="switch" data-chat-types="classic">
                                 <input id="firstMessageEnabled" type="checkbox">
-                                <span><span class="label" data-i18n="switch.firstMessage">First message background</span><span class="hint" data-i18n="switch.firstMessageHint">Highlight the first message from each user with a background, without adding text.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="sparkles"></i></span>
+                                        <span class="label" data-i18n="switch.firstMessage">First message background</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.firstMessageHint">Highlight the first message from each user with a background, without adding text.</span>
+                                </span>
                             </label>
                             <div class="nested hidden" id="firstMessageSettings">
                                 <div class="grid">
                                     <div class="field full">
-                                        <label for="firstMessageColor" data-i18n="fields.firstMessageColor">First message background color</label>
+                                        <label for="firstMessageColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.firstMessageColor">First message background color</span>
+                                            </span>
+                                        </label>
                                         <div class="color-control" data-color-control="firstMessageColor"></div>
                                     </div>
                                     <div class="field">
-                                        <label for="firstMessageRadius"><span data-i18n="fields.firstMessageRadius">First message background radius</span>: <span id="firstMessageRadiusValue" class="range-value" data-range-value="firstMessageRadius">12px</span></label>
+                                        <label for="firstMessageRadius">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="box-select"></i></span>
+                                                <span><span data-i18n="fields.firstMessageRadius">First message background radius</span>: <span id="firstMessageRadiusValue" class="range-value" data-range-value="firstMessageRadius">12px</span></span>
+                                            </span>
+                                        </label>
                                         <input id="firstMessageRadius" type="range" min="0" max="32" step="1" value="12">
                                     </div>
                                     <div class="field full">
-                                        <label for="firstMessageOpacity"><span data-i18n="fields.firstMessageOpacity">First message background opacity</span>: <span id="firstMessageOpacityValue" class="range-value" data-range-value="firstMessageOpacity">0.35</span></label>
-                                    <input id="firstMessageOpacity" type="range" min="0" max="1" step="0.05" value="0.35">
+                                        <label for="firstMessageOpacity">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="sun-medium"></i></span>
+                                                <span><span data-i18n="fields.firstMessageOpacity">First message background opacity</span>: <span id="firstMessageOpacityValue" class="range-value" data-range-value="firstMessageOpacity">0.35</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="firstMessageOpacity" type="range" min="0" max="1" step="0.05" value="0.35">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="grid">
-                            <div class="field">
-                                <label for="chatPadding"><span data-i18n="fields.chatPadding">Chat edge padding</span>: <span id="chatPaddingValue" class="range-value" data-range-value="chatPadding">12px</span></label>
-                                <input id="chatPadding" type="range" min="0" max="64" step="1" value="12">
+                            <div class="grid">
+                                <div class="field">
+                                    <label for="chatPadding">
+                                        <span class="setting-title-wrap">
+                                            <span class="setting-icon-badge"><i data-lucide="move"></i></span>
+                                            <span><span data-i18n="fields.chatPadding">Chat edge padding</span>: <span id="chatPaddingValue" class="range-value" data-range-value="chatPadding">12px</span></span>
+                                        </span>
+                                    </label>
+                                    <input id="chatPadding" type="range" min="0" max="64" step="1" value="12">
+                                </div>
+                                <div class="field">
+                                    <label for="messageGap">
+                                        <span class="setting-title-wrap">
+                                            <span class="setting-icon-badge"><i data-lucide="rows-3"></i></span>
+                                            <span><span data-i18n="fields.messageGap">Message gap</span>: <span id="messageGapValue" class="range-value" data-range-value="messageGap">5px</span></span>
+                                        </span>
+                                    </label>
+                                    <input id="messageGap" type="range" min="0" max="32" step="1" value="5">
+                                </div>
+                                <div class="field full" data-chat-types="classic">
+                                    <label for="messagePadding">
+                                        <span class="setting-title-wrap">
+                                            <span class="setting-icon-badge"><i data-lucide="minimize-2"></i></span>
+                                            <span><span data-i18n="fields.messagePadding">Message inner padding</span>: <span id="messagePaddingValue" class="range-value" data-range-value="messagePadding">5px</span></span>
+                                        </span>
+                                    </label>
+                                    <input id="messagePadding" type="range" min="0" max="32" step="1" value="5">
+                                </div>
                             </div>
-                            <div class="field">
-                                <label for="messageGap"><span data-i18n="fields.messageGap">Message gap</span>: <span id="messageGapValue" class="range-value" data-range-value="messageGap">5px</span></label>
-                                <input id="messageGap" type="range" min="0" max="32" step="1" value="5">
-                            </div>
-                            <div class="field full" data-chat-types="classic">
-                                <label for="messagePadding"><span data-i18n="fields.messagePadding">Message inner padding</span>: <span id="messagePaddingValue" class="range-value" data-range-value="messagePadding">5px</span></label>
-                                <input id="messagePadding" type="range" min="0" max="32" step="1" value="5">
-                            </div>
-                        </div>
-                        <div data-chat-types="hellcakefication">
-                            <div class="section-head">
-                                <h2 data-i18n="hellcake.title">HellCakeFication message box</h2>
-                                <p data-i18n="hellcake.desc">Customize the separated message structure: nickname row, reply preview and message text.</p>
+                            <div data-chat-types="hellcakefication">
+                                <div class="section-head">
+                                    <h2 data-i18n="hellcake.title">HellCakeFication message box</h2>
+                                    <p data-i18n="hellcake.desc">Customize the separated message structure: nickname row, reply preview and message text.</p>
+                                </div>
+                                <div class="grid">
+                                    <div class="field full">
+                                        <label for="hcfBoxColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.hcfBoxColor">Message box color</span>
+                                            </span>
+                                        </label>
+                                        <div class="color-control" data-color-control="hcfBoxColor"></div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="hcfBoxOpacity">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="sun-medium"></i></span>
+                                                <span><span data-i18n="fields.hcfBoxOpacity">Message box opacity</span>: <span class="range-value" data-range-value="hcfBoxOpacity">0.72</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="hcfBoxOpacity" type="range" min="0" max="1" step="0.05" value="0.72">
+                                    </div>
+                                    <div class="field">
+                                        <label for="hcfBoxRadius">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="box-select"></i></span>
+                                                <span><span data-i18n="fields.hcfBoxRadius">Message box radius</span>: <span class="range-value" data-range-value="hcfBoxRadius">18px</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="hcfBoxRadius" type="range" min="0" max="48" step="1" value="18">
+                                    </div>
+                                    <div class="field">
+                                        <label for="hcfBoxPadding">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="minimize-2"></i></span>
+                                                <span><span data-i18n="fields.hcfBoxPadding">Message box padding</span>: <span class="range-value" data-range-value="hcfBoxPadding">12px</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="hcfBoxPadding" type="range" min="0" max="40" step="1" value="12">
+                                    </div>
+                                    <div class="field">
+                                        <label for="hcfBadgeRadius">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="box-select"></i></span>
+                                                <span><span data-i18n="fields.hcfBadgeRadius">Badge radius</span>: <span class="range-value" data-range-value="hcfBadgeRadius">5px</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="hcfBadgeRadius" type="range" min="0" max="16" step="1" value="5">
+                                    </div>
+                                    <div class="field full">
+                                        <label for="hcfWidthMode">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="stretch-horizontal"></i></span>
+                                                <span data-i18n="fields.hcfWidthMode">Message width mode</span>
+                                            </span>
+                                        </label>
+                                        <select id="hcfWidthMode" class="hidden-select">
+                                            <option value="full" data-i18n="options.hcfFullWidth">Full width</option>
+                                            <option value="compact" data-i18n="options.hcfCompactWidth">Compact</option>
+                                        </select>
+                                        <div class="visual-card-group cols-2" data-visual-select="hcfWidthMode" role="radiogroup" aria-label="Message width mode">
+                                            <button type="button" class="visual-card active" data-value="full" role="radio" aria-checked="true">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-stretch-horizontal"><rect width="20" height="6" x="2" y="4" rx="2" /><rect width="20" height="6" x="2" y="14" rx="2" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.hcfFullWidth">Full width</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="compact" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minimize-2"><path d="m14 10 7-7" /><path d="M20 10h-6V4" /><path d="m3 21 7-7" /><path d="M4 14h6v6" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.hcfCompactWidth">Compact</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="field full">
+                                        <label for="hcfMessageSide">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="arrow-left-right"></i></span>
+                                                <span data-i18n="fields.hcfMessageSide">Compact message side</span>
+                                            </span>
+                                        </label>
+                                        <select id="hcfMessageSide" class="hidden-select">
+                                            <option value="left" data-i18n="options.hcfSideLeft">Left</option>
+                                            <option value="right" data-i18n="options.hcfSideRight">Right</option>
+                                        </select>
+                                        <div class="visual-card-group cols-2" data-visual-select="hcfMessageSide" role="radiogroup" aria-label="Compact message side">
+                                            <button type="button" class="visual-card active" data-value="left" role="radio" aria-checked="true">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.hcfSideLeft">Left</span>
+                                            </button>
+                                            <button type="button" class="visual-card" data-value="right" role="radio" aria-checked="false">
+                                                <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-right"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M15 3v18" /></svg>
+                                        </div>
+                                                <span class="visual-card-label" data-i18n="options.hcfSideRight">Right</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="field hidden" id="hcfMessageWidthWrap">
+                                        <label for="hcfMessageWidth">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="ruler"></i></span>
+                                                <span><span data-i18n="fields.hcfMessageWidth">Max message width</span>: <span class="range-value" data-range-value="hcfMessageWidth">680px</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="hcfMessageWidth" type="range" min="160" max="1200" step="10" value="680">
+                                    </div>
+                                    <label class="switch full">
+                                        <input id="hcfSpecialBackgrounds" type="checkbox">
+                                        <span>
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="image"></i></span>
+                                                <span class="label" data-i18n="switch.hcfSpecialBackgrounds">Background styling</span>
+                                            </span>
+                                            <span class="hint" data-i18n="switch.hcfSpecialBackgroundsHint">Use osu! profile covers as message backgrounds for special users.</span>
+                                        </span>
+                                    </label>
+                                    <div class="field full">
+                                        <label for="hcfTopColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.hcfTopColor">Nickname row color</span>
+                                            </span>
+                                        </label>
+                                        <div class="color-control" data-color-control="hcfTopColor"></div>
+                                    </div>
+                                    <div class="field full">
+                                        <label for="hcfReplyColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.hcfReplyColor">Reply preview color</span>
+                                            </span>
+                                        </label>
+                                        <div class="color-control" data-color-control="hcfReplyColor"></div>
+                                    </div>
+                                    <div class="field full">
+                                        <label for="hcfTextColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.hcfTextColor">Message text color</span>
+                                            </span>
+                                        </label>
+                                        <div class="color-control" data-color-control="hcfTextColor"></div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="grid">
                                 <div class="field full">
-                                    <label for="hcfBoxColor" data-i18n="fields.hcfBoxColor">Message box color</label>
-                                    <div class="color-control" data-color-control="hcfBoxColor"></div>
-                                </div>
-                                <div class="field">
-                                    <label for="hcfBoxOpacity"><span data-i18n="fields.hcfBoxOpacity">Message box opacity</span>: <span class="range-value" data-range-value="hcfBoxOpacity">0.72</span></label>
-                                    <input id="hcfBoxOpacity" type="range" min="0" max="1" step="0.05" value="0.72">
-                                </div>
-                                <div class="field">
-                                    <label for="hcfBoxRadius"><span data-i18n="fields.hcfBoxRadius">Message box radius</span>: <span class="range-value" data-range-value="hcfBoxRadius">18px</span></label>
-                                    <input id="hcfBoxRadius" type="range" min="0" max="48" step="1" value="18">
-                                </div>
-                                <div class="field">
-                                    <label for="hcfBoxPadding"><span data-i18n="fields.hcfBoxPadding">Message box padding</span>: <span class="range-value" data-range-value="hcfBoxPadding">12px</span></label>
-                                    <input id="hcfBoxPadding" type="range" min="0" max="40" step="1" value="12">
-                                </div>
-                                <div class="field">
-                                    <label for="hcfBadgeRadius"><span data-i18n="fields.hcfBadgeRadius">Badge radius</span>: <span class="range-value" data-range-value="hcfBadgeRadius">5px</span></label>
-                                    <input id="hcfBadgeRadius" type="range" min="0" max="16" step="1" value="5">
-                                </div>
-                                <div class="field">
-                                    <label for="hcfWidthMode" data-i18n="fields.hcfWidthMode">Message width mode</label>
-                                    <select id="hcfWidthMode">
-                                        <option value="full" data-i18n="options.hcfFullWidth">Full width</option>
-                                        <option value="compact" data-i18n="options.hcfCompactWidth">Compact</option>
-                                    </select>
-                                </div>
-                                <div class="field">
-                                    <label for="hcfMessageSide" data-i18n="fields.hcfMessageSide">Compact message side</label>
-                                    <select id="hcfMessageSide">
-                                        <option value="left" data-i18n="options.hcfSideLeft">Left</option>
-                                        <option value="right" data-i18n="options.hcfSideRight">Right</option>
-                                    </select>
-                                </div>
-                                <div class="field hidden" id="hcfMessageWidthWrap">
-                                    <label for="hcfMessageWidth"><span data-i18n="fields.hcfMessageWidth">Max message width</span>: <span class="range-value" data-range-value="hcfMessageWidth">680px</span></label>
-                                    <input id="hcfMessageWidth" type="range" min="160" max="1200" step="10" value="680">
-                                </div>
-                                <label class="switch full">
-                                    <input id="hcfSpecialBackgrounds" type="checkbox">
-                                    <span><span class="label" data-i18n="switch.hcfSpecialBackgrounds">Background styling</span><span class="hint" data-i18n="switch.hcfSpecialBackgroundsHint">Use osu! profile covers as message backgrounds for special users.</span></span>
-                                </label>
-                                <div class="field full">
-                                    <label for="hcfTopColor" data-i18n="fields.hcfTopColor">Nickname row color</label>
-                                    <div class="color-control" data-color-control="hcfTopColor"></div>
-                                </div>
-                                <div class="field full">
-                                    <label for="hcfReplyColor" data-i18n="fields.hcfReplyColor">Reply preview color</label>
-                                    <div class="color-control" data-color-control="hcfReplyColor"></div>
-                                </div>
-                                <div class="field full">
-                                    <label for="hcfTextColor" data-i18n="fields.hcfTextColor">Message text color</label>
-                                    <div class="color-control" data-color-control="hcfTextColor"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid">
-                            <div class="field">
-                                <label for="animationIn" data-i18n="fields.animationIn">Animation in</label>
-                                <select id="animationIn">
+                                    <label for="animationIn">
+                                        <span class="setting-title-wrap">
+                                            <span class="setting-icon-badge"><i data-lucide="arrow-down-left"></i></span>
+                                            <span data-i18n="fields.animationIn">Animation in</span>
+                                        </span>
+                                    </label>
+                                    <select id="animationIn" class="hidden-select">
                                         <option value="none" data-i18n="options.none">None</option>
                                         <option value="fade" data-i18n="options.fade">Fade</option>
                                         <option value="slide-up" data-i18n="options.slideUp">Slide up</option>
                                         <option value="pop" data-i18n="options.pop">Pop</option>
                                     </select>
+                                    <div class="visual-card-group cols-4" data-visual-select="animationIn" role="radiogroup" aria-label="Animation in">
+                                        <button type="button" class="visual-card active" data-value="none" role="radio" aria-checked="true">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-slash"><path d="M22 2 2 22" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.none">None</span>
+                                        </button>
+                                        <button type="button" class="visual-card" data-value="fade" role="radio" aria-checked="false">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /><path d="M20 2v4" /><path d="M22 4h-4" /><circle cx="4" cy="20" r="2" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.fade">Fade</span>
+                                        </button>
+                                        <button type="button" class="visual-card" data-value="slide-up" role="radio" aria-checked="false">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.slideUp">Slide up</span>
+                                        </button>
+                                        <button type="button" class="visual-card" data-value="pop" role="radio" aria-checked="false">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-in"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><line x1="11" x2="11" y1="8" y2="14" /><line x1="8" x2="14" y1="11" y2="11" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.pop">Pop</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="field">
-                                    <label for="animationOut" data-i18n="fields.animationOut">Animation out</label>
-                                    <select id="animationOut">
+                                <div class="field full">
+                                    <label for="animationOut">
+                                        <span class="setting-title-wrap">
+                                            <span class="setting-icon-badge"><i data-lucide="arrow-up-right"></i></span>
+                                            <span data-i18n="fields.animationOut">Animation out</span>
+                                        </span>
+                                    </label>
+                                    <select id="animationOut" class="hidden-select">
                                         <option value="fade" data-i18n="options.fade">Fade</option>
                                         <option value="slide-down" data-i18n="options.slideDown">Slide down</option>
                                         <option value="pop" data-i18n="options.pop">Pop</option>
                                         <option value="none" data-i18n="options.none">None</option>
                                     </select>
+                                    <div class="visual-card-group cols-4" data-visual-select="animationOut" role="radiogroup" aria-label="Animation out">
+                                        <button type="button" class="visual-card active" data-value="fade" role="radio" aria-checked="true">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkle"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.fade">Fade</span>
+                                        </button>
+                                        <button type="button" class="visual-card" data-value="slide-down" role="radio" aria-checked="false">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down"><path d="M12 5v14" /><path d="m19 12-7 7-7-7" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.slideDown">Slide down</span>
+                                        </button>
+                                        <button type="button" class="visual-card" data-value="pop" role="radio" aria-checked="false">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-out"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><line x1="8" x2="14" y1="11" y2="11" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.pop">Pop</span>
+                                        </button>
+                                        <button type="button" class="visual-card" data-value="none" role="radio" aria-checked="false">
+                                            <div class="visual-card-svg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-slash"><path d="M22 2 2 22" /></svg>
+                                        </div>
+                                            <span class="visual-card-label" data-i18n="options.none">None</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1580,67 +2355,141 @@
                         <div class="switches">
                             <label class="switch">
                                 <input id="clearOnCommand" type="checkbox" checked>
-                                <span><span class="label" data-i18n="switch.clear">Clear on /clear</span><span class="hint" data-i18n="switch.clearHint">Clear overlay when Twitch sends CLEARCHAT.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="trash-2"></i></span>
+                                        <span class="label" data-i18n="switch.clear">Clear on /clear</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.clearHint">Clear overlay when Twitch sends CLEARCHAT.</span>
+                                </span>
                             </label>
                             <label class="switch" data-chat-types="classic">
                                 <input id="colonEnabled" type="checkbox">
-                                <span><span class="label" data-i18n="switch.colon">Colon after nickname</span><span class="hint" data-i18n="switch.colonHint">Render usernames as name: message.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="quote"></i></span>
+                                        <span class="label" data-i18n="switch.colon">Colon after nickname</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.colonHint">Render usernames as name: message.</span>
+                                </span>
                             </label>
                             <label class="switch">
                                 <input id="autoRemove" type="checkbox">
-                                <span><span class="label" data-i18n="switch.autoRemove">Auto remove messages</span><span class="hint" data-i18n="switch.autoRemoveHint">Remove old messages after a delay.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="timer-off"></i></span>
+                                        <span class="label" data-i18n="switch.autoRemove">Auto remove messages</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.autoRemoveHint">Remove old messages after a delay.</span>
+                                </span>
                             </label>
-                        <div class="nested hidden" id="removeSettings">
-                            <div class="field">
-                                <label for="removeTimeout" data-i18n="fields.removeTimeout">Remove after seconds</label>
-                                <input id="removeTimeout" type="number" min="3" max="120" value="12">
-                            </div>
-                        </div>
-                        <label class="switch">
-                            <input id="showUserNotices" type="checkbox" checked>
-                            <span><span class="label" data-i18n="switch.userNotices">Twitch event notices</span><span class="hint" data-i18n="switch.userNoticesHint">Show subs, resubs, gifts, raids and similar USERNOTICE events.</span></span>
-                        </label>
-                        <div class="nested" id="userNoticeSettings">
-                            <div class="grid">
+                            <div class="nested hidden" id="removeSettings">
                                 <div class="field full">
-                                    <label for="userNoticeColor" data-i18n="fields.userNoticeColor">Notice color</label>
-                                    <div class="color-control" data-color-control="userNoticeColor"></div>
-                                </div>
-                                <div class="field full">
-                                    <label for="userNoticeOpacity"><span data-i18n="fields.userNoticeOpacity">Notice background opacity</span>: <span id="userNoticeOpacityValue" class="range-value" data-range-value="userNoticeOpacity">0.16</span></label>
-                                    <input id="userNoticeOpacity" type="range" min="0" max="1" step="0.05" value="0.16">
+                                    <label for="removeTimeout">
+                                        <span class="setting-title-wrap">
+                                            <span class="setting-icon-badge"><i data-lucide="hourglass"></i></span>
+                                            <span data-i18n="fields.removeTimeout">Remove after seconds</span>
+                                        </span>
+                                    </label>
+                                    <input id="removeTimeout" type="number" min="3" max="120" value="12">
                                 </div>
                             </div>
-                        </div>
-                        <label class="switch">
-                            <input id="meStyleEnabled" type="checkbox" checked>
-                            <span><span class="label" data-i18n="switch.meStyle">/me message style</span><span class="hint" data-i18n="switch.meStyleHint">Apply a separate style to Twitch action messages.</span></span>
-                        </label>
-                        <div class="nested" id="meStyleSettings">
-                            <div class="grid">
-                                <label class="switch">
-                                    <input id="meItalic" type="checkbox" checked>
-                                    <span><span class="label" data-i18n="switch.meItalic">Italic /me text</span><span class="hint" data-i18n="switch.meItalicHint">Render action messages with italic text.</span></span>
-                                </label>
+                            <label class="switch">
+                                <input id="showUserNotices" type="checkbox" checked>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="bell"></i></span>
+                                        <span class="label" data-i18n="switch.userNotices">Twitch event notices</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.userNoticesHint">Show subs, resubs, gifts, raids and similar USERNOTICE events.</span>
+                                </span>
+                            </label>
+                            <div class="nested" id="userNoticeSettings">
+                                <div class="grid">
+                                    <div class="field full">
+                                        <label for="userNoticeColor">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                                <span data-i18n="fields.userNoticeColor">Notice color</span>
+                                            </span>
+                                        </label>
+                                        <div class="color-control" data-color-control="userNoticeColor"></div>
+                                    </div>
+                                    <div class="field full">
+                                        <label for="userNoticeOpacity">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="sun-medium"></i></span>
+                                                <span><span data-i18n="fields.userNoticeOpacity">Notice background opacity</span>: <span id="userNoticeOpacityValue" class="range-value" data-range-value="userNoticeOpacity">0.16</span></span>
+                                            </span>
+                                        </label>
+                                        <input id="userNoticeOpacity" type="range" min="0" max="1" step="0.05" value="0.16">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <label class="switch">
-                            <input id="showSystemMessages" type="checkbox" checked>
-                            <span><span class="label" data-i18n="switch.systemMessages">System messages</span><span class="hint" data-i18n="switch.systemMessagesHint">Show local connection/test/system messages.</span></span>
-                        </label>
-                        <div class="nested" id="systemMessageSettings">
-                            <div class="field full">
-                                <label for="systemMessageColor" data-i18n="fields.systemMessageColor">System message color</label>
-                                <div class="color-control" data-color-control="systemMessageColor"></div>
+                            <label class="switch">
+                                <input id="meStyleEnabled" type="checkbox" checked>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="sparkle"></i></span>
+                                        <span class="label" data-i18n="switch.meStyle">/me message style</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.meStyleHint">Apply a separate style to Twitch action messages.</span>
+                                </span>
+                            </label>
+                            <div class="nested" id="meStyleSettings">
+                                <div class="grid">
+                                    <label class="switch">
+                                        <input id="meItalic" type="checkbox" checked>
+                                        <span>
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="italic"></i></span>
+                                                <span class="label" data-i18n="switch.meItalic">Italic /me text</span>
+                                            </span>
+                                            <span class="hint" data-i18n="switch.meItalicHint">Render action messages with italic text.</span>
+                                        </span>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <label class="switch">
-                            <input id="testMode" type="checkbox">
-                            <span><span class="label" data-i18n="switch.testMode">Test mode</span><span class="hint" data-i18n="switch.testModeHint">Generate local messages instead of connecting to Twitch.</span></span>
-                        </label>
+                            <label class="switch">
+                                <input id="showSystemMessages" type="checkbox" checked>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="terminal"></i></span>
+                                        <span class="label" data-i18n="switch.systemMessages">System messages</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.systemMessagesHint">Show local connection/test/system messages.</span>
+                                </span>
+                            </label>
+                            <div class="nested" id="systemMessageSettings">
+                                <div class="field full">
+                                    <label for="systemMessageColor">
+                                        <span class="setting-title-wrap">
+                                            <span class="setting-icon-badge"><i data-lucide="palette"></i></span>
+                                            <span data-i18n="fields.systemMessageColor">System message color</span>
+                                        </span>
+                                    </label>
+                                    <div class="color-control" data-color-control="systemMessageColor"></div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input id="testMode" type="checkbox">
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="flask-conical"></i></span>
+                                        <span class="label" data-i18n="switch.testMode">Test mode</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.testModeHint">Generate local messages instead of connecting to Twitch.</span>
+                                </span>
+                            </label>
                             <label class="switch">
                                 <input id="debugMode" type="checkbox">
-                                <span><span class="label" data-i18n="switch.debug">Debug mode</span><span class="hint" data-i18n="switch.debugHint">Keep extra messages and log more information to console.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="bug"></i></span>
+                                        <span class="label" data-i18n="switch.debug">Debug mode</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.debugHint">Keep extra messages and log more information to console.</span>
+                                </span>
                             </label>
                         </div>
                     </div>
@@ -1653,26 +2502,55 @@
                         <div class="switches">
                             <label class="switch">
                                 <input id="osuEnabled" type="checkbox">
-                                <span><span class="label" data-i18n="switch.osu">osu! links</span><span class="hint" data-i18n="switch.osuHint">Replace osu! map/user links with readable info.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="disc-3"></i></span>
+                                        <span class="label" data-i18n="switch.osu">osu! links</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.osuHint">Replace osu! map/user links with readable info.</span>
+                                </span>
                             </label>
                             <div class="nested hidden" id="osuSettings">
                                 <div class="grid">
                                     <div class="field full hidden">
-                                        <label for="osuApiKey" data-i18n="fields.osuKey">osu! API key</label>
+                                        <label for="osuApiKey">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="key"></i></span>
+                                                <span data-i18n="fields.osuKey">osu! API key</span>
+                                            </span>
+                                        </label>
                                         <input id="osuApiKey" type="password" autocomplete="off" spellcheck="false">
                                         <div class="hint"><a href="publics/howgetosuapi.md" target="_blank" rel="noopener noreferrer" data-i18n="links.osuHelp">How to get a legacy osu! API key</a></div>
                                     </div>
                                     <label class="switch">
                                         <input id="osuMap" type="checkbox" checked>
-                                        <span><span class="label" data-i18n="switch.osuMap">Parse maps</span><span class="hint" data-i18n="switch.osuMapHint">beatmapsets and beatmaps.</span></span>
+                                        <span>
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="map"></i></span>
+                                                <span class="label" data-i18n="switch.osuMap">Parse maps</span>
+                                            </span>
+                                            <span class="hint" data-i18n="switch.osuMapHint">beatmapsets and beatmaps.</span>
+                                        </span>
                                     </label>
                                     <label class="switch">
                                         <input id="osuUser" type="checkbox" checked>
-                                        <span><span class="label" data-i18n="switch.osuUser">Parse users</span><span class="hint" data-i18n="switch.osuUserHint">osu! user profile links.</span></span>
+                                        <span>
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="user"></i></span>
+                                                <span class="label" data-i18n="switch.osuUser">Parse users</span>
+                                            </span>
+                                            <span class="hint" data-i18n="switch.osuUserHint">osu! user profile links.</span>
+                                        </span>
                                     </label>
                                     <label class="switch">
                                         <input id="osuHighlight" type="checkbox">
-                                        <span><span class="label" data-i18n="switch.osuHighlight">Highlight osu! info</span><span class="hint" data-i18n="switch.osuHighlightHint">Color replaced osu! text by type.</span></span>
+                                        <span>
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="highlighter"></i></span>
+                                                <span class="label" data-i18n="switch.osuHighlight">Highlight osu! info</span>
+                                            </span>
+                                            <span class="hint" data-i18n="switch.osuHighlightHint">Color replaced osu! text by type.</span>
+                                        </span>
                                     </label>
                                     <div class="nested full compact-options" id="osuMapCardSettings" data-chat-types="hellcakefication">
                                         <div class="section-head"><h2 data-i18n="osu.mapCard">Map card fields</h2></div>
@@ -1707,8 +2585,13 @@
                                             <label class="switch"><input id="osuProfileShowPp" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowPp">PP</span></span></label>
                                             <label class="switch"><input id="osuProfileShowPlayCount" type="checkbox" checked><span><span class="label" data-i18n="switch.osuProfileShowPlayCount">Play count</span></span></label>
                                         </div>
-                                        <div class="field compact-slider-field">
-                                            <label for="osuProfileTopScoresCount"><span data-i18n="fields.osuProfileTopScoresCount">Top scores count</span>: <span class="range-value" data-range-value="osuProfileTopScoresCount">3</span></label>
+                                        <div class="field compact-slider-field full">
+                                            <label for="osuProfileTopScoresCount">
+                                                <span class="setting-title-wrap">
+                                                    <span class="setting-icon-badge"><i data-lucide="trophy"></i></span>
+                                                    <span><span data-i18n="fields.osuProfileTopScoresCount">Top scores count</span>: <span class="range-value" data-range-value="osuProfileTopScoresCount">3</span></span>
+                                                </span>
+                                            </label>
                                             <input id="osuProfileTopScoresCount" type="range" min="0" max="5" step="1" value="3">
                                         </div>
                                     </div>
@@ -1716,21 +2599,43 @@
                             </div>
                             <label class="switch">
                                 <input id="blockBots" type="checkbox">
-                                <span><span class="label" data-i18n="switch.blockBots">Block known bots</span><span class="hint" data-i18n="switch.blockBotsHint">Hide messages from a small bundled bot list.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="bot"></i></span>
+                                        <span class="label" data-i18n="switch.blockBots">Block known bots</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.blockBotsHint">Hide messages from a small bundled bot list.</span>
+                                </span>
                             </label>
                             <label class="switch">
                                 <input id="mediaEnabled" type="checkbox" checked>
-                                <span><span class="label" data-i18n="switch.media">Images and videos</span><span class="hint" data-i18n="switch.mediaHint">Show media links from broadcaster, moderators and trusted users.</span></span>
+                                <span>
+                                    <span class="setting-title-wrap">
+                                        <span class="setting-icon-badge"><i data-lucide="film"></i></span>
+                                        <span class="label" data-i18n="switch.media">Images and videos</span>
+                                    </span>
+                                    <span class="hint" data-i18n="switch.mediaHint">Show media links from broadcaster, moderators and trusted users.</span>
+                                </span>
                             </label>
                             <div class="nested" id="mediaSettings" data-chat-types="hellcakefication">
                                 <div class="section-head"><h2 data-i18n="media.card">Media card</h2></div>
                                 <div class="grid">
                                     <div class="field">
-                                        <label for="mediaRadius"><span data-i18n="fields.mediaRadius">Media radius</span>: <span class="range-value" data-range-value="mediaRadius">20px</span></label>
+                                        <label for="mediaRadius">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="box-select"></i></span>
+                                                <span><span data-i18n="fields.mediaRadius">Media radius</span>: <span class="range-value" data-range-value="mediaRadius">20px</span></span>
+                                            </span>
+                                        </label>
                                         <input id="mediaRadius" type="range" min="0" max="64" step="1" value="20">
                                     </div>
                                     <div class="field">
-                                        <label for="mediaOpacity"><span data-i18n="fields.mediaOpacity">Media opacity</span>: <span class="range-value" data-range-value="mediaOpacity">1.00</span></label>
+                                        <label for="mediaOpacity">
+                                            <span class="setting-title-wrap">
+                                                <span class="setting-icon-badge"><i data-lucide="sun-medium"></i></span>
+                                                <span><span data-i18n="fields.mediaOpacity">Media opacity</span>: <span class="range-value" data-range-value="mediaOpacity">1.00</span></span>
+                                            </span>
+                                        </label>
                                         <input id="mediaOpacity" type="range" min="0" max="1" step="0.05" value="1">
                                     </div>
                                 </div>
@@ -1787,10 +2692,92 @@
             <a href="https://ikuza.space" target="_blank" rel="noopener noreferrer" aria-label="ikuza.space">
                 <img src="https://raw.githubusercontent.com/ikuza47/ikuza47/999b5c23b392de927975949c1060b83383f4bdb7/files/ikuza.space.logo.svg" alt="ikuza.space">
             </a>
+            <div class="footer-resources">
+                <div class="footer-resources-label" data-i18n="footer.resources">Used resources</div>
+                <div class="footer-resources-list">
+                    <a href="https://lucide.dev" target="_blank" rel="noopener noreferrer">Lucide Icons</a>
+                    <span class="footer-sep">•</span>
+                    <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer">Google Fonts</a>
+                    <span class="footer-sep">•</span>
+                    <a href="https://7tv.app" target="_blank" rel="noopener noreferrer">7TV</a>
+                    <span class="footer-sep">•</span>
+                    <a href="https://betterttv.com" target="_blank" rel="noopener noreferrer">BetterTTV</a>
+                    <span class="footer-sep">•</span>
+                    <a href="https://www.frankerfacez.com" target="_blank" rel="noopener noreferrer">FrankerFaceZ</a>
+                    <span class="footer-sep">•</span>
+                    <a href="https://hinamizawa.ai" target="_blank" rel="noopener noreferrer">hinamizawa.ai</a>
+                    <span class="footer-sep">•</span>
+                    <a href="https://twitch.tv" target="_blank" rel="noopener noreferrer">Twitch</a>
+                </div>
+            </div>
         </footer>
     </main>
 
     <script src="v2/js/generator.js"></script>
-    <script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
+    <script>
+        (function () {
+            function syncAllVisualCards() {
+                document.querySelectorAll('[data-visual-select]').forEach(function (group) {
+                    var selectId = group.getAttribute('data-visual-select');
+                    var selectEl = document.getElementById(selectId);
+                    if (!selectEl) return;
+
+                    var currentVal = selectEl.value;
+                    group.querySelectorAll('.visual-card').forEach(function (card) {
+                        var isSelected = card.getAttribute('data-value') === currentVal;
+                        card.classList.toggle('active', isSelected);
+                        card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+                    });
+                });
+            }
+
+            function initVisualCards() {
+                document.querySelectorAll('[data-visual-select]').forEach(function (group) {
+                    var selectId = group.getAttribute('data-visual-select');
+                    var selectEl = document.getElementById(selectId);
+                    if (!selectEl) return;
+
+                    group.querySelectorAll('.visual-card').forEach(function (card) {
+                        card.addEventListener('click', function () {
+                            var val = card.getAttribute('data-value');
+                            if (selectEl.value !== val) {
+                                selectEl.value = val;
+                                selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+                                selectEl.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                            syncAllVisualCards();
+                        });
+                    });
+
+                    selectEl.addEventListener('change', syncAllVisualCards);
+                });
+
+                var resetBtn = document.getElementById('resetSettings');
+                if (resetBtn) {
+                    resetBtn.addEventListener('click', function () {
+                        setTimeout(syncAllVisualCards, 30);
+                    });
+                }
+
+                // Also sync on lang change
+                document.querySelectorAll('.lang-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        setTimeout(syncAllVisualCards, 30);
+                    });
+                });
+
+                syncAllVisualCards();
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initVisualCards);
+            } else {
+                initVisualCards();
+            }
+        })();
+    </script>
 </body>
 </html>

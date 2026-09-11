@@ -52,6 +52,20 @@
             overflow: hidden;
             padding: var(--chat-padding);
             scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+            background: rgba(var(--general-bg-rgb, 0, 0, 0), var(--general-bg-opacity, 0));
+            border-radius: var(--general-bg-radius, 0);
+        }
+
+        :root[style*="--chat-align: center"] #chat-container,
+        html[data-chat-align="center"] #chat-container {
+            align-items: center;
+        }
+
+        :root[style*="--chat-align: right"] #chat-container,
+        html[data-chat-align="right"] #chat-container {
+            align-items: flex-end;
         }
 
         #chat-container::-webkit-scrollbar {
@@ -63,7 +77,6 @@
             width: fit-content;
             max-width: 100%;
             margin-top: var(--message-gap);
-            margin-left: -0.04em;
             padding: 0.08em 0.04em;
             color: white;
             font-family: var(--chat-font);
@@ -72,6 +85,16 @@
             word-break: break-word;
             overflow-wrap: anywhere;
             text-shadow: 0 0 var(--shadow-blur) var(--shadow-color);
+        }
+
+        :root[style*="--chat-align: center"] .msg,
+        html[data-chat-align="center"] .msg {
+            text-align: center;
+        }
+
+        :root[style*="--chat-align: right"] .msg,
+        html[data-chat-align="right"] .msg {
+            text-align: right;
         }
 
         .msg.with-bg {
@@ -199,6 +222,27 @@
             min-width: calc(var(--chat-size) * 0.62 * var(--badge-scale));
             border-radius: 2px;
             vertical-align: middle;
+        }
+
+        .user-avatar {
+            display: inline-block;
+            height: calc(var(--chat-size) * 0.85 * var(--avatar-scale, 1));
+            width: calc(var(--chat-size) * 0.85 * var(--avatar-scale, 1));
+            object-fit: cover;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        .user-avatar-circle {
+            border-radius: 50%;
+        }
+
+        .user-avatar-rounded {
+            border-radius: calc(var(--chat-size) * 0.22 * var(--avatar-scale, 1));
+        }
+
+        .user-avatar-square {
+            border-radius: 0;
         }
 
         .emote {
@@ -408,6 +452,29 @@
             from { opacity: 1; transform: scale(1); }
             to { opacity: 0; transform: scale(0.86); }
         }
+
+        .watermark {
+            position: fixed;
+            right: 14px;
+            bottom: 10px;
+            z-index: 99999;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            color: rgba(255, 255, 255, 0.32);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0.8);
+            display: none;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        html[data-preview-theme="light"] .watermark {
+            color: rgba(0, 0, 0, 0.32);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
     </style>
 </head>
 <body>
@@ -418,6 +485,7 @@
     </div>
     <div id="error-indicator" role="alert"></div>
     <div id="chat-container" aria-live="polite"></div>
+    <div id="watermark" class="watermark" aria-hidden="true">made by ikuza47.</div>
 
     <script src="preload/manifest.js"></script>
     <script>
@@ -469,6 +537,7 @@
     <script src="js/osu.js"></script>
     <script src="js/media.js"></script>
     <script src="js/bots.js"></script>
+    <script src="js/avatars.js"></script>
     <script src="js/renderer.js"></script>
     <script src="js/twitch.js"></script>
     <script src="js/test-mode.js"></script>

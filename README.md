@@ -1,26 +1,46 @@
-# IkuzaChat - chat created with love <3
-[![ ](./publics/ikuzachat-preview.png)](https://ikuzachat.ikuza.space/)
+# IkuzaChat v2
+
 <p align="center">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg"></a>
-  <a href="https://github.com/ikuza47/ikuzachat"><img src="https://img.shields.io/badge/version-1.2-blue.svg"></a>
+  <img src="./publics/ikuzachat-preview.png" alt="IkuzaChat v2 Preview" width="100%">
 </p>
-IkuzaChat is a Twitch chat overlay with a wide range of customization options to suit everyone.
 
-## What does the chat have?
+<p align="center">
+  <a href="https://ikuzachat.ikuza.space/"><img src="https://img.shields.io/badge/Website-ikuzachat.ikuza.space-7c6aef?style=flat-square" alt="Website"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License"></a>
+  <a href="https://github.com/ikuza47/ikuzachat"><img src="https://img.shields.io/badge/Actual_Version-V2-blue.svg?style=flat-square" alt="Version"></a>
+  <a href="https://twitch.tv/ikuza47"><img src="https://img.shields.io/badge/Twitch-ikuza47-9146ff?style=flat-square&logo=twitch&logoColor=white" alt="Twitch"></a>
+</p>
 
-- Modern settings page design for easy and enjoyable creation of the overlay of your dreams
-- Fully customizable chat settings to suit your preferences
-- Support for emojis from 7TV, BTTV, FFZ and Twitch
-- Flexible font settings with a choice of several popular fonts, as well as the ability to upload your own
-- Auto-delete messages after a set period of time
-- Auto-clear chat when using the /clear command in Twitch
-- Animations for message appearance and disappearance
-- Modularity: The highlight of this chat is its modules, more about them in another section
-- Proper emoji replacement that doesn't break text sequences like "((( "
-- Colored user mentions with personalized colors
-- Time display customization with timezone support
+<p align="center">
+  <b>Modern, highly customizable Twitch chat overlay for OBS Studio.</b><br>
+  Built with vanilla web technologies — lightweight, fast, and feature-packed.
+</p>
 
----
+
+## What's New in v2?
+
+- **Rebuilt Generator UI**: Instant tab navigation, and visual option selector cards with icons.
+- **Interactive Live Preview**: Real-time responsive preview viewport and Light/Dark stream canvas switcher.
+- **Multiple Chat Layouts**:
+  - **Classic**: Clean, IRC-style Twitch stream chat.
+  - **HellCakeFication**: Card-based modern layout with rich embeds, side panels, and customizable widths.
+- **Full Emote & Badge Support**:
+  - Twitch emotes, **7TV**, **BetterTTV (BTTV)**, and **FrankerFaceZ (FFZ)**.
+  - Scalable broadcaster, moderator, VIP, and subscriber badges.
+  - User avatars with selectable shapes and positions.
+- **Smooth Animations**:
+  - Configurable In and Out animations (**Fade**, **Slide**, **Pop**, or None) with customizable durations.
+- **Smart Message Control**:
+  - Auto-remove messages after a configurable timeout.
+  - Native Twitch `/clear` command support.
+  - `/me` action text formatting and local system/test messages.
+- **Rich Modules**:
+  - **osu! Module**: Rich beatmap embeds and user profile cards.
+  - **Media Module**: Inline image and video previews from trusted users, moderators, and broadcaster.
+  - **Bot Blocker**: Automatically hide some bots.
+
+## Getting Started
+
 ### Using via the website
 
 1. **Open [website]((https://ikuzachat.ikuza.space/))**
@@ -56,54 +76,20 @@ cd ikuzachat
 - Paste the generated link into the URL field
 - Set the appropriate dimensions
 - Disable "Curse Capture" (optional)
----
-## Modules
-- **osu! module**: Enables support for displaying osu! map info from a link (API key required)
-- **Bot blocker module**: Hide messages from bots (list loaded from GitHub)
+
+## Support
+
+If you enjoy IkuzaChat and want to support its ongoing development:
+- ⭐ Star this repository on GitHub!
+- 💖 Support on [Boosty](https://boosty.to/ikuza47)
+- 🟣 Follow on [Twitch](https://twitch.tv/ikuza47)
 
 ---
-## Plans
-- [ ] Bug fixing
-- [ ] Small additionals
-- [ ] Fix bot blocker module
-- [ ] Add additional modules
-- [ ] New site generator
-- [X] OSU Module (Basic)
-- [X] Colored User Mentions
-- [X] User-Friendly Settings Page
-- [X] Proper emoji replacement (preventing text breakage like "((( ")
-- [X] Twitch Emoji Support (through tags)
-- [X] Message Reading Fix
-- [X] Message Sent Time Display Setting
-- [X] User First Message Mark
-- [X] Message Ignoring Setting
-- [X] Modules
-## Denied
-- Presets
-- Sound Effect Setting with Cooldown, etc.
-- Commands
-## How to Contribute
-
-We welcome any suggestions for improving the project! Here's how you can help:
-
-1. Suggest a chat idea
-2. Report a bug
-3. Create a fork
-4. Help with bug fixes
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more information.
 
-## Support
-If you liked the chat and want to see it grow into something bigger, you can help: [click](https://boosty.to/ikuza47)
-
-## Thanks
-
-Thanks for using IkuzaChat! If you like the project, don't forget to give it a ⭐ star on GitHub.
-
-Created with ❤️ for those looking for the perfect Twitch chat
-
----
-
-**IkuzaChat** © 2025 - Twitch Chat Overlay | Developed by ikuza47
+<p align="center">
+  <b>IkuzaChat v2</b> © 2026 • Developed with ❤️ by <a href="https://twitch.tv/ikuza47">ikuza47</a>
+</p>

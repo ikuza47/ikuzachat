@@ -87,6 +87,20 @@
         meItalic: getBool('meItalic', true),
         showSystemMessages: getBool('systemMessages', true),
         systemMessageColor: getColor('systemMessageColor', '#c3c7d4'),
+        showWatermark: getBool('watermark', false),
+        showAvatar: getBool('showAvatar', false),
+        avatarPosition: getChoice('avatarPosition', 'before-badges', ['before-badges', 'after-badges']),
+        avatarShape: getChoice('avatarShape', 'circle', ['circle', 'rounded', 'square']),
+        avatarScale: getNumber('avatarScale', 1.0, 0.5, 2.5),
+        nameColorMode: getChoice('nameColorMode', 'twitch', ['twitch', 'random', 'defined', 'palette']),
+        definedNameColor: getColor('definedNameColor', '#a996ff'),
+        nameColorPalette: getChoice('nameColorPalette', 'vibrant', ['vibrant', 'pastel', 'neon', 'monochrome', 'sunset']),
+        chatAlign: getChoice('chatAlign', 'left', ['left', 'center', 'right']),
+        showGeneralBackground: getBool('generalBackground', false),
+        generalBackgroundColor: getColor('generalBackgroundColor', '#000000'),
+        generalBackgroundOpacity: getNumber('generalBackgroundOpacity', 0.5, 0, 1),
+        generalBackgroundRadius: getNumber('generalBackgroundRadius', 16, 0, 48),
+        generalBackgroundPadding: getNumber('generalBackgroundPadding', 12, 0, 64),
         hcfBoxColor: getColor('hcfBoxColor', '#121218'),
         hcfBoxOpacity: getNumber('hcfBoxOpacity', 0.72, 0, 1),
         hcfBoxRadius: getNumber('hcfBoxRadius', 18, 0, 48),
@@ -145,6 +159,7 @@
     document.documentElement.style.setProperty('--chat-font', config.font);
     document.documentElement.style.setProperty('--chat-size', `${config.size}px`);
     document.documentElement.style.setProperty('--badge-scale', String(config.badgeScale));
+    document.documentElement.style.setProperty('--avatar-scale', String(config.avatarScale));
     document.documentElement.style.setProperty('--time-color', config.timeColor);
     document.documentElement.style.setProperty('--message-bg-rgb', hexToRgb(config.backgroundColor));
     document.documentElement.style.setProperty('--message-bg-opacity', String(config.backgroundOpacity));
@@ -159,6 +174,11 @@
     document.documentElement.style.setProperty('--user-notice-rgb', hexToRgb(config.userNoticeColor));
     document.documentElement.style.setProperty('--user-notice-opacity', String(config.userNoticeOpacity));
     document.documentElement.style.setProperty('--system-message-color', config.systemMessageColor);
+    document.documentElement.style.setProperty('--general-bg-rgb', hexToRgb(config.generalBackgroundColor));
+    document.documentElement.style.setProperty('--general-bg-opacity', config.showGeneralBackground ? String(config.generalBackgroundOpacity) : '0');
+    document.documentElement.style.setProperty('--general-bg-radius', `${config.generalBackgroundRadius}px`);
+    document.documentElement.style.setProperty('--general-bg-padding', `${config.generalBackgroundPadding}px`);
+    document.documentElement.style.setProperty('--chat-align', config.chatAlign);
     document.documentElement.style.setProperty('--hcf-box-rgb', hexToRgb(config.hcfBoxColor));
     document.documentElement.style.setProperty('--hcf-box-opacity', String(config.hcfBoxOpacity));
     document.documentElement.style.setProperty('--hcf-box-radius', `${config.hcfBoxRadius}px`);
@@ -174,10 +194,16 @@
     window.IkuzaChatV2 = window.IkuzaChatV2 || {};
     window.IkuzaChatV2.config = config;
 
-    const previewTheme = urlParams.get('previewTheme');
+    const watermarkEl = document.getElementById('watermark');
+    if (watermarkEl) {
+        watermarkEl.style.display = config.showWatermark ? 'block' : 'none';
+    }
+
+    const previewTheme = params.get('previewTheme');
     if (previewTheme) {
         const themeColor = previewTheme === 'light' ? '#f1f3f7' : '#0c0c12';
         document.documentElement.style.setProperty('--preview-bg', themeColor);
+        document.documentElement.setAttribute('data-preview-theme', previewTheme);
         document.documentElement.style.backgroundColor = themeColor;
         if (document.body) document.body.style.backgroundColor = themeColor;
     }
@@ -188,6 +214,7 @@
 
         if (themeBg) {
             document.documentElement.style.setProperty('--preview-bg', themeBg);
+            document.documentElement.setAttribute('data-preview-theme', themeBg === '#f1f3f7' ? 'light' : 'dark');
             document.documentElement.style.backgroundColor = themeBg;
             if (document.body) document.body.style.backgroundColor = themeBg;
         }
@@ -212,6 +239,20 @@
                     currentConfig[key] = newConfig[key];
                 }
             });
+
+            if (typeof newConfig.showWatermark !== 'undefined') {
+                const wm = document.getElementById('watermark');
+                if (wm) wm.style.display = newConfig.showWatermark ? 'block' : 'none';
+            }
+
+            if (typeof newConfig.chatAlign !== 'undefined') {
+                document.documentElement.setAttribute('data-chat-align', newConfig.chatAlign);
+            }
+
+            if (typeof newConfig.showGeneralBackground !== 'undefined') {
+                const opacity = newConfig.showGeneralBackground ? String(newConfig.generalBackgroundOpacity || 0.5) : '0';
+                document.documentElement.style.setProperty('--general-bg-opacity', opacity);
+            }
 
             if (typeof newConfig.background !== 'undefined') {
                 document.querySelectorAll('.msg').forEach((msg) => {

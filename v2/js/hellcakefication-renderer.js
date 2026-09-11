@@ -5,17 +5,62 @@
     const container = document.getElementById('message_container');
     const colorCache = new Map();
 
-    const fallbackColors = [
-        '#ff7a59', '#4dd4ac', '#63a8ff', '#ffd166', '#ff73c8',
-        '#b3f56f', '#ff8f70', '#9f8cff', '#66e3ff', '#f7a8ff'
-    ];
+    const colorPalettes = {
+        vibrant: [
+            '#ff7a59', '#4dd4ac', '#63a8ff', '#ffd166', '#ff73c8',
+            '#b3f56f', '#ff8f70', '#9f8cff', '#66e3ff', '#f7a8ff'
+        ],
+        pastel: [
+            '#ffb3ba', '#ffdfba', '#ffffba', '#baffc9', '#bae1ff',
+            '#e8c5ff', '#ffcbf2', '#f3c4fb', '#c5e3f6', '#d6f8b8'
+        ],
+        neon: [
+            '#00ffcc', '#ff007f', '#00e5ff', '#ffea00', '#76ff03',
+            '#f50057', '#d500f9', '#00b0ff', '#1de9b6', '#ff3d00'
+        ],
+        monochrome: [
+            '#ffffff', '#e0e0e0', '#cfd8dc', '#b0bec5', '#90a4ae',
+            '#eceff1', '#f5f5f5', '#d1d5db', '#9ca3af', '#cbd5e1'
+        ],
+        sunset: [
+            '#ff5e62', '#ff9966', '#ff7e5f', '#feb47b', '#f857a6',
+            '#ff5858', '#f09819', '#ed4264', '#ffedbc', '#ff6e7f'
+        ]
+    };
 
-    function getFallbackColor(username) {
-        const key = String(username || '').toLowerCase();
-        if (!colorCache.has(key)) {
-            colorCache.set(key, fallbackColors[colorCache.size % fallbackColors.length]);
+    function hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = (hash << 5) - hash + str.charCodeAt(i);
+            hash |= 0;
         }
-        return colorCache.get(key);
+        return Math.abs(hash);
+    }
+
+    function getUserColor(username, payloadColor) {
+        const mode = config.nameColorMode || 'twitch';
+        if (mode === 'defined') {
+            return config.definedNameColor || '#a996ff';
+        }
+
+        const key = String(username || '').toLowerCase();
+        const paletteName = mode === 'palette' ? (config.nameColorPalette || 'vibrant') : 'vibrant';
+        const palette = colorPalettes[paletteName] || colorPalettes.vibrant;
+
+        if (mode === 'twitch') {
+            if (payloadColor && /^#[0-9a-f]{6}$/i.test(payloadColor)) {
+                return payloadColor;
+            }
+            if (!colorCache.has(key)) {
+                const color = palette[hashString(key) % palette.length];
+                colorCache.set(key, color);
+            }
+            return colorCache.get(key);
+        }
+
+        // 'random' or 'palette' mode
+        const hash = hashString(key);
+        return palette[hash % palette.length];
     }
 
     function getSpecialUsernameClass(username) {
@@ -45,7 +90,8 @@
         if (specialClass) {
             return `<span class="nick ${specialClass}">${safeName}</span>`;
         }
-        return `<span class="nick" style="color: ${utils.escapeAttribute(color || getFallbackColor(username))}">${safeName}</span>`;
+        const finalColor = getUserColor(username, color);
+        return `<span class="nick" style="color: ${utils.escapeAttribute(finalColor)}">${safeName}</span>`;
     }
 
     function processMentions(html) {
@@ -194,7 +240,19 @@
         textHtml = processMentions(textHtml);
 
         const badges = root.badges.createHtml(root.badges.parse(payload.tags || ''), config);
-        const topParts = [createNickHtml(payload.username, payload.color), badges].filter(Boolean).join(' ');
+        let avatarHtml = '';
+        if (config.showAvatar && root.avatars) {
+            const avatarUrl = await root.avatars.fetchAvatarUrl(payload.username);
+            avatarHtml = root.avatars.createAvatarHtml(payload.username, avatarUrl, config);
+        }
+
+        const nickHtml = createNickHtml(payload.username, payload.color);
+        let topParts = '';
+        if (config.avatarPosition === 'before-badges') {
+            topParts = [avatarHtml, badges, nickHtml].filter(Boolean).join(' ');
+        } else {
+            topParts = [badges, avatarHtml, nickHtml].filter(Boolean).join(' ');
+        }
         const timeLeft = getTopTimeHtml();
         const messageText = textHtml ? `<div class="messagetext">${textHtml}</div>` : '';
         message.innerHTML = `<div class="messagetop"><div class="messagetopmeta">${topParts}</div>${timeLeft}</div>${getReply(payload)}${media.html}${osu.html}${messageText}`;
